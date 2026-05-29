@@ -120,6 +120,9 @@ namespace Garrison.Shared.Round
                     continue;
 
                 capsule.Assign(player);
+                if (capsuleObject.TryGetComponent(out PlayerMovement movement))
+                    movement.Configure(Config);
+
                 spawnedCapsules[player] = capsule;
             }
         }

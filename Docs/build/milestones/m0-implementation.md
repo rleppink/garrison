@@ -282,6 +282,10 @@ player at a spawn point.
 
 ## C9 — Server-authoritative movement (no prediction)
 
+**Status:** Done. `PlayerInput` sends owner WASD intent to the server,
+`PlayerMovement` applies it server-side, `NetworkTransform` replicates the
+server transform, and movement speed is read through `ConfigKey.MoveSpeed`.
+
 **Goal:** each player moves their own capsule; movement is decided on the server
 and replicated out. Latency feel is accepted.
 

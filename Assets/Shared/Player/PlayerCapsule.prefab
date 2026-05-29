@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 13600000}
   - component: {fileID: 11400000}
   - component: {fileID: 11400002}
+  - component: {fileID: 11400003}
+  - component: {fileID: 11400004}
   m_Layer: 0
   m_Name: PlayerCapsule
   m_TagString: Untagged
@@ -78,6 +80,51 @@ MonoBehaviour:
   _parent: {fileID: 0}
   _invertedPathToNearestParent: 
   _directChildren: []
+--- !u!114 &11400003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f734c582c8461387861445fd847b64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Player.PlayerMovement
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+--- !u!114 &11400004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f449ad67f9e744118c149040040cafc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Player.PlayerInput
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  capsule: {fileID: 11400002}
+  movement: {fileID: 11400003}
+  sendInterval: 0.05
   _syncPosition: 1
   _syncRotation: 1
   _syncScale: 1
