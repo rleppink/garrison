@@ -31,6 +31,10 @@ to verify, not assume.
 
 ## C1 — Integrate PurrNet & pin the toolchain
 
+**Status:** Done. PurrNet `dev.purrnet.purrnet` `1.19.1` is pinned through the
+Unity Package Manager, and the toolchain note lives at
+[`../toolchain.md`](../toolchain.md).
+
 **Goal:** PurrNet compiles in the project; everyone is on one editor version.
 
 **Build**
