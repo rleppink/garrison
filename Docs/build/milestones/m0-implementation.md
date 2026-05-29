@@ -88,6 +88,11 @@ direction is *enforced by the compiler*, not just by good intentions.
 
 ## C3 — Net spine: NetworkManager, transport, host/client bootstrap
 
+**Status:** Done. `Scenes/Bootstrap.unity` owns the persistent `GameSystems`
+object with PurrNet `NetworkManager`, UDP transport, and the inspector-wired
+`Shared/Net/ConnectionLauncher`; net conventions are documented in
+`Shared/Net/README.md`.
+
 **Goal:** a host can open a session and a client can connect by direct address.
 No UI yet — driven by inspector fields + a temporary key/console hook.
 
