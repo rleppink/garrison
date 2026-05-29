@@ -834,12 +834,12 @@ MonoBehaviour:
   _cookieScope: 1
   _dontDestroyOnLoad: 0
   _transport: {fileID: 1877830049}
-  _networkPrefabs: {fileID: 0}
+  _networkPrefabs: {fileID: 11400000, guid: 837e7b6b1a5b54fec9cd831ff2a46ca7, type: 2}
   _networkAssets: {fileID: 0}
-  _networkRules: {fileID: 0}
+  _networkRules: {fileID: 11400000, guid: d8799083b96579a42b8b2d03e4ceae98, type: 2}
   _visibilityRules: {fileID: 11400000, guid: 8f014a5bd8dc68646a2a3c0b18c5bbd8, type: 2}
   _authenticator: {fileID: 0}
-  _tickRate: 20
+  _tickRate: 60
   _patchLingeringProcessBug: 0
 --- !u!4 &1877830051
 Transform:
