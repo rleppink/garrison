@@ -127,6 +127,11 @@ No UI yet — driven by inspector fields + a temporary key/console hook.
 
 ## C4 — Lobby & player list
 
+**Status:** Done. `Shared/Lobby/LobbyController` tracks PurrNet join/leave
+events into a server-auth synced player dictionary, and `LobbyUI` renders the
+live list with host/client status and a hidden disabled Start button for the
+host.
+
 **Goal:** host opens a session, clients join, and the lobby shows who's in.
 
 **Build**
