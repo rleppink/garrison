@@ -17,4 +17,8 @@ MonoBehaviour:
   poolByDefault: 0
   folder: {fileID: 102900000, guid: 00000000000000001000000000000000, type: 3}
   linkedNetworkPrefabs: []
-  prefabs: []
+  prefabs:
+  - guid: 25ab061a88494d22aa7adcaf2beac35b
+    prefab: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+    pooled: 0
+    warmupCount: 0

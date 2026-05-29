@@ -955,6 +955,8 @@ MonoBehaviour:
   _invertedPathToNearestParent: 
   _directChildren: []
   configSource: {fileID: 1877830053}
+  mapSceneName: Greybox
+  playerCapsulePrefab: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

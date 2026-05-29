@@ -248,6 +248,11 @@ markers collected by `Shared/Round/SpawnPoints`.
 
 ## C8 — Player capsule + server-authoritative spawn
 
+**Status:** Done. `Shared/Player/PlayerCapsule.prefab` is registered with
+PurrNet, and `RoundController` loads the Greybox map, spawns one server-auth
+capsule per connected player at authored spawn points, and despawns them on
+reset.
+
 **Goal:** on round start, the **server** spawns one authoritative capsule per
 player at a spawn point.
 
