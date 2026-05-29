@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Garrison.Shared.Config;
+using Garrison.Shared.Round;
 using PurrNet;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace Garrison.Shared.Lobby
     public sealed class LobbyController : NetworkBehaviour
     {
         [SerializeField] private MonoBehaviour configSource;
+        [SerializeField] private RoundController roundController;
 
         private readonly SyncDictionary<PlayerID, string> players = new();
         private readonly SyncVar<PlayerID> hostPlayer = new(PlayerID.Server);
@@ -48,6 +50,8 @@ namespace Garrison.Shared.Lobby
 
         public int PlayerCountConfig => Config?.GetInt(ConfigKey.PlayerCount) ?? 0;
 
+        public RoundState RoundState => roundController ? roundController.State : RoundState.Lobby;
+
         private IConfig Config => configSource as IConfig;
 
         protected override void OnSpawned(bool asServer)
@@ -57,6 +61,9 @@ namespace Garrison.Shared.Lobby
 
             if (Config != null)
                 Config.Changed += OnConfigChanged;
+
+            if (roundController)
+                roundController.Changed += OnRoundChanged;
 
             if (asServer)
             {
@@ -76,6 +83,9 @@ namespace Garrison.Shared.Lobby
             if (Config != null)
                 Config.Changed -= OnConfigChanged;
 
+            if (roundController)
+                roundController.Changed -= OnRoundChanged;
+
             if (asServer && networkManager)
             {
                 networkManager.onPlayerJoined -= OnPlayerJoined;
@@ -85,10 +95,14 @@ namespace Garrison.Shared.Lobby
 
         public void StartRound()
         {
-            if (!isServer)
-                return;
+            if (isServer && roundController)
+                roundController.StartRound();
+        }
 
-            Debug.Log("Lobby StartRound requested. RoundController will take over in C6.");
+        public void ResetRound()
+        {
+            if (isServer && roundController)
+                roundController.ResetRound();
         }
 
         private void RebuildServerList()
@@ -137,6 +151,11 @@ namespace Garrison.Shared.Lobby
         }
 
         private void OnConfigChanged()
+        {
+            RaiseLobbyChanged();
+        }
+
+        private void OnRoundChanged()
         {
             RaiseLobbyChanged();
         }

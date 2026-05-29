@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using Garrison.Shared.Round;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,9 @@ namespace Garrison.Shared.Lobby
             if (lobbyController)
                 lobbyController.LobbyChanged += Refresh;
 
+            if (startButton)
+                startButton.onClick.AddListener(SubmitHostRoundAction);
+
             Refresh();
         }
 
@@ -27,6 +31,9 @@ namespace Garrison.Shared.Lobby
         {
             if (lobbyController)
                 lobbyController.LobbyChanged -= Refresh;
+
+            if (startButton)
+                startButton.onClick.RemoveListener(SubmitHostRoundAction);
         }
 
         private void Update()
@@ -45,12 +52,16 @@ namespace Garrison.Shared.Lobby
                 roleText.text = isHost ? "Host" : "Client";
 
             if (configText)
-                configText.text = $"N: {lobbyController.PlayerCountConfig}";
+                configText.text = $"N: {lobbyController.PlayerCountConfig} | {lobbyController.RoundState}";
 
             if (startButton)
             {
-                startButton.interactable = false;
+                startButton.interactable = isHost;
                 startButton.gameObject.SetActive(isHost);
+
+                Text buttonLabel = startButton.GetComponentInChildren<Text>();
+                if (buttonLabel)
+                    buttonLabel.text = lobbyController.RoundState == RoundState.Lobby ? "Start" : "Reset";
             }
 
             if (!playersText)
@@ -72,6 +83,17 @@ namespace Garrison.Shared.Lobby
             }
 
             playersText.text = builder.Length == 0 ? "Waiting for players" : builder.ToString();
+        }
+
+        private void SubmitHostRoundAction()
+        {
+            if (!lobbyController || !lobbyController.IsLocalHost)
+                return;
+
+            if (lobbyController.RoundState == RoundState.Lobby)
+                lobbyController.StartRound();
+            else
+                lobbyController.ResetRound();
         }
     }
 }

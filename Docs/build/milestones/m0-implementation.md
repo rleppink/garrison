@@ -193,6 +193,10 @@ with one value (`PlayerCount`, read as general `N`), shown in the lobby.
 
 ## C6 — Round lifecycle + config survives reset
 
+**Status:** Done. `Shared/Round` owns the synced lobby/in-round state,
+`LobbyController` delegates host Start/Reset to it, and `LobbyUI` shows the
+synced state while preserving `ConfigService` values across reset.
+
 **Goal:** a server round state machine that applies config at round start and
 preserves config across a reset.
 
