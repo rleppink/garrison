@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Garrison.Shared.Config;
 using PurrNet;
 using UnityEngine;
 
@@ -21,6 +22,8 @@ namespace Garrison.Shared.Lobby
 
     public sealed class LobbyController : NetworkBehaviour
     {
+        [SerializeField] private MonoBehaviour configSource;
+
         private readonly SyncDictionary<PlayerID, string> players = new();
         private readonly SyncVar<PlayerID> hostPlayer = new(PlayerID.Server);
 
@@ -43,10 +46,17 @@ namespace Garrison.Shared.Lobby
 
         public bool IsLocalHost => localPlayer.HasValue && localPlayer.Value == hostPlayer.value;
 
+        public int PlayerCountConfig => Config?.GetInt(ConfigKey.PlayerCount) ?? 0;
+
+        private IConfig Config => configSource as IConfig;
+
         protected override void OnSpawned(bool asServer)
         {
             players.onChanged += OnPlayersChanged;
             hostPlayer.onChanged += OnHostChanged;
+
+            if (Config != null)
+                Config.Changed += OnConfigChanged;
 
             if (asServer)
             {
@@ -62,6 +72,9 @@ namespace Garrison.Shared.Lobby
         {
             players.onChanged -= OnPlayersChanged;
             hostPlayer.onChanged -= OnHostChanged;
+
+            if (Config != null)
+                Config.Changed -= OnConfigChanged;
 
             if (asServer && networkManager)
             {
@@ -119,6 +132,11 @@ namespace Garrison.Shared.Lobby
         }
 
         private void OnHostChanged(PlayerID newHost)
+        {
+            RaiseLobbyChanged();
+        }
+
+        private void OnConfigChanged()
         {
             RaiseLobbyChanged();
         }

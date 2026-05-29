@@ -9,6 +9,7 @@ namespace Garrison.Shared.Lobby
     {
         [SerializeField] private LobbyController lobbyController;
         [SerializeField] private Text roleText;
+        [SerializeField] private Text configText;
         [SerializeField] private Text playersText;
         [SerializeField] private Button startButton;
 
@@ -42,6 +43,9 @@ namespace Garrison.Shared.Lobby
 
             if (roleText)
                 roleText.text = isHost ? "Host" : "Client";
+
+            if (configText)
+                configText.text = $"N: {lobbyController.PlayerCountConfig}";
 
             if (startButton)
             {

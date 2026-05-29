@@ -155,6 +155,10 @@ host.
 
 ## C5 — Config system (the "config, not constants" vehicle)
 
+**Status:** Done. `Shared/Config` contains keyed config values, defaults data,
+the `IConfig` read seam, and a server-auth `ConfigService`; the lobby reads
+`PlayerCount` through `IConfig` and displays it as `N`.
+
 **Goal:** a keyed, typed, host-settable, network-synced config table. Seeded
 with one value (`PlayerCount`, read as general `N`), shown in the lobby.
 
