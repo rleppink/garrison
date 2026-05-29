@@ -9,6 +9,10 @@ code is organized is [`../architecture.md`](../architecture.md)'s job. Each
 sub-plan answers: what sub-features does this milestone grow, which config dials
 and audio cues come online with them, and what can you *play* when it's done.
 
+When a milestone is ready to build, it gets an `m<N>-implementation.md`
+companion that drops *below* this level into commit-by-commit build steps. So
+far: [M0](m0-implementation.md).
+
 ## Order & dependency shape
 
 ```

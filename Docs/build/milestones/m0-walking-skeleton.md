@@ -6,7 +6,8 @@
 > spine and config plumbing are real.
 
 Detail for M0 in [`../plan.md`](../plan.md). Conventions live in
-[`../architecture.md`](../architecture.md).
+[`../architecture.md`](../architecture.md). Engineer-facing, commit-by-commit
+build steps are in [`m0-implementation.md`](m0-implementation.md).
 
 ## Why it's first
 
