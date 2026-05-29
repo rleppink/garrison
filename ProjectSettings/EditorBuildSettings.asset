@@ -8,5 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Bootstrap.unity
     guid: 15d0e5b40566b452290930fde20118aa
+  - enabled: 1
+    path: Assets/Scenes/Greybox.unity
+    guid: 12fed5876d8de421fb728fd35aa363a2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

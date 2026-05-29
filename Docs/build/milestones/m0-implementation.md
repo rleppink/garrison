@@ -220,6 +220,10 @@ preserves config across a reset.
 
 ## C7 — Greybox plane & spawn points
 
+**Status:** Done. `Scenes/Greybox.unity` is the first swappable `Map` scene,
+registered in build settings with a visible floor and six authored spawn
+markers collected by `Shared/Round/SpawnPoints`.
+
 **Goal:** a flat world to stand on and authored points to spawn at.
 
 **Build**
