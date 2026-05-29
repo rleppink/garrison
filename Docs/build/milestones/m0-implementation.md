@@ -57,6 +57,9 @@ Unity Package Manager, and the toolchain note lives at
 
 ## C2 — Feature-folder skeleton + assembly definitions
 
+**Status:** Done. The eight feature assemblies exist under `Assets/`, with
+slice assemblies referencing only `Garrison.Shared` and `PurrNet.Runtime`.
+
 **Goal:** the `architecture.md` slice layout exists and the dependency
 direction is *enforced by the compiler*, not just by good intentions.
 

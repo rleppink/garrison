@@ -1,0 +1,17 @@
+{
+    "name": "Garrison.Planning",
+    "rootNamespace": "Garrison.Planning",
+    "references": [
+        "Garrison.Shared",
+        "PurrNet.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,17 @@
+{
+    "name": "Garrison.Vision",
+    "rootNamespace": "Garrison.Vision",
+    "references": [
+        "Garrison.Shared",
+        "PurrNet.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

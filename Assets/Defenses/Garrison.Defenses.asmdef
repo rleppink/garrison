@@ -1,0 +1,17 @@
+{
+    "name": "Garrison.Defenses",
+    "rootNamespace": "Garrison.Defenses",
+    "references": [
+        "Garrison.Shared",
+        "PurrNet.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,17 @@
+{
+    "name": "Garrison.Reinforcements",
+    "rootNamespace": "Garrison.Reinforcements",
+    "references": [
+        "Garrison.Shared",
+        "PurrNet.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
