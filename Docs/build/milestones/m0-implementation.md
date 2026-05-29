@@ -314,6 +314,10 @@ and replicated out. Latency feel is accepted.
 
 ## C10 — Audio bus stub (live but silent)
 
+**Status:** Done. `Shared/Audio` contains `IAudioBus`, channel keys, and a
+pooled 3D `AudioBus` service on `GameSystems`; it is silent until clips and
+mixer groups are wired.
+
 **Goal:** the positional-audio routing layer exists so later systems play *into*
 it instead of spinning up ad-hoc audio. Silent for now.
 

@@ -772,6 +772,7 @@ GameObject:
   - component: {fileID: 1877830050}
   - component: {fileID: 1877830049}
   - component: {fileID: 1877830048}
+  - component: {fileID: 1877830054}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -795,6 +796,21 @@ MonoBehaviour:
   transport: {fileID: 1877830049}
   defaultAddress: 127.0.0.1
   defaultPort: 5000
+--- !u!114 &1877830054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877830047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1e5280f70a340f1933cd1a3b71a7a8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Audio.AudioBus
+  routes: []
+  initialPoolSize: 8
+  spatialBlend: 1
 --- !u!114 &1877830049
 MonoBehaviour:
   m_ObjectHideFlags: 0
