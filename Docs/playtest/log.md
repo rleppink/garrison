@@ -63,3 +63,26 @@ How to use:
 ---
 
 <!-- Add new session blocks below this line, newest at the bottom. -->
+
+### Session 2026-05-29 — M0 skeleton local acceptance
+
+**Config this session**
+
+| Config      | Value |
+|-------------|-------|
+| PlayerCount | 6     |
+| MoveSpeed   | 4.5   |
+| Map         | Greybox |
+
+**Result**
+
+Local implementation acceptance only. Unity batchmode import/compile succeeded,
+`Garrison.Shared` built with 0 errors, the Shared services/prefab/map are wired
+in assets, and the slice dependency wall still holds.
+
+**Still pending**
+
+- Multi-instance LAN run with 2–6 players.
+- Runtime confirmation that Start loads `Greybox`, spawns one capsule per
+  player, moves server-authoritatively, and Reset preserves config.
+- Real AudioMixer asset/group routing once the Unity editor is responsive.

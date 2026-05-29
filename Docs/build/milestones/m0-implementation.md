@@ -346,6 +346,11 @@ it instead of spinning up ad-hoc audio. Silent for now.
 
 ## C11 — Acceptance pass & "deletes clean" check
 
+**Status:** Local acceptance complete. Batchmode Unity import/compile exits
+successfully, generated `Garrison.Shared` builds with 0 errors, slice folders
+still delete clean, and slice asmdefs only reference `Garrison.Shared` +
+`PurrNet.Runtime`. Real multi-instance LAN validation is still pending.
+
 **Goal:** confirm every M0 "Done when" from the milestone doc, and that the
 architecture invariants hold.
 
@@ -353,10 +358,18 @@ architecture invariants hold.
 - [ ] 2–6 people on a LAN join one host's lobby and spawn capsules.
 - [ ] Everyone sees everyone move, server-authoritative, on the greybox plane.
 - [ ] Host sets a config value and it survives a round reset.
-- [ ] **Deletes clean:** the seven slice folders are still empty; nothing
+- [x] **Deletes clean:** the seven slice folders are still empty; nothing
       couples to a god-object/singleton (no `*.Instance`); the only shared state
       lives in `Shared/` services injected via `[SerializeField]` / interfaces.
-- [ ] Compiler wall holds: no slice assembly references another slice.
+- [x] Compiler wall holds: no slice assembly references another slice.
+
+**Local verification**
+- `Unity -batchmode -quit -projectPath ...` exits `0` after import/compile.
+- `dotnet build Garrison.Shared.csproj --no-restore` succeeds with `0` errors
+  (PurrNet emits only upstream obsolete API warnings).
+- Slice folders contain only their `.asmdef`/`.meta` files.
+- Searches for `*.Instance` and `DontDestroyOnLoad` under `Assets/Shared` and
+  slice folders are clean.
 
 **Done when**
 - The above all pass with real instances on a LAN, and the playtest log
