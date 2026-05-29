@@ -75,3 +75,6 @@ looks like:
 ## Explicitly not in M1
 - Shoot/accuracy resolution (M2 reads the movement hook), LOS fog (M3), sight
   cones (M3), any weapon or damage.
+- The planning-phase **high-overview camera mode** (M4). M1 builds only the
+  execution-gameplay camera; planning is a later `Vision/` mode over the live
+  `Map` (per `architecture.md`), not built here.

@@ -101,6 +101,10 @@ No UI yet — driven by inspector fields + a temporary key/console hook.
 - Wire references with `[SerializeField]`, assigned in the inspector — no
   `GetComponent`, no `NetworkManager.Instance` singleton reach. `GameSystems` is
   the one scene object slices get handed references to.
+- `Bootstrap` is the **lifetime spine** (`../architecture.md`, "Scenes & object
+  lifetime"): loaded first, **never unloaded.** Get persistence by *not
+  unloading the scene* — do **not** also `DontDestroyOnLoad` the object; doing
+  both invites duplicates on any reload.
 - LAN/direct only. No matchmaking, no lobby browser.
 
 **Done when**
@@ -194,14 +198,19 @@ preserves config across a reset.
 **Goal:** a flat world to stand on and authored points to spawn at.
 
 **Build**
-- `Scenes/Greybox.unity` (or content inside `Bootstrap`): a large flat plane
-  with a collider, neutral material, basic lighting.
+- `Scenes/Greybox.unity` — the first **`Map` scene** (`../architecture.md`),
+  kept **separate from `Bootstrap`**: a large flat plane with a collider, neutral
+  material, basic lighting.
 - A set of `SpawnPoint` markers (empty transforms) — enough for 6 players.
   `Shared/Round/SpawnPoints.cs` collects them (assigned via `[SerializeField]`)
   and hands the server a free point per player at spawn time.
 
 **Notes**
 - Greybox only — no map geometry, no night lighting (that's M8). Just a floor.
+- Don't fold the plane into `Bootstrap` — it's the swappable `Map`, loaded
+  **additively** over the persistent Bootstrap (real maps replace it later).
+  Load it through **PurrNet's scene sync** (the server loads, clients follow),
+  not a hand-rolled `SceneManager.LoadScene` + a "tell clients to load too" RPC.
 
 **Done when**
 - Scene loads with a visible plane and N reachable spawn markers.
@@ -218,9 +227,11 @@ player at a spawn point.
   `NetworkIdentity` + `NetworkTransform` + the controller scripts (added in C9).
   Register it as a PurrNet network prefab.
 - In `RoundController.StartRound` (server): for each player, instantiate the
-  capsule at a `SpawnPoint` and network-spawn it. Capsule is **server-owned**
-  (authority stays on the server); map `PlayerID → capsule` so input in C9 can
-  route to the right one. Despawn all capsules on `ResetRound`.
+  capsule at a `SpawnPoint` and network-spawn it **into the `Map` (Greybox)
+  scene**, not `Bootstrap` — gameplay lives in the swappable scene so it tears
+  down clean. Capsule is **server-owned** (authority stays on the server); map
+  `PlayerID → capsule` so input in C9 can route to the right one. Despawn all
+  capsules on `ResetRound`.
 
 **Notes**
 - The capsule lives in `Shared/Player` *deliberately as throwaway skeleton* —

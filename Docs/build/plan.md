@@ -48,6 +48,9 @@ audio cues it lands, and what it has to prove. The summaries here own the
 Stand up the spine everything hangs off.
 - Unity 6 project, pinned editor version; PurrNet integrated.
 - The `Assets/` feature-folder layout from `architecture.md`.
+- Scene & lifetime spine (`architecture.md`): a persistent `Bootstrap` scene
+  hosts the long-lived services; the greybox loads as the one swappable `Map`
+  scene. No `DontDestroyOnLoad`, no per-phase scenes.
 - `Shared/`: lobby/config system (host-settable), networking conventions, audio
   bus stub.
 - LAN connect: host + clients join a lobby and spawn server-authoritative
@@ -93,6 +96,9 @@ The `Planning/` slice + the placement half of `Defenses/`.
   planning end.
 - Valuable placement (concentrate vs spread); per-player edge spawn selection
   (changeable, visible to teammates); defender's attacker-POV preview.
+- Planning runs as a high-overview camera/UI **mode over the live `Map` scene**,
+  not a separate scene — placements *are* the real world objects and previews
+  use the real geometry (see `architecture.md`).
 
 **Proves:** a defender can build a position and a crew can pick approaches — the
 round now has a setup.

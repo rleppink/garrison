@@ -18,6 +18,18 @@ each one exposes downstream, plus the one vertical flow that proves they're real
 
 ## Foundations laid (and the contract each exposes)
 
+### Scene & lifetime spine
+- **Responsibility:** establish *where* long-lived objects live and *how* the
+  playable world loads — per `architecture.md`'s "Scenes & object lifetime."
+- **Owns:** a persistent `Bootstrap` scene (loaded first, never unloaded) holding
+  `GameSystems`; the greybox loads as the one swappable, networked `Map` scene
+  additively on top.
+- **Contract exposed:** services live in `Bootstrap` and are inspector-wired —
+  **no `DontDestroyOnLoad`, no singletons.** All gameplay spawns **into** `Map`
+  so it tears down clean on reset. Later milestones add no new persistent scenes:
+  **round phases (Planning/Execution/Getaway) are state over the live `Map`,
+  never separate scenes.**
+
 ### Lobby & config system
 - **Responsibility:** hold host-settable settings, apply them at round start,
   allow change between rounds.

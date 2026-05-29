@@ -17,6 +17,11 @@ file isn't about state or seams, it's about **what the space must afford**: the
 gameplay each lane has to make possible, and the fixtures other milestones expect
 to find here.
 
+Mechanically, the greybox is the first **`Map` scene** (per `architecture.md`'s
+"Scenes & object lifetime"): the one swappable, networked content scene, loaded
+additively over the persistent `Bootstrap` via PurrNet's scene sync. Real maps
+later are just more `Map` scenes — `Bootstrap` and the services don't change.
+
 ## What each lane must afford
 
 Functional requirement → diegetic skin → what it must make *possible* (the

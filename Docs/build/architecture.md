@@ -18,6 +18,54 @@ Companion to `../design/concept.md` (what we're building) and
 
 ---
 
+## Scenes & object lifetime
+
+**A persistent `Bootstrap` scene is the lifetime spine — not
+`DontDestroyOnLoad`.** The long-lived services (PurrNet `NetworkManager` +
+transport, `ConfigService`, `AudioBus`, `RoundController`, `LobbyController`)
+live on a `GameSystems` object in a `Bootstrap` scene that loads first and is
+never unloaded. Raw `DontDestroyOnLoad` would fight two of our own rules: you
+can't wire a DDOL'd object from another scene in the inspector, so it pushes you
+toward `FindObjectOfType` / `*.Instance` lookups — the exact `GetComponent` and
+singleton smells we ban. An authored, never-unloaded scene gives the same
+"outlives everything" guarantee while keeping everything `[SerializeField]`-wired
+at author time.
+
+The scenes:
+
+- **`Bootstrap`** — persistent services; loaded first, never unloaded. The
+  DDOL-container, done as a scene.
+- **`MainMenu`** — host / join screen.
+- **`Lobby`** — pre-game waiting room: player list, config, Start. It's UI over
+  the Bootstrap services; make it a scene only if you prefer the pattern — at
+  this point it carries no state forward, so there's no architectural difference.
+- **`Map`** — the round itself. The one networked, swappable content scene
+  (greybox now; real maps later — a major variety axis). Load it through
+  PurrNet's scene sync rather than hand-rolling `SceneManager` + a "tell clients
+  to load too" RPC. Spawn all gameplay (capsules, defenses, NPCs, loot) **into**
+  this scene so it tears down clean on round reset; Bootstrap holds only the
+  immortal services.
+
+**Round phases are state over the live `Map` scene, not separate scenes.**
+Planning, Execution, and Getaway all play out in the one loaded map, driven by
+`RoundController` state. Getaway is continuous with Execution by design ("blends
+out of execution on the grab"), and Planning is a **high-overview camera / input
+/ UI mode over the real map** — not a separate scene, not an abstract board.
+Planning needs the real geometry anyway (attacker-POV sightline previews, the
+defender seeing their own placements); a board would mean new artwork plus a
+visual↔world mapping for no gain. Splitting Planning into its own scene would
+also force the entire plan — every placement, role, spawn pick, drawing — across
+a scene boundary and rebuild it as networked objects. That cross-scene state
+transfer, not the load, is the real cost.
+
+**The litmus for a new scene:** is it a *distinct world / content set*, or just
+a *different view and verb set over the same live state*? Distinct world → a
+scene earns its keep. Different view over shared live state → a mode on an
+existing scene. The scene *load* is cheap; carrying live, networked state across
+it is not — that's the thing to weigh.
+
+---
+
 ## Organize by feature, not by layer
 
 **Vertical slices.** Code lives next to the feature it serves, not in a

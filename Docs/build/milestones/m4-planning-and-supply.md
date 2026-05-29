@@ -17,6 +17,13 @@ phase lifecycle**, not runtime behaviour — everything placed here gets its
 *behaviour* in M5. So it's shaped around the artifact both sides author (the
 Plan), the lifecycle that locks it, and the two editing surfaces.
 
+**Planning is a mode, not a scene.** Per `architecture.md`'s "Scenes & object
+lifetime," planning runs as a **high-overview camera / input / UI mode over the
+live `Map` scene** — not a separate scene and not an abstract board. Placements
+*are* the real world objects (M5 wakes their behaviour in place; nothing crosses
+a scene boundary), and the attacker-POV preview below uses the **real map
+geometry**. The phase lifecycle is `RoundController` state, not a scene load.
+
 ## The Plan (the artifact both sides build)
 
 The central thing M4 produces is a **Plan** — the round's setup, authored in this
