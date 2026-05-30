@@ -15,6 +15,10 @@ namespace Garrison.Vision
         private const int PushShapeCircle = 0;
         private const int PushShapeEllipse = 1;
         private const int PushShapeAsymmetric = 2;
+        private const int ReturnSnap = 0;
+        private const int ReturnLazyFollow = 1;
+        private const int PushCouplingAim = 0;
+        private const int PushCouplingSeparate = 1;
 
         [SerializeField] private Camera targetCamera;
 
@@ -36,6 +40,9 @@ namespace Garrison.Vision
         [SerializeField] private float defaultPushForwardScale = 1f;
         [SerializeField] private float defaultPushBackwardScale = 0.7f;
         [SerializeField, Range(0f, 0.45f)] private float defaultSafeViewportInset = 0.18f;
+        [SerializeField] private int defaultReturnMode = ReturnSnap;
+        [SerializeField] private float defaultReturnSpeed = 8f;
+        [SerializeField] private int defaultPushCoupling = PushCouplingAim;
 
         private ILocalPlayerRegistry registry;
         private IConfig config;
@@ -46,6 +53,11 @@ namespace Garrison.Vision
         private float pushForwardScale;
         private float pushBackwardScale;
         private float safeViewportInset;
+        private int returnMode;
+        private float returnSpeed;
+        private int pushCoupling;
+        private Vector3 currentPush;
+        private Vector3 pushVelocity;
 
         private ILocalPlayerRegistry Registry => registry ??= localPlayerRegistrySource as ILocalPlayerRegistry;
         private IConfig Config => config ??= configSource as IConfig;
@@ -90,7 +102,7 @@ namespace Garrison.Vision
             Vector3 backwards = viewDirection.sqrMagnitude > 0f ? -viewDirection.normalized : Vector3.up;
             Quaternion cameraRotation = Quaternion.LookRotation(-backwards, Vector3.up);
             Vector3 desiredPush = ComputeAimPush(view, cameraRotation);
-            Vector3 clampedPush = ClampPushToSafeViewport(desiredPush, cameraRotation);
+            Vector3 clampedPush = UpdatePush(desiredPush, cameraRotation);
             Vector3 frameTarget = target.position + clampedPush;
 
             Transform camTransform = targetCamera.transform;
@@ -108,10 +120,17 @@ namespace Garrison.Vision
             pushForwardScale = Mathf.Max(0.01f, activeConfig?.GetFloat(ConfigKey.CameraPushForwardScale, defaultPushForwardScale) ?? defaultPushForwardScale);
             pushBackwardScale = Mathf.Max(0.01f, activeConfig?.GetFloat(ConfigKey.CameraPushBackwardScale, defaultPushBackwardScale) ?? defaultPushBackwardScale);
             safeViewportInset = Mathf.Clamp(activeConfig?.GetFloat(ConfigKey.CameraSafeViewportInset, defaultSafeViewportInset) ?? defaultSafeViewportInset, 0f, 0.45f);
+            returnMode = Mathf.Clamp(activeConfig?.GetInt(ConfigKey.CameraReturn, defaultReturnMode) ?? defaultReturnMode, ReturnSnap, ReturnLazyFollow);
+            returnSpeed = Mathf.Max(0.01f, activeConfig?.GetFloat(ConfigKey.CameraReturnSpeed, defaultReturnSpeed) ?? defaultReturnSpeed);
+            pushCoupling = Mathf.Clamp(activeConfig?.GetInt(ConfigKey.CameraPushCoupling, defaultPushCoupling) ?? defaultPushCoupling, PushCouplingAim, PushCouplingSeparate);
         }
 
         private Vector3 ComputeAimPush(ILocalPlayerView view, Quaternion cameraRotation)
         {
+            // Separate push input is exposed for tuning, but M1 only has aim input.
+            // Until that input exists, both coupling modes intentionally use aim.
+            _ = pushCoupling;
+
             IAimSource aim = view.Aim;
             if (aim == null || pushExtent <= 0f || aim.AimDistance <= 0f)
                 return Vector3.zero;
@@ -165,6 +184,33 @@ namespace Garrison.Vision
                 return desiredPush;
 
             return GroundPushForScreenOffset(-clampedX, -clampedY, cameraRotation);
+        }
+
+        private Vector3 UpdatePush(Vector3 desiredPush, Quaternion cameraRotation)
+        {
+            Vector3 clampedTarget = ClampPushToSafeViewport(desiredPush, cameraRotation);
+
+            if (returnMode == ReturnSnap)
+            {
+                currentPush = clampedTarget;
+                pushVelocity = Vector3.zero;
+                return currentPush;
+            }
+
+            if (clampedTarget.sqrMagnitude >= currentPush.sqrMagnitude)
+            {
+                currentPush = clampedTarget;
+                pushVelocity = Vector3.zero;
+                return currentPush;
+            }
+
+            float smoothTime = 1f / returnSpeed;
+            Vector3 smoothedPush = Vector3.SmoothDamp(currentPush, clampedTarget, ref pushVelocity, smoothTime, Mathf.Infinity, Time.deltaTime);
+            currentPush = ClampPushToSafeViewport(smoothedPush, cameraRotation);
+            if ((currentPush - smoothedPush).sqrMagnitude > 0.0001f)
+                pushVelocity = Vector3.zero;
+
+            return currentPush;
         }
 
         private static Vector3 GroundPushForScreenOffset(float screenX, float screenY, Quaternion cameraRotation)

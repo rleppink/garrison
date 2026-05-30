@@ -10,6 +10,9 @@ namespace Garrison.Shared.Config
         CameraPushHorizontalScale = 5,
         CameraPushForwardScale = 6,
         CameraPushBackwardScale = 7,
-        CameraSafeViewportInset = 8
+        CameraSafeViewportInset = 8,
+        CameraReturn = 9,
+        CameraReturnSpeed = 10,
+        CameraPushCoupling = 11
     }
 }
