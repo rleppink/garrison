@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Garrison.Shared.Player;
 using Garrison.Shared.Config;
 using PurrNet;
 using PurrNet.Modules;
@@ -14,14 +12,17 @@ namespace Garrison.Shared.Round
     {
         [SerializeField] private MonoBehaviour configSource;
         [SerializeField] private string mapSceneName = "Greybox";
-        [SerializeField] private GameObject playerCapsulePrefab;
 
         private readonly SyncVar<RoundState> state = new(RoundState.Lobby);
-        private readonly Dictionary<PlayerID, PlayerCapsule> spawnedCapsules = new();
         private int appliedPlayerCount;
         private Coroutine spawnRoutine;
 
         public event Action Changed;
+
+        // Server-side round-phase seam. Slices (e.g. Player) subscribe to spawn/despawn
+        // their own content without Shared depending on those slices.
+        public event Action<Scene> RoundStarted;
+        public event Action RoundReset;
 
         public RoundState State => state.value;
 
@@ -51,7 +52,7 @@ namespace Garrison.Shared.Round
 
             appliedPlayerCount = Config?.GetInt(ConfigKey.PlayerCount) ?? 0;
             state.value = RoundState.InRound;
-            spawnRoutine = StartCoroutine(LoadMapAndSpawnPlayers());
+            spawnRoutine = StartCoroutine(LoadMapAndStart());
             Debug.Log($"Round started with N={appliedPlayerCount}.");
         }
 
@@ -66,13 +67,13 @@ namespace Garrison.Shared.Round
                 spawnRoutine = null;
             }
 
-            DespawnCapsules();
+            RoundReset?.Invoke();
             UnloadMapScene();
             state.value = RoundState.Lobby;
             Debug.Log("Round reset. Config values were preserved.");
         }
 
-        private IEnumerator LoadMapAndSpawnPlayers()
+        private IEnumerator LoadMapAndStart()
         {
             if (!networkManager.TryGetModule<ScenesModule>(true, out ScenesModule scenes))
             {
@@ -93,65 +94,10 @@ namespace Garrison.Shared.Round
                 mapScene = SceneManager.GetSceneByName(mapSceneName);
             }
 
-            SpawnPlayers(mapScene);
+            if (mapScene.IsValid() && mapScene.isLoaded)
+                RoundStarted?.Invoke(mapScene);
+
             spawnRoutine = null;
-        }
-
-        private void SpawnPlayers(Scene mapScene)
-        {
-            if (!mapScene.IsValid() || !mapScene.isLoaded || !playerCapsulePrefab)
-                return;
-
-            SpawnPoints spawnPoints = FindSpawnPoints(mapScene);
-            IReadOnlyList<PlayerID> players = networkManager.players;
-
-            for (int i = 0; i < players.Count; i++)
-            {
-                PlayerID player = players[i];
-                if (spawnedCapsules.ContainsKey(player))
-                    continue;
-
-                Transform point = spawnPoints ? spawnPoints.GetPoint(i) : null;
-                Vector3 position = point ? point.position : Vector3.zero;
-                Quaternion rotation = point ? point.rotation : Quaternion.identity;
-
-                GameObject capsuleObject = UnityProxy.Instantiate(playerCapsulePrefab, position, rotation, mapScene);
-                if (!capsuleObject || !capsuleObject.TryGetComponent(out PlayerCapsule capsule))
-                    continue;
-
-                capsule.Assign(player);
-                if (capsuleObject.TryGetComponent(out PlayerMovement movement))
-                    movement.Configure(Config);
-
-                spawnedCapsules[player] = capsule;
-            }
-        }
-
-        private static SpawnPoints FindSpawnPoints(Scene mapScene)
-        {
-            GameObject[] roots = mapScene.GetRootGameObjects();
-            for (int i = 0; i < roots.Length; i++)
-            {
-                if (roots[i].TryGetComponent(out SpawnPoints spawnPoints))
-                    return spawnPoints;
-
-                spawnPoints = roots[i].GetComponentInChildren<SpawnPoints>(true);
-                if (spawnPoints)
-                    return spawnPoints;
-            }
-
-            return null;
-        }
-
-        private void DespawnCapsules()
-        {
-            foreach (PlayerCapsule capsule in spawnedCapsules.Values)
-            {
-                if (capsule)
-                    capsule.Despawn();
-            }
-
-            spawnedCapsules.Clear();
         }
 
         private void UnloadMapScene()

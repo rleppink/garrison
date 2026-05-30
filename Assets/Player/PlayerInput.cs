@@ -3,11 +3,11 @@ using PurrNet.Transports;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Garrison.Shared.Player
+namespace Garrison.Player
 {
     public sealed class PlayerInput : NetworkBehaviour
     {
-        [SerializeField] private PlayerCapsule capsule;
+        [SerializeField] private PlayerBody capsule;
         [SerializeField] private PlayerMovement movement;
         [SerializeField] private float sendInterval = 0.05f;
 

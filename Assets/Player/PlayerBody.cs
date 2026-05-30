@@ -1,10 +1,10 @@
 using PurrNet;
 using UnityEngine;
 
-namespace Garrison.Shared.Player
+namespace Garrison.Player
 {
-    // M0 throwaway skeleton: M1/M2 can replace this when movement and combat own the player body.
-    public sealed class PlayerCapsule : NetworkBehaviour
+    // The networked player body: server-authoritative position, owned by the Player slice.
+    public sealed class PlayerBody : NetworkBehaviour
     {
         private readonly SyncVar<PlayerID> assignedPlayer = new(PlayerID.Server);
 

@@ -74,6 +74,7 @@ folder owns its behaviours, its data, its UI, its networking glue:
 
 ```
 Assets/
+  Player/          # the player body, input, locomotion, and the movement/aim seams (cross-cutting: Vision/Combat/Loot consume it)
   Planning/        # supply budget, placement, spawn selection, planning board
   Combat/          # hearts, hits, downed/revive, armor
   Defenses/        # mines, wire, flares, MG nests, searchlights, bodies

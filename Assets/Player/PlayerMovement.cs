@@ -2,7 +2,7 @@ using Garrison.Shared.Config;
 using PurrNet;
 using UnityEngine;
 
-namespace Garrison.Shared.Player
+namespace Garrison.Player
 {
     public sealed class PlayerMovement : NetworkBehaviour
     {
