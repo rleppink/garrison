@@ -175,6 +175,20 @@ screen"* invariant, before any push exists.
 
 ## C3 — Mouse aim → aim vector seam
 
+**Status:** Done (`e1c7d55`). New `Shared/Player/IAimSource` (`AimPoint`,
+`AimDirection` XZ-normalized, `AimDistance`), exposed off the local view via
+`ILocalPlayerView.Aim`. `Player/PlayerAim` (local `MonoBehaviour`) computes it
+each frame **only for the local body** (`IsLocalView` gate): `Mouse.current`
+→ `ScreenPointToRay` → intersection with a math `Plane` at the body's height (no
+physics raycast). The gameplay camera reaches the runtime body via the **C2
+registry**: `LocalPlayerRegistry` holds the Main Camera (`[SerializeField]`) and
+injects it through `ILocalPlayerView.BindCamera` when the body becomes `Current`
+— no `Find`/`Camera.main`/`Instance`/static. **Local only** — no aim `ServerRpc`
+(nothing server-side reads aim until M2). Reticle skipped (optional; trivial to
+add for the feel pass). Server-authoritative movement preserved (NetworkTransform
+`_ownerAuth: 0`). Walls hold; compile clean; **not** runtime-verified (cursor
+tracking folds into the C8 gate).
+
 **Goal:** the local body exposes an **aim vector** derived from the mouse cursor
 — the input the camera-push (C4) and, later, accuracy (M2) both consume.
 
