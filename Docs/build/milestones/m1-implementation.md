@@ -75,7 +75,7 @@ single commit.*
 | C5 | Return behaviour & coupling dials | ✅ Done | `b185aae` |
 | C6 | Movement feel + movement-state seam | ✅ Done | `f11a216` |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
-| C7 | Footsteps (first audio-bus consumer) | ⏳ Next | — |
+| C7 | Footsteps (first audio-bus consumer) | ⚠️ Front-work done; editor wiring pending | `98a8c70` |
 | C8 | Acceptance pass — go/no-go feel gate | — | — |
 
 Doc-only `M1 docs ...` commits carry these Status updates; engineering commits
@@ -471,6 +471,21 @@ round-trip latency on your own character — *if and only if* the feel demands i
 ---
 
 ## C7 — Footsteps: the first real audio-bus consumer
+
+**Status:** Front-work done (`98a8c70`), **not fully accepted yet**. Added
+`PlayerFootstepEmitter` on `PlayerBody.prefab`, driven by the C6 replicated
+`IMovementState` seam with separate walk/sprint cadences and routed through
+`IAudioBus.Play(AudioChannel.Footsteps, clip, worldPos)`. Added a Shared
+`IAudioBusSink` / `AudioBusBinder` injection seam so spawned network identities
+can receive the persistent Bootstrap `AudioBus` without `Find`/singletons/static
+lookups. No `AudioSource.PlayClipAtPoint`; compile clean (0 errors); changed
+scripts validate clean; walls and banned-pattern greps are clean; server-
+authoritative movement preserved (`_ownerAuth: 0`).
+
+Pending human editor wiring before C7 can be marked Done: add/wire
+`AudioBusBinder` in `Bootstrap`, create or assign a `Footsteps` mixer group in
+`AudioBus.routes`, and assign a footstep `AudioClip` to `PlayerFootstepEmitter`
+on `PlayerBody.prefab`. Runtime positional audio has not been verified yet.
 
 **Goal:** movement makes noise — directional, distance-attenuated footsteps
 played **into the M0 audio bus**, the bus's first real customer.
