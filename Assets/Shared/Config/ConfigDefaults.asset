@@ -25,3 +25,9 @@ MonoBehaviour:
       intValue: 0
       floatValue: 4.5
       boolValue: 0
+  - key: 2
+    value:
+      type: 1
+      intValue: 0
+      floatValue: 10
+      boolValue: 0

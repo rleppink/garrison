@@ -330,6 +330,7 @@ GameObject:
   - component: {fileID: 415818059}
   - component: {fileID: 415818058}
   - component: {fileID: 415818057}
+  - component: {fileID: 415818060}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -379,8 +380,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -411,6 +412,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &415818060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 415818056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ca39170838d64b2aa23200c8efb7238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Vision::Garrison.Vision.CameraRig
+  targetCamera: {fileID: 415818058}
+  localPlayerRegistrySource: {fileID: 1877830055}
+  configSource: {fileID: 1877830053}
+  viewDirection: {x: 0, y: -1, z: -0.5}
+  distance: 20
+  defaultZoom: 10
 --- !u!1 &556404849
 GameObject:
   m_ObjectHideFlags: 0
@@ -944,6 +963,7 @@ GameObject:
   - component: {fileID: 1877830049}
   - component: {fileID: 1877830048}
   - component: {fileID: 1877830054}
+  - component: {fileID: 1877830055}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -1086,6 +1106,19 @@ MonoBehaviour:
   routes: []
   initialPoolSize: 8
   spatialBlend: 1
+--- !u!114 &1877830055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877830047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b55cc61a9e314bedb2cf57b002dacbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Player.LocalPlayerRegistry
+  networkManager: {fileID: 1877830050}
 --- !u!1 &1987000001
 GameObject:
   m_ObjectHideFlags: 0
