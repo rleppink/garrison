@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 11400003}
   - component: {fileID: 11400004}
   - component: {fileID: 8267471949978962232}
+  - component: {fileID: 5351614546556482813}
   m_Layer: 0
   m_Name: PlayerBody
   m_TagString: Untagged
@@ -113,6 +114,7 @@ MonoBehaviour:
   _invertedPathToNearestParent: 
   _directChildren: []
   aim: {fileID: 8267471949978962232}
+  footstepEmitter: {fileID: 5351614546556482813}
 --- !u!114 &11400003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,3 +174,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerAim
   body: {fileID: 11400002}
+--- !u!114 &5351614546556482813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e9ccd705d5940b99c6ea97fff4a863, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerFootstepEmitter
+  movementSource: {fileID: 11400002}
+  footstepClip: {fileID: 0}
+  walkInterval: 0.55
+  sprintInterval: 0.36

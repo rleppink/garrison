@@ -1,3 +1,4 @@
+using Garrison.Shared.Audio;
 using Garrison.Shared.Player;
 using PurrNet;
 using UnityEngine;
@@ -8,9 +9,10 @@ namespace Garrison.Player
     // Implements the Shared ILocalPlayerView seam so local-presentation services (the
     // Vision camera) can follow it without referencing the Player slice. The local
     // check lives here because only the Player slice knows about AssignedPlayer.
-    public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView, IMovementState
+    public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView, IMovementState, IAudioBusSink
     {
         [SerializeField] private PlayerAim aim;
+        [SerializeField] private PlayerFootstepEmitter footstepEmitter;
 
         private readonly SyncVar<PlayerID> assignedPlayer = new(PlayerID.Server);
         private readonly SyncVar<MovementState> movementState = new(MovementState.Idle);
@@ -42,6 +44,12 @@ namespace Garrison.Player
         {
             if (aim != null)
                 aim.SetCamera(camera);
+        }
+
+        public void BindAudioBus(IAudioBus audioBus)
+        {
+            if (footstepEmitter != null)
+                footstepEmitter.BindAudioBus(audioBus);
         }
 
         private void Awake()
