@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using PurrNet;
 using PurrNet.Modules;
 using PurrNet.Transports;
@@ -13,10 +15,9 @@ namespace Garrison.Shared.Player
     // banned. Instead this registry observes PurrNet's manager-level
     // HierarchyFactory.onIdentityAdded/onIdentityRemoved (reached through the
     // inspector-wired NetworkManager, the same TryGetModule pattern RoundController
-    // uses for ScenesModule). When a spawned identity reports itself as the local
-    // view (ILocalPlayerView.IsLocalView, decided by the Player slice), it becomes
-    // Current. The body's OnSpawned has already run by the time onIdentityAdded
-    // fires, so its assigned-player SyncVar is populated and the local check is valid.
+    // uses for ScenesModule). Spawn and SyncVar/local-player-id ordering differs
+    // between host and remote clients, so this registry keeps candidate views and
+    // re-evaluates whenever a view says its local status may have changed.
     public sealed class LocalPlayerRegistry : MonoBehaviour, ILocalPlayerRegistry
     {
         [SerializeField] private NetworkManager networkManager;
@@ -28,8 +29,13 @@ namespace Garrison.Shared.Player
         // raycast use the gameplay camera without any Find/Camera.main/Instance lookup.
         [SerializeField] private Camera gameplayCamera;
 
+        private readonly List<ILocalPlayerView> candidates = new();
+
         private HierarchyFactory clientHierarchy;
+        private HierarchyFactory serverHierarchy;
+        private PlayersManager clientPlayers;
         private ILocalPlayerView current;
+        private Coroutine refreshRoutine;
 
         public ILocalPlayerView Current => current;
 
@@ -45,6 +51,8 @@ namespace Garrison.Shared.Player
 
             networkManager.onClientConnectionState += OnClientConnectionState;
             Subscribe();
+            ReevaluateCurrent();
+            refreshRoutine = StartCoroutine(RefreshLocalViewLoop());
         }
 
         private void OnDisable()
@@ -54,12 +62,36 @@ namespace Garrison.Shared.Player
 
             Unsubscribe();
             SetCurrent(null);
+
+            if (refreshRoutine != null)
+            {
+                StopCoroutine(refreshRoutine);
+                refreshRoutine = null;
+            }
+        }
+
+        private IEnumerator RefreshLocalViewLoop()
+        {
+            while (enabled)
+            {
+                // Module creation and local-player-id receipt can lag connection
+                // callbacks, especially in host mode.
+                Subscribe();
+
+                if (current == null || !IsLiveLocalView(current))
+                    ReevaluateCurrent();
+
+                yield return null;
+            }
         }
 
         private void OnClientConnectionState(ConnectionState state)
         {
             if (state == ConnectionState.Connected)
+            {
                 Subscribe();
+                ReevaluateCurrent();
+            }
             else if (state == ConnectionState.Disconnected)
             {
                 Unsubscribe();
@@ -69,39 +101,152 @@ namespace Garrison.Shared.Player
 
         private void Subscribe()
         {
-            if (clientHierarchy != null)
+            if (networkManager == null)
                 return;
 
-            // asServer:false — this is per-client local presentation; we watch the
-            // client-side hierarchy so each client follows its own body.
-            if (!networkManager.TryGetModule(out HierarchyFactory hierarchy, false))
+            // Client hierarchy is the normal path. In host mode, PurrNet can surface
+            // the already-instantiated local body through the server hierarchy before
+            // the client-side spawn path has the assigned-player SyncVar ready, so we
+            // observe both and still only select views whose IsLocalView is true.
+            SubscribeHierarchy(false, ref clientHierarchy);
+            SubscribeHierarchy(true, ref serverHierarchy);
+            SubscribeClientPlayers();
+        }
+
+        private void SubscribeHierarchy(bool asServer, ref HierarchyFactory hierarchy)
+        {
+            if (hierarchy != null)
                 return;
 
-            clientHierarchy = hierarchy;
-            clientHierarchy.onIdentityAdded += OnIdentityAdded;
-            clientHierarchy.onIdentityRemoved += OnIdentityRemoved;
+            if (!networkManager.TryGetModule(out HierarchyFactory module, asServer))
+                return;
+
+            hierarchy = module;
+            hierarchy.onIdentityAdded += OnIdentityAdded;
+            hierarchy.onIdentityRemoved += OnIdentityRemoved;
         }
 
         private void Unsubscribe()
         {
-            if (clientHierarchy == null)
+            UnsubscribeHierarchy(ref clientHierarchy);
+            UnsubscribeHierarchy(ref serverHierarchy);
+            UnsubscribeClientPlayers();
+
+            for (int i = candidates.Count - 1; i >= 0; i--)
+                RemoveCandidate(candidates[i]);
+        }
+
+        private void UnsubscribeHierarchy(ref HierarchyFactory hierarchy)
+        {
+            if (hierarchy == null)
                 return;
 
-            clientHierarchy.onIdentityAdded -= OnIdentityAdded;
-            clientHierarchy.onIdentityRemoved -= OnIdentityRemoved;
-            clientHierarchy = null;
+            hierarchy.onIdentityAdded -= OnIdentityAdded;
+            hierarchy.onIdentityRemoved -= OnIdentityRemoved;
+            hierarchy = null;
+        }
+
+        private void SubscribeClientPlayers()
+        {
+            if (clientPlayers != null)
+                return;
+
+            if (!networkManager.TryGetModule(out PlayersManager players, false))
+                return;
+
+            clientPlayers = players;
+            clientPlayers.onLocalPlayerReceivedID += OnLocalPlayerReceivedID;
+        }
+
+        private void UnsubscribeClientPlayers()
+        {
+            if (clientPlayers == null)
+                return;
+
+            clientPlayers.onLocalPlayerReceivedID -= OnLocalPlayerReceivedID;
+            clientPlayers = null;
         }
 
         private void OnIdentityAdded(NetworkIdentity identity)
         {
-            if (identity is ILocalPlayerView view && view.IsLocalView)
-                SetCurrent(view);
+            if (identity is ILocalPlayerView view)
+                AddCandidate(view);
         }
 
         private void OnIdentityRemoved(NetworkIdentity identity)
         {
-            if (identity is ILocalPlayerView view && ReferenceEquals(view, current))
-                SetCurrent(null);
+            if (identity is ILocalPlayerView view)
+            {
+                bool wasCurrent = ReferenceEquals(view, current);
+                RemoveCandidate(view);
+
+                if (wasCurrent)
+                    SetCurrent(null);
+
+                ReevaluateCurrent();
+            }
+        }
+
+        private void OnLocalPlayerReceivedID(PlayerID _)
+        {
+            ReevaluateCurrent();
+        }
+
+        private void OnCandidateLocalViewStatusChanged()
+        {
+            ReevaluateCurrent();
+        }
+
+        private void AddCandidate(ILocalPlayerView view)
+        {
+            if (candidates.Contains(view))
+                return;
+
+            candidates.Add(view);
+            view.LocalViewStatusChanged += OnCandidateLocalViewStatusChanged;
+            ReevaluateCurrent();
+        }
+
+        private void RemoveCandidate(ILocalPlayerView view)
+        {
+            if (!candidates.Remove(view))
+                return;
+
+            view.LocalViewStatusChanged -= OnCandidateLocalViewStatusChanged;
+        }
+
+        private void ReevaluateCurrent()
+        {
+            if (current != null && IsLiveLocalView(current))
+                return;
+
+            for (int i = candidates.Count - 1; i >= 0; i--)
+            {
+                ILocalPlayerView candidate = candidates[i];
+                if (IsDestroyed(candidate))
+                {
+                    candidates.RemoveAt(i);
+                    continue;
+                }
+
+                if (IsLiveLocalView(candidate))
+                {
+                    SetCurrent(candidate);
+                    return;
+                }
+            }
+
+            SetCurrent(null);
+        }
+
+        private static bool IsLiveLocalView(ILocalPlayerView view)
+        {
+            return view != null && !IsDestroyed(view) && view.ViewTarget != null && view.IsLocalView;
+        }
+
+        private static bool IsDestroyed(ILocalPlayerView view)
+        {
+            return view is UnityEngine.Object unityObject && unityObject == null;
         }
 
         private void SetCurrent(ILocalPlayerView view)
@@ -110,9 +255,13 @@ namespace Garrison.Shared.Player
                 return;
 
             // Release the camera from the outgoing view, hand it to the incoming one.
-            current?.BindCamera(null);
+            if (!IsDestroyed(current))
+                current?.BindCamera(null);
+
             current = view;
-            current?.BindCamera(gameplayCamera);
+
+            if (!IsDestroyed(current))
+                current?.BindCamera(gameplayCamera);
 
             CurrentChanged?.Invoke();
         }

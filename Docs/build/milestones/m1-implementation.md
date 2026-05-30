@@ -75,8 +75,8 @@ single commit.*
 | C5 | Return behaviour & coupling dials | ✅ Done | `b185aae` |
 | C6 | Movement feel + movement-state seam | ✅ Done | `f11a216` |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
-| C7 | Footsteps (first audio-bus consumer) | ⚠️ Wired; runtime verification pending | `8945050` |
-| C8 | Acceptance pass — go/no-go feel gate | ❌ Live pre-acceptance failed; runtime verification pending | — |
+| C7 | Footsteps (first audio-bus consumer) | ✅ Live two-client retest passed | `8945050` |
+| C8 | Acceptance pass — go/no-go feel gate | ❌ Live pre-acceptance failed twice; local handoff bugfix pending retest | — |
 
 ### M1 bugfix after failed C8 preflight
 
@@ -88,8 +88,24 @@ bugfix stores movement state in a supported primitive SyncVar and exposes it bac
 through the existing `IMovementState` / `MovementState` seam, clamping unknown
 wire values to `Idle`.
 
-C7 and C8 remain runtime-verification pending until a fresh two-client round
-confirms camera handoff, aim-push, movement state, and positional footsteps.
+Follow-up live two-client retest after `2f761a1` confirmed footsteps work, but
+local body handoff is still not robust enough: two bodies spawned, yet both
+clients controlled the same blob. The host camera stayed static, and the client
+had aim/push against a fixed point instead of a camera anchored to the moving
+local body. C8 remains pending.
+
+The current local-handoff bugfix addresses both assignment and presentation:
+`PlayerSpawner` now assigns the body's `assignedPlayer` before PurrNet spawn so
+the per-player assignment is in the initial network state, and
+`LocalPlayerRegistry` no longer depends on a one-shot spawn event. It tracks
+candidate `ILocalPlayerView`s from the PurrNet hierarchies, listens for
+local-view-status changes from the body, and re-evaluates when the local player
+ID or assigned-player SyncVar can change. It also watches the server hierarchy
+deliberately for host mode while still selecting only views that report
+`IsLocalView`.
+
+C8 remains runtime-verification pending until a fresh two-client round confirms
+camera handoff, aim-push, movement state, and positional footsteps together.
 
 Doc-only `M1 docs ...` commits carry these Status updates; engineering commits
 carry only their own code/asset changes.
@@ -123,13 +139,20 @@ The runtime-spawned, **server-owned** player body cannot be inspector-wired to
 persistent Bootstrap scene services, and `Find`/`Camera.main`/`Instance`/static
 are banned. Two deliberate decisions resolve this and are **reused by later
 commits and M9 shoulder-spectator**, so don't undo them casually:
-- **C2 — registry *observes* spawns.** `LocalPlayerRegistry` subscribes to
-  PurrNet's manager-level `HierarchyFactory.onIdentityAdded/Removed` (via the
-  inspector-wired `NetworkManager`, the same `TryGetModule` pattern
-  `RoundController` uses) and sets `Current` to the spawned identity reporting
-  `IsLocalView`. Verified against pinned PurrNet 1.19.1 source, including that
-  `OnSpawned`/SyncVar application runs **before** `onIdentityAdded` fires, so the
-  `assignedPlayer`/`localPlayer` check is valid. The body holds no registry handle.
+- **C2 — registry *observes* spawned candidates and re-evaluates.**
+  `LocalPlayerRegistry` subscribes to PurrNet's manager-level
+  `HierarchyFactory.onIdentityAdded/Removed` (via the inspector-wired
+  `NetworkManager`, the same `TryGetModule` pattern `RoundController` uses),
+  keeps every spawned `ILocalPlayerView` as a candidate, and sets `Current` only
+  after a candidate reports `IsLocalView`. Live host/client retests invalidated
+  the old one-shot assumption around `OnSpawned`/SyncVar ordering. `PlayerSpawner`
+  assigns each body before PurrNet spawn so the per-player assignment ships in
+  the initial network state; the body also raises `LocalViewStatusChanged` when
+  assigned-player or spawn state can affect locality; the registry re-evaluates
+  after local player ID receipt. Host mode deliberately watches both client and
+  server hierarchy modules because the host's already-instantiated local body can
+  surface through the server path before the client-side local presentation check
+  is ready. The body holds no registry handle.
 - **C3 — registry *injects* the camera.** The registry holds the persistent Main
   Camera (`[SerializeField]`) and hands it to the local body via
   `ILocalPlayerView.BindCamera` when it becomes `Current`, so the `Player` slice
@@ -533,12 +556,15 @@ played **into the M0 audio bus**, the bus's first real customer.
 
 ## C8 — Acceptance pass: the go/no-go feel gate
 
-**Status:** Live pre-acceptance **failed before a verdict**: spawned observer
-sync threw `InvalidOperationException: [Hasher] Type
-'Garrison.Shared.Player.MovementState' is not registered` from
-`PlayerBody`'s movement-state SyncVar, so the camera/audio local-presentation
-handoff never had a working local body to follow or bind. Do **not** mark C8
-accepted from that run. Retest after the M1 bugfix commit.
+**Status:** Live pre-acceptance **failed before a verdict** twice. First, spawned
+observer sync threw `InvalidOperationException: [Hasher] Type
+'Garrison.Shared.Player.MovementState' is not registered` from `PlayerBody`'s
+movement-state SyncVar. After the primitive-SyncVar bugfix (`2f761a1`), a fresh
+two-client retest confirmed footsteps work but local handoff still failed: two
+bodies spawned, yet both clients controlled the same blob; the host camera stayed
+static, and the client aim/push camera was centered on a fixed point instead of
+following the moving local body. Do **not** mark C8 accepted from either run.
+Retest after the local-handoff bugfix commit.
 
 **Goal:** render M1's verdict. Two people move and aim around the greybox; we
 decide **elegant, or fighting the controls?**

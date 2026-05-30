@@ -56,14 +56,23 @@ namespace Garrison.Player
                 Vector3 position = point ? point.position : Vector3.zero;
                 Quaternion rotation = point ? point.rotation : Quaternion.identity;
 
-                GameObject bodyObject = UnityProxy.Instantiate(playerBodyPrefab, position, rotation, mapScene);
+                GameObject bodyObject = UnityProxy.InstantiateDirectly(playerBodyPrefab, position, rotation, mapScene);
                 if (!bodyObject || !bodyObject.TryGetComponent(out PlayerBody body))
-                    continue;
+                {
+                    if (bodyObject)
+                        UnityProxy.DestroyDirectly(bodyObject);
 
+                    continue;
+                }
+
+                // Assign before PurrNet spawn so assignedPlayer is part of the
+                // initial network state. Spawning first can let multiple clients see
+                // the same default owner and route local input to the same body.
                 body.Assign(player);
                 if (bodyObject.TryGetComponent(out PlayerMovement movement))
                     movement.Configure(Config);
 
+                NetworkIdentity.Spawn(bodyObject, playerBodyPrefab, networkManager);
                 spawnedBodies[player] = body;
             }
         }

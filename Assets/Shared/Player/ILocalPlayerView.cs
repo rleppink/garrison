@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Garrison.Shared.Player
@@ -8,6 +9,10 @@ namespace Garrison.Shared.Player
     // the two slices stay mutually ignorant (Vision never references Player).
     public interface ILocalPlayerView
     {
+        // Fired when IsLocalView may have changed after spawn, local-player-id
+        // assignment, or assigned-player SyncVar replication.
+        event Action LocalViewStatusChanged;
+
         // The transform a follower frames. For M1 this is the body itself.
         Transform ViewTarget { get; }
 

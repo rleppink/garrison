@@ -1,3 +1,4 @@
+using System;
 using Garrison.Shared.Audio;
 using Garrison.Shared.Player;
 using PurrNet;
@@ -16,6 +17,8 @@ namespace Garrison.Player
 
         private readonly SyncVar<PlayerID> assignedPlayer = new(PlayerID.Server);
         private readonly SyncVar<int> movementState = new((int)MovementState.Idle);
+
+        public event Action LocalViewStatusChanged;
 
         public PlayerID AssignedPlayer => assignedPlayer.value;
 
@@ -57,10 +60,32 @@ namespace Garrison.Player
             EnsureVisual();
         }
 
+        private void OnEnable()
+        {
+            assignedPlayer.onChanged += OnAssignedPlayerChanged;
+        }
+
+        private void OnDisable()
+        {
+            assignedPlayer.onChanged -= OnAssignedPlayerChanged;
+        }
+
+        protected override void OnSpawned(bool asServer)
+        {
+            NotifyLocalViewStatusChanged();
+        }
+
+        protected override void OnDespawned(bool asServer)
+        {
+            NotifyLocalViewStatusChanged();
+        }
+
         public void Assign(PlayerID player)
         {
-            if (isServer)
+            if (!isSpawned || isServer)
                 assignedPlayer.value = player;
+
+            NotifyLocalViewStatusChanged();
         }
 
         public void SetMovementState(MovementState state)
@@ -87,6 +112,16 @@ namespace Garrison.Player
                 (int)MovementState.Sprinting => MovementState.Sprinting,
                 _ => MovementState.Idle
             };
+        }
+
+        private void OnAssignedPlayerChanged(PlayerID _)
+        {
+            NotifyLocalViewStatusChanged();
+        }
+
+        private void NotifyLocalViewStatusChanged()
+        {
+            LocalViewStatusChanged?.Invoke();
         }
 
         private void EnsureVisual()
