@@ -75,7 +75,7 @@ single commit.*
 | C5 | Return behaviour & coupling dials | ✅ Done | `b185aae` |
 | C6 | Movement feel + movement-state seam | ✅ Done | `f11a216` |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
-| C7 | Footsteps (first audio-bus consumer) | ⚠️ Front-work done; editor wiring pending | `98a8c70` |
+| C7 | Footsteps (first audio-bus consumer) | ⚠️ Wired; runtime verification pending | `98a8c70` |
 | C8 | Acceptance pass — go/no-go feel gate | — | — |
 
 Doc-only `M1 docs ...` commits carry these Status updates; engineering commits
@@ -484,10 +484,10 @@ No `AudioSource.PlayClipAtPoint`; compile clean (0 errors); changed scripts
 validate clean; walls and banned-pattern greps are clean; server-authoritative
 movement preserved (`_ownerAuth: 0`).
 
-Pending human editor wiring before C7 can be marked Done: add/wire
-`AudioBusBinder` in `Bootstrap`, create or assign a `Footsteps` mixer group in
-`AudioBus.routes`, and runtime-verify positional playback. Runtime positional
-audio has not been verified yet.
+Editor wiring is now done: `AudioBusBinder` is on `GameSystems`,
+`GarrisonAudio.mixer` has a `Footsteps` group, and `AudioBus.routes` maps
+`AudioChannel.Footsteps` to that group. Pending before C7 can be marked Done:
+runtime-verify positional playback in a live run.
 
 **Goal:** movement makes noise — directional, distance-attenuated footsteps
 played **into the M0 audio bus**, the bus's first real customer.
