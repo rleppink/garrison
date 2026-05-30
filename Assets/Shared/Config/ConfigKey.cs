@@ -4,6 +4,12 @@ namespace Garrison.Shared.Config
     {
         PlayerCount = 0,
         MoveSpeed = 1,
-        CameraZoom = 2
+        CameraZoom = 2,
+        CameraPushExtent = 3,
+        CameraPushShape = 4,
+        CameraPushHorizontalScale = 5,
+        CameraPushForwardScale = 6,
+        CameraPushBackwardScale = 7,
+        CameraSafeViewportInset = 8
     }
 }

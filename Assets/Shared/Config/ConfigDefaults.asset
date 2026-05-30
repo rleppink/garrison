@@ -31,3 +31,39 @@ MonoBehaviour:
       intValue: 0
       floatValue: 10
       boolValue: 0
+  - key: 3
+    value:
+      type: 1
+      intValue: 0
+      floatValue: 3.5
+      boolValue: 0
+  - key: 4
+    value:
+      type: 0
+      intValue: 0
+      floatValue: 0
+      boolValue: 0
+  - key: 5
+    value:
+      type: 1
+      intValue: 0
+      floatValue: 1
+      boolValue: 0
+  - key: 6
+    value:
+      type: 1
+      intValue: 0
+      floatValue: 1
+      boolValue: 0
+  - key: 7
+    value:
+      type: 1
+      intValue: 0
+      floatValue: 0.7
+      boolValue: 0
+  - key: 8
+    value:
+      type: 1
+      intValue: 0
+      floatValue: 0.18
+      boolValue: 0
