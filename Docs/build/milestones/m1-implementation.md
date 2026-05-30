@@ -73,9 +73,9 @@ single commit.*
 | C3 | Mouse aim → `IAimSource` seam | ✅ Done | `e1c7d55` |
 | C4 | Aim-push camera (core feel-bet) | ✅ Done | `b18e50a` |
 | C5 | Return behaviour & coupling dials | ✅ Done | `b185aae` |
-| C6 | Movement feel + movement-state seam | ⏳ Next | — |
+| C6 | Movement feel + movement-state seam | ✅ Done | `f11a216` |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
-| C7 | Footsteps (first audio-bus consumer) | — | — |
+| C7 | Footsteps (first audio-bus consumer) | ⏳ Next | — |
 | C8 | Acceptance pass — go/no-go feel gate | — | — |
 
 Doc-only `M1 docs ...` commits carry these Status updates; engineering commits
@@ -395,6 +395,19 @@ relaxes, and the coupling choice — so the feel is fully tunable for the gate.
 ---
 
 ## C6 — Movement feel + the movement-state seam
+
+**Status:** Done (`f11a216`). `PlayerInput` now includes Left Shift sprint in
+the existing client→server input RPC, still validated with `RPCInfo.sender`
+against `AssignedPlayer`. `PlayerMovement` server-applies walk vs sprint speeds
+from config (`MoveSpeed` remains walk; new `SprintSpeed` default 5.8) and updates
+a server-auth replicated movement state on `PlayerBody`. Added the Shared seam
+`MovementState` / `IMovementState`, surfaced through `ILocalPlayerView.Movement`
+without `Shared` referencing the Player slice. Verified seam-only: movement
+state has no M1 consumer beyond Shared definitions/plumbing and Player
+implementation. Compile clean (0 errors); changed Player scripts validate clean;
+walls and banned-pattern greps are clean; server-authoritative movement
+preserved (`_ownerAuth: 0`). Still not runtime-feel-verified — C8 owns the live
+two-instance verdict.
 
 **Goal:** movement is tuned toward *tactical, not rush-B* with **walk + sprint**,
 and the character exposes its **movement state** — the seam M2 will read for
