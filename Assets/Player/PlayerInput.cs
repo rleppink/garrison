@@ -9,11 +9,14 @@ namespace Garrison.Player
     {
         [SerializeField] private PlayerBody capsule;
         [SerializeField] private PlayerMovement movement;
-        [SerializeField] private float sendInterval = 0.05f;
+
+        // Stream input at the server's simulation rate (PlayerMovement.tickRate, 60Hz).
+        // On Unreliable, every tick is a fresh snapshot so a dropped packet self-corrects
+        // on the next one (last wins). Sending faster than the server steps just gets
+        // overwritten unconsumed; slower undersamples the sim. So match the server tick.
+        [SerializeField] private float sendInterval = 1f / 60f;
 
         private float nextSendTime;
-        private Vector2 lastSentInput;
-        private bool lastSentSprint;
 
         private void Update()
         {
@@ -23,15 +26,8 @@ namespace Garrison.Player
             if (Time.unscaledTime < nextSendTime)
                 return;
 
-            Vector2 moveInput = ReadMoveInput();
-            bool sprint = ReadSprintInput();
-            if (moveInput == lastSentInput && sprint == lastSentSprint)
-                return;
-
             nextSendTime = Time.unscaledTime + sendInterval;
-            lastSentInput = moveInput;
-            lastSentSprint = sprint;
-            SendMoveInput(moveInput, sprint);
+            SendMoveInput(ReadMoveInput(), ReadSprintInput());
         }
 
         private static Vector2 ReadMoveInput()
