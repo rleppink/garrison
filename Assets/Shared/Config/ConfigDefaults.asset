@@ -85,3 +85,9 @@ MonoBehaviour:
       intValue: 0
       floatValue: 0
       boolValue: 0
+  - key: 12
+    value:
+      type: 1
+      intValue: 0
+      floatValue: 5.8
+      boolValue: 0

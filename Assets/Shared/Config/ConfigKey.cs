@@ -13,6 +13,7 @@ namespace Garrison.Shared.Config
         CameraSafeViewportInset = 8,
         CameraReturn = 9,
         CameraReturnSpeed = 10,
-        CameraPushCoupling = 11
+        CameraPushCoupling = 11,
+        SprintSpeed = 12
     }
 }

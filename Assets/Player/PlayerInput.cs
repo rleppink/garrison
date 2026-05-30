@@ -13,6 +13,7 @@ namespace Garrison.Player
 
         private float nextSendTime;
         private Vector2 lastSentInput;
+        private bool lastSentSprint;
 
         private void Update()
         {
@@ -23,12 +24,14 @@ namespace Garrison.Player
                 return;
 
             Vector2 moveInput = ReadMoveInput();
-            if (moveInput == lastSentInput)
+            bool sprint = ReadSprintInput();
+            if (moveInput == lastSentInput && sprint == lastSentSprint)
                 return;
 
             nextSendTime = Time.unscaledTime + sendInterval;
             lastSentInput = moveInput;
-            SendMoveInput(moveInput);
+            lastSentSprint = sprint;
+            SendMoveInput(moveInput, sprint);
         }
 
         private static Vector2 ReadMoveInput()
@@ -51,13 +54,19 @@ namespace Garrison.Player
             return input.sqrMagnitude > 1f ? input.normalized : input;
         }
 
+        private static bool ReadSprintInput()
+        {
+            Keyboard keyboard = Keyboard.current;
+            return keyboard != null && keyboard.leftShiftKey.isPressed;
+        }
+
         [ServerRpc(channel: Channel.Unreliable, requireOwnership: false)]
-        private void SendMoveInput(Vector2 moveInput, RPCInfo info = default)
+        private void SendMoveInput(Vector2 moveInput, bool sprint, RPCInfo info = default)
         {
             if (info.sender != capsule.AssignedPlayer)
                 return;
 
-            movement.SetMoveInput(moveInput);
+            movement.SetMoveInput(moveInput, sprint);
         }
     }
 }

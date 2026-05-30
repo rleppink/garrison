@@ -134,6 +134,7 @@ MonoBehaviour:
   _parent: {fileID: 0}
   _invertedPathToNearestParent: 
   _directChildren: []
+  body: {fileID: 11400002}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 0

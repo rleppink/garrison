@@ -20,6 +20,10 @@ namespace Garrison.Shared.Player
         // Symmetric with ViewTarget: a consumer holding registry.Current reads it here.
         IAimSource Aim { get; }
 
+        // Server-derived movement state, replicated by the body and surfaced as a seam
+        // for future slices without referencing Player internals.
+        IMovementState Movement { get; }
+
         // Injected by the local-player registry when this view becomes Current: the
         // persistent gameplay camera the aim raycast needs. The body is runtime-spawned
         // and can't be inspector-wired to the persistent camera, and Find/Camera.main/
