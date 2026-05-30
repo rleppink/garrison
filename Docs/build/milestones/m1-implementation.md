@@ -60,6 +60,21 @@ drift on netcode is the tax `architecture.md` warns about.
 
 ## C1 — `Player/` slice + spawn-ownership handoff
 
+**Status:** Done (`ae9a9c5`). The M0 skeleton moved out of `Shared/Player` into a
+deletable `Garrison.Player` slice (`PlayerCapsule` → `PlayerBody`, plus
+`PlayerInput`/`PlayerMovement`, GUIDs preserved). `RoundController` no longer
+references any player type — it owns scene load/unload and raises a server-side
+phase seam (`event Action<Scene> RoundStarted` / `event Action RoundReset`).
+The new server `Player/PlayerSpawner` subscribes to that seam and owns
+spawning/despawning server-owned bodies + the `PlayerID → body` routing map.
+Compile clean (0 errors); `grep Shared/` for player types is clean.
+Two accepted deviations from the literal spec: (1) the `Garrison.Player` asmdef
+also references `Unity.InputSystem` (a Unity engine module `PlayerInput` needs —
+not a sibling slice, so the coupling wall holds; same as M0's `Shared`); (2)
+`PlayerSpawner` lives on the `NetworkedSystems` object (where the networked
+services `RoundController`/`ConfigService` live) rather than the non-networked
+`GameSystems` object — "the systems object" read in context.
+
 **Goal:** the player body lives in its own deletable slice, and *the Player
 slice owns spawning it* — `Shared` no longer references any player type.
 
@@ -105,6 +120,22 @@ slice owns spawning it* — `Shared` no longer references any player type.
 ---
 
 ## C2 — Orthographic camera rig that follows the local body
+
+**Status:** Done (`e97912b`). `Vision/CameraRig` (local `MonoBehaviour`, not
+networked) drives the persistent Bootstrap Main Camera: orthographic, fixed
+top-down/iso angle (serialized `viewDirection`/`distance` dials), zoom via
+`ConfigKey.CameraZoom` (default 10, re-applied live on `IConfig.Changed`). The
+**local-player handoff seam** lives in `Shared/Player`: `ILocalPlayerView`
+(`ViewTarget` + `IsLocalView`), `ILocalPlayerRegistry` (`Current` +
+`CurrentChanged`), and `LocalPlayerRegistry` — a persistent Bootstrap service
+that **observes PurrNet's `HierarchyFactory.onIdentityAdded/Removed`** (reached
+via inspector-wired `NetworkManager`, the same `TryGetModule` pattern
+`RoundController` uses) and sets `Current` when a spawned identity reports
+`IsLocalView`. `PlayerBody` implements `ILocalPlayerView`. No `Find`/`Instance`/
+static; the body never holds a registry handle. Both walls hold (`Vision`↛
+`Player`, `Shared`↛`Player`). Compile clean; **not** runtime-verified yet
+(follow behaviour needs a live two-instance run — folded into the C8 gate).
+This is the seam C3 (aim) and M9 (spectator) reuse.
 
 **Goal:** a top-down/iso orthographic camera follows the **local** player and
 keeps them centered — the trivial baseline of the *"character never leaves the
