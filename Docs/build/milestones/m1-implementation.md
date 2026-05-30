@@ -75,7 +75,7 @@ single commit.*
 | C5 | Return behaviour & coupling dials | ✅ Done | `b185aae` |
 | C6 | Movement feel + movement-state seam | ✅ Done | `f11a216` |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
-| C7 | Footsteps (first audio-bus consumer) | ⚠️ Wired; runtime verification pending | `98a8c70` |
+| C7 | Footsteps (first audio-bus consumer) | ⚠️ Wired; runtime verification pending | `8945050` |
 | C8 | Acceptance pass — go/no-go feel gate | — | — |
 
 Doc-only `M1 docs ...` commits carry these Status updates; engineering commits
@@ -472,7 +472,8 @@ round-trip latency on your own character — *if and only if* the feel demands i
 
 ## C7 — Footsteps: the first real audio-bus consumer
 
-**Status:** Front-work done (`98a8c70`, plus `7b67311`). Added
+**Status:** Front-work and editor wiring done (`98a8c70`, plus `7b67311` and
+`8945050`); runtime verification still pending. Added
 `PlayerFootstepEmitter` on `PlayerBody.prefab`, driven by the C6 replicated
 `IMovementState` seam with separate walk/sprint cadences and routed through
 `IAudioBus.Play(AudioChannel.Footsteps, clip, worldPos)`. Added a Shared
