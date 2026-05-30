@@ -86,3 +86,34 @@ in assets, and the slice dependency wall still holds.
 - Runtime confirmation that Start loads `Greybox`, spawns one capsule per
   player, moves server-authoritatively, and Reset preserves config.
 - Real AudioMixer asset/group routing once the Unity editor is responsive.
+
+---
+
+### Session 2026-05-30 — M0 skeleton walks (live multi-instance)
+
+**Config this session**
+
+| Config      | Value   |
+|-------------|---------|
+| PlayerCount | 6       |
+| MoveSpeed   | 4.5     |
+| Map         | Greybox |
+
+**Result**
+
+First live "skeleton walks." Two instances connected over the net spine; the
+host lobby listed both players (`Player 001 (host)`, `Player 002`) and showed
+`N: 6 | Lobby`. Host pressed Start → capsules spawned on the Greybox plane and
+moved server-authoritatively, visible to all. The walking-skeleton flow
+(connect → lobby → start → spawn → replicated movement) is proven end to end.
+
+**Notes / feel**
+
+- No config-editing UI exists yet — `PlayerCount` is display-only by M0 design.
+  Config-survives-reset is accepted structurally (`ResetRound` never touches
+  `ConfigService`), not via a live set→reset cycle.
+
+**Still pending**
+
+- Exercise the runtime config *set* path once a control is wired (later milestone).
+- Real AudioMixer asset/group routing verification.

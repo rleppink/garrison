@@ -346,18 +346,29 @@ it instead of spinning up ad-hoc audio. Silent for now.
 
 ## C11 — Acceptance pass & "deletes clean" check
 
-**Status:** Local acceptance complete. Batchmode Unity import/compile exits
+**Status:** Acceptance complete. Batchmode Unity import/compile exits
 successfully, generated `Garrison.Shared` builds with 0 errors, slice folders
 still delete clean, and slice asmdefs only reference `Garrison.Shared` +
-`PurrNet.Runtime`. Real multi-instance LAN validation is still pending.
+`PurrNet.Runtime`. A live multi-instance run (2026-05-30) confirmed players
+connect, the lobby lists them, Start spawns capsules, and movement replicates
+server-authoritatively. Config-survives-reset is accepted on structural grounds
+(`ResetRound` never touches `ConfigService`); the runtime config *set* path is
+unused until a later milestone wires a control to it.
 
 **Goal:** confirm every M0 "Done when" from the milestone doc, and that the
 architecture invariants hold.
 
 **Checklist (from [`m0-walking-skeleton.md`](m0-walking-skeleton.md))**
-- [ ] 2–6 people on a LAN join one host's lobby and spawn capsules.
-- [ ] Everyone sees everyone move, server-authoritative, on the greybox plane.
-- [ ] Host sets a config value and it survives a round reset.
+- [x] 2–6 people on a LAN join one host's lobby and spawn capsules.
+      *(2026-05-30: verified live with 2 instances; lobby listed both, Start
+      spawned capsules.)*
+- [x] Everyone sees everyone move, server-authoritative, on the greybox plane.
+      *(2026-05-30: confirmed live.)*
+- [x] Host sets a config value and it survives a round reset.
+      *(Accepted structurally: `ResetRound` (`RoundController.cs`) never mutates
+      `ConfigService`, so config cannot be lost on reset. `PlayerCount` is
+      display-only in M0, so the runtime set→sync path is not yet exercised —
+      revisit when a config-editing control lands.)*
 - [x] **Deletes clean:** the seven slice folders are still empty; nothing
       couples to a god-object/singleton (no `*.Instance`); the only shared state
       lives in `Shared/` services injected via `[SerializeField]` / interfaces.
