@@ -15,5 +15,18 @@ namespace Garrison.Shared.Player
         // decides locality from its assigned player vs the local player, keeping
         // that Player-specific check out of Shared.
         bool IsLocalView { get; }
+
+        // The body's mouse-aim, surfaced for other slices (C4 camera-push, later M2).
+        // Symmetric with ViewTarget: a consumer holding registry.Current reads it here.
+        IAimSource Aim { get; }
+
+        // Injected by the local-player registry when this view becomes Current: the
+        // persistent gameplay camera the aim raycast needs. The body is runtime-spawned
+        // and can't be inspector-wired to the persistent camera, and Find/Camera.main/
+        // Instance/static are banned — so the registry (a persistent Bootstrap object
+        // that CAN be inspector-wired to the persistent Main Camera) hands it over here.
+        // Camera is a UnityEngine type, so referencing it from Shared is not a slice
+        // dependency. Null is passed when the camera is unavailable.
+        void BindCamera(Camera camera);
     }
 }

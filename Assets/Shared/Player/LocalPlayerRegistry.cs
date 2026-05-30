@@ -21,6 +21,13 @@ namespace Garrison.Shared.Player
     {
         [SerializeField] private NetworkManager networkManager;
 
+        // The persistent Bootstrap Main Camera. Both this registry and the camera are
+        // persistent Bootstrap objects, so they ARE inspector-wireable to each other.
+        // The runtime-spawned local body can't be, so we hand the camera to it via
+        // ILocalPlayerView.BindCamera when it becomes Current — letting the body's aim
+        // raycast use the gameplay camera without any Find/Camera.main/Instance lookup.
+        [SerializeField] private Camera gameplayCamera;
+
         private HierarchyFactory clientHierarchy;
         private ILocalPlayerView current;
 
@@ -101,7 +108,11 @@ namespace Garrison.Shared.Player
             if (ReferenceEquals(view, current))
                 return;
 
+            // Release the camera from the outgoing view, hand it to the incoming one.
+            current?.BindCamera(null);
             current = view;
+            current?.BindCamera(gameplayCamera);
+
             CurrentChanged?.Invoke();
         }
     }

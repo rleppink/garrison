@@ -10,6 +10,8 @@ namespace Garrison.Player
     // check lives here because only the Player slice knows about AssignedPlayer.
     public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView
     {
+        [SerializeField] private PlayerAim aim;
+
         private readonly SyncVar<PlayerID> assignedPlayer = new(PlayerID.Server);
 
         public PlayerID AssignedPlayer => assignedPlayer.value;
@@ -18,6 +20,18 @@ namespace Garrison.Player
 
         // True only on the client whose own body this is (mirrors PlayerInput's check).
         public bool IsLocalView => isClient && localPlayer.HasValue && assignedPlayer.value == localPlayer.Value;
+
+        // The mouse-aim source for this body, surfaced through the local-player view seam.
+        public IAimSource Aim => aim;
+
+        // Registry hands over the persistent gameplay camera when this body becomes the
+        // current local view; forward it to the aim component, which needs it for the
+        // cursor->ground raycast. No lookup happens anywhere on the Player side.
+        public void BindCamera(Camera camera)
+        {
+            if (aim != null)
+                aim.SetCamera(camera);
+        }
 
         private void Awake()
         {
