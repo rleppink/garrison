@@ -428,7 +428,7 @@ MonoBehaviour:
   targetCamera: {fileID: 415818058}
   localPlayerRegistrySource: {fileID: 1877830055}
   configSource: {fileID: 1877830053}
-  viewDirection: {x: 0, y: -1, z: -0.5}
+  viewDirection: {x: 0, y: -1, z: 0.5}
   distance: 20
   defaultZoom: 10
   defaultPushExtent: 3.5

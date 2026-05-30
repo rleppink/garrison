@@ -29,7 +29,12 @@ namespace Garrison.Vision
         [SerializeField] private MonoBehaviour configSource;
 
         // Authored camera pose. Runtime zoom and push feel are config-driven.
-        [SerializeField] private Vector3 viewDirection = new(0f, -1f, -0.5f);
+        // Direction the camera LOOKS. The camera sits opposite this (on the -z side,
+        // south of the body) and looks down toward +z, so world +x reads as screen
+        // right and world +z (W) as screen up — matching PlayerInput's world-space
+        // WASD mapping. Keep z POSITIVE: flipping it puts the camera north-of-body
+        // looking south, which mirrors both screen axes (W moves down, D moves left).
+        [SerializeField] private Vector3 viewDirection = new(0f, -1f, 0.5f);
         [SerializeField] private float distance = 20f;
 
         // Fallbacks used until config delivers values (e.g. before the client connects).
@@ -101,7 +106,7 @@ namespace Garrison.Vision
 
             Vector3 backwards = viewDirection.sqrMagnitude > 0f ? -viewDirection.normalized : Vector3.up;
             Quaternion cameraRotation = Quaternion.LookRotation(-backwards, Vector3.up);
-            Vector3 desiredPush = ComputeAimPush(view, cameraRotation);
+            Vector3 desiredPush = ComputeAimPush(view, target.position, cameraRotation);
             Vector3 clampedPush = UpdatePush(desiredPush, cameraRotation);
             Vector3 frameTarget = target.position + clampedPush;
 
@@ -125,23 +130,35 @@ namespace Garrison.Vision
             pushCoupling = Mathf.Clamp(activeConfig?.GetInt(ConfigKey.CameraPushCoupling, defaultPushCoupling) ?? defaultPushCoupling, PushCouplingAim, PushCouplingSeparate);
         }
 
-        private Vector3 ComputeAimPush(ILocalPlayerView view, Quaternion cameraRotation)
+        private Vector3 ComputeAimPush(ILocalPlayerView view, Vector3 bodyPosition, Quaternion cameraRotation)
         {
             // Separate push input is exposed for tuning, but M1 only has aim input.
             // Until that input exists, both coupling modes intentionally use aim.
             _ = pushCoupling;
 
             IAimSource aim = view.Aim;
-            if (aim == null || pushExtent <= 0f || aim.AimDistance <= 0f)
+            if (aim == null || pushExtent <= 0f)
                 return Vector3.zero;
 
-            Vector2 aimDirection = aim.AimDirection;
-            if (aimDirection.sqrMagnitude <= 0.0001f)
+            // PlayerAim's AimPoint is the cursor projected through the ALREADY-pushed
+            // camera, so it equals (body + currentPush + cursorScreenOffset). Feeding
+            // that straight back in makes the push a gain-1 integrator: every frame it
+            // re-counts the push it already applied and runs away to the clamp the
+            // instant the cursor leaves dead-center (the "magnets repelling" jank).
+            // Subtracting the push we are currently applying recovers the cursor's
+            // offset from the body as if the camera were centered on it, which is
+            // camera-independent — that breaks the feedback loop and makes the push a
+            // stable function of where the cursor actually is.
+            Vector3 aimOffset = aim.AimPoint - bodyPosition - currentPush;
+            aimOffset.y = 0f;
+
+            float aimDistance = aimOffset.magnitude;
+            if (aimDistance <= 0.0001f)
                 return Vector3.zero;
 
-            Vector3 worldDirection = new Vector3(aimDirection.x, 0f, aimDirection.y).normalized;
+            Vector3 worldDirection = aimOffset / aimDistance;
             float maxDistance = GetShapeRadius(worldDirection, cameraRotation);
-            float distanceAlongAim = Mathf.Min(aim.AimDistance, maxDistance);
+            float distanceAlongAim = Mathf.Min(aimDistance, maxDistance);
             return worldDirection * distanceAlongAim;
         }
 
