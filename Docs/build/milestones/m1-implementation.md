@@ -58,6 +58,91 @@ drift on netcode is the tax `architecture.md` warns about.
 
 ---
 
+## Build status — team-lead running log
+
+*Maintained by the lead overseeing M1. Per-commit detail lives in each commit's
+**Status** line below; this is the cross-cutting view that doesn't belong to a
+single commit.*
+
+### Progress
+
+| Commit | What | Status | Hash |
+|--------|------|--------|------|
+| C1 | `Player/` slice + spawn-ownership handoff | ✅ Done | `ae9a9c5` |
+| C2 | Orthographic follow-camera rig + local-player seam | ✅ Done | `e97912b` |
+| C3 | Mouse aim → `IAimSource` seam | ✅ Done | `e1c7d55` |
+| C4 | Aim-push camera (core feel-bet) | ⏳ Next | — |
+| C5 | Return behaviour & coupling dials | — | — |
+| C6 | Movement feel + movement-state seam | — | — |
+| C6b | *(conditional)* PurrDiction prediction | — | — |
+| C7 | Footsteps (first audio-bus consumer) | — | — |
+| C8 | Acceptance pass — go/no-go feel gate | — | — |
+
+Doc-only `M1 docs ...` commits carry these Status updates; engineering commits
+carry only their own code/asset changes.
+
+### Verification discipline (what "Done" means here)
+
+Each engineering commit is **independently re-verified by the lead** (not taken
+on the implementing agent's word) before its Status is recorded:
+- Clean compile — `editor_state.isCompiling` false, then `read_console` (errors)
+  shows **0** new errors (PurrNet upstream obsolete-API warnings are pre-existing).
+- Both compiler walls hold — `grep "Garrison.Player"` over `Assets/Vision/` and
+  `Assets/Shared/` is empty.
+- No banned patterns introduced — `Find`/`FindObjectOfType`/`Camera.main`/
+  `*.Instance`/static singletons/`DontDestroyOnLoad` (comments explaining their
+  avoidance are allowed).
+- Server-authoritative movement preserved — `PlayerBody.prefab` NetworkTransform
+  `_ownerAuth: 0`.
+- Working tree clean after commit.
+
+### ⚠️ Not yet runtime-verified
+
+C1–C3 are **"compiles + wired correctly," not "felt good."** The camera-follow,
+aim-tracking, and (coming) push behaviours have **not** run in play mode. By
+design, all behavioural confirmation folds into the **C8 go/no-go feel gate**,
+which needs a live two-instance LAN run. Nothing in the camera/aim chain is
+proven to *feel* right until then — that is the whole point of M1.
+
+### Cross-cutting design decisions (reused downstream — C4, M9)
+
+The runtime-spawned, **server-owned** player body cannot be inspector-wired to
+persistent Bootstrap scene services, and `Find`/`Camera.main`/`Instance`/static
+are banned. Two deliberate decisions resolve this and are **reused by later
+commits and M9 shoulder-spectator**, so don't undo them casually:
+- **C2 — registry *observes* spawns.** `LocalPlayerRegistry` subscribes to
+  PurrNet's manager-level `HierarchyFactory.onIdentityAdded/Removed` (via the
+  inspector-wired `NetworkManager`, the same `TryGetModule` pattern
+  `RoundController` uses) and sets `Current` to the spawned identity reporting
+  `IsLocalView`. Verified against pinned PurrNet 1.19.1 source, including that
+  `OnSpawned`/SyncVar application runs **before** `onIdentityAdded` fires, so the
+  `assignedPlayer`/`localPlayer` check is valid. The body holds no registry handle.
+- **C3 — registry *injects* the camera.** The registry holds the persistent Main
+  Camera (`[SerializeField]`) and hands it to the local body via
+  `ILocalPlayerView.BindCamera` when it becomes `Current`, so the `Player` slice
+  does zero camera lookups for the aim raycast.
+
+### Accepted deviations from the literal plan
+
+- **C1:** `Garrison.Player` asmdef also references `Unity.InputSystem` (an engine
+  module `PlayerInput` needs — not a sibling slice, so the coupling wall holds;
+  same as M0's `Shared` asmdef).
+- **C1:** `PlayerSpawner` lives on the `NetworkedSystems` object (alongside the
+  other networked services) rather than the literal `GameSystems` — "the systems
+  object" read in context. (`GameSystems` holds the non-networked
+  `NetworkManager`/transport/`AudioBus`; `LocalPlayerRegistry` lives there.)
+- **C3:** the world-space reticle was **skipped** (optional nice-to-have for the
+  feel pass; trivial to add later).
+
+### ⚠️ Carry-forward caveat
+
+In C3, a Unity MCP prefab edit **re-serialized `PlayerBody.prefab`'s
+NetworkTransform** YAML (it flipped `_ownerAuth` to `1`; reset to `0` to preserve
+server authority). Benign, but if a later commit edits that prefab via MCP,
+re-check the NetworkTransform block (`_ownerAuth` must stay `0`).
+
+---
+
 ## C1 — `Player/` slice + spawn-ownership handoff
 
 **Status:** Done (`ae9a9c5`). The M0 skeleton moved out of `Shared/Player` into a
