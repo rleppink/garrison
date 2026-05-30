@@ -1,4 +1,3 @@
-using System;
 using PurrNet;
 using UnityEngine;
 
@@ -65,9 +64,8 @@ namespace Garrison.Shared.Config
             if (!defaults)
                 return;
 
-            ReadOnlySpan<ConfigDefaults.Entry> entries = defaults.Entries;
-            for (int i = 0; i < entries.Length; i++)
-                values[entries[i].key] = entries[i].value;
+            foreach (var entry in defaults.Entries())
+                values[entry.Key] = entry.Value;
         }
 
         private void OnValuesChanged(SyncDictionaryChange<ConfigKey, ConfigValue> change)
