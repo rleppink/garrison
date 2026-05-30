@@ -76,7 +76,20 @@ single commit.*
 | C6 | Movement feel + movement-state seam | ✅ Done | `f11a216` |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
 | C7 | Footsteps (first audio-bus consumer) | ⚠️ Wired; runtime verification pending | `8945050` |
-| C8 | Acceptance pass — go/no-go feel gate | — | — |
+| C8 | Acceptance pass — go/no-go feel gate | ❌ Live pre-acceptance failed; runtime verification pending | — |
+
+### M1 bugfix after failed C8 preflight
+
+Live two-client pre-acceptance found M1 nonfunctional before any C8 verdict:
+camera follow/aim/push and footsteps did not come online because `PlayerBody`
+replicated `MovementState` directly as `SyncVar<MovementState>`, and PurrNet
+1.19.1 did not have that custom enum registered with its hasher/packer. The
+bugfix stores movement state in a supported primitive SyncVar and exposes it back
+through the existing `IMovementState` / `MovementState` seam, clamping unknown
+wire values to `Idle`.
+
+C7 and C8 remain runtime-verification pending until a fresh two-client round
+confirms camera handoff, aim-push, movement state, and positional footsteps.
 
 Doc-only `M1 docs ...` commits carry these Status updates; engineering commits
 carry only their own code/asset changes.
@@ -519,6 +532,13 @@ played **into the M0 audio bus**, the bus's first real customer.
 ---
 
 ## C8 — Acceptance pass: the go/no-go feel gate
+
+**Status:** Live pre-acceptance **failed before a verdict**: spawned observer
+sync threw `InvalidOperationException: [Hasher] Type
+'Garrison.Shared.Player.MovementState' is not registered` from
+`PlayerBody`'s movement-state SyncVar, so the camera/audio local-presentation
+handoff never had a working local body to follow or bind. Do **not** mark C8
+accepted from that run. Retest after the M1 bugfix commit.
 
 **Goal:** render M1's verdict. Two people move and aim around the greybox; we
 decide **elegant, or fighting the controls?**

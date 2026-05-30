@@ -44,6 +44,7 @@ namespace Garrison.Shared.Player
             }
 
             networkManager.onClientConnectionState += OnClientConnectionState;
+            Subscribe();
         }
 
         private void OnDisable()

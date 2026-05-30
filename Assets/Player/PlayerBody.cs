@@ -15,7 +15,7 @@ namespace Garrison.Player
         [SerializeField] private PlayerFootstepEmitter footstepEmitter;
 
         private readonly SyncVar<PlayerID> assignedPlayer = new(PlayerID.Server);
-        private readonly SyncVar<MovementState> movementState = new(MovementState.Idle);
+        private readonly SyncVar<int> movementState = new((int)MovementState.Idle);
 
         public PlayerID AssignedPlayer => assignedPlayer.value;
 
@@ -29,13 +29,13 @@ namespace Garrison.Player
 
         public IMovementState Movement => this;
 
-        public MovementState State => movementState.value;
+        public MovementState State => DecodeMovementState(movementState.value);
 
-        public bool IsIdle => movementState.value == MovementState.Idle;
+        public bool IsIdle => State == MovementState.Idle;
 
-        public bool IsWalking => movementState.value == MovementState.Walking;
+        public bool IsWalking => State == MovementState.Walking;
 
-        public bool IsSprinting => movementState.value == MovementState.Sprinting;
+        public bool IsSprinting => State == MovementState.Sprinting;
 
         // Registry hands over the persistent gameplay camera when this body becomes the
         // current local view; forward it to the aim component, which needs it for the
@@ -66,7 +66,27 @@ namespace Garrison.Player
         public void SetMovementState(MovementState state)
         {
             if (isServer)
-                movementState.value = state;
+                movementState.value = EncodeMovementState(state);
+        }
+
+        private static int EncodeMovementState(MovementState state)
+        {
+            return state switch
+            {
+                MovementState.Walking => (int)MovementState.Walking,
+                MovementState.Sprinting => (int)MovementState.Sprinting,
+                _ => (int)MovementState.Idle
+            };
+        }
+
+        private static MovementState DecodeMovementState(int value)
+        {
+            return value switch
+            {
+                (int)MovementState.Walking => MovementState.Walking,
+                (int)MovementState.Sprinting => MovementState.Sprinting,
+                _ => MovementState.Idle
+            };
         }
 
         private void EnsureVisual()
