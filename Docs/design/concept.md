@@ -397,13 +397,18 @@ Discrete and readable; tactical-shooter shape inside a top-down camera.
   wire). Both fit "maim, not kill" — pick in playtest.
 - **Movement reduces accuracy.** Stand-still to shoot reliably; sprinting
   fire is wild. The single biggest anti-rush-B lever.
-- **0 hearts = downed, not dead.** Crawling/incapacitated. Teammate revive
-  inside a window of X seconds restores you to 1 heart; otherwise you bleed
-  out to permadeath. (X TBD; tunes the rescue-the-specialist drama.)
-- **Healing:** *open.* Recommended starting point — **syrettes in the Cell's
-  shared gear pool.** Scarce, drafted in planning ("do we bring 2 syrettes or
-  trade them for an extra grenade?"), applied to self or a teammate. Defender
-  has no healing; their healing *is* respawn.
+- **1 heart = downed, immobile.** The last heart isn't a limp you fight through —
+  drop to 1 and you're incapacitated: can't move, can't fire, a bleed-out timer
+  (X sec) running toward permadeath. **0 hearts = dead, no matter how** — there's
+  no separate sub-zero state. (X TBD; tunes the rescue-the-specialist drama.)
+- **No healing — ever.** Hearts only go down; nothing gives one back. The only
+  thing that brings a downed player back into play is a **syrette**, and it does
+  *not* restore a heart: it gets you (or a teammate you reach) up and moving —
+  walking, running, fighting *through the pain* — while still at 1 heart, so the
+  next hit kills. Adrenaline, not a medkit. Syrettes are scarce, drafted in
+  planning ("do we bring 2 syrettes or trade them for an extra grenade?") and
+  carried as one of the shared-pool items. **Revive *is* the syrette** — there's
+  no item-less revive. Defender has no syrettes; their recovery *is* respawn.
 - **Defender armor.** Same 3 hearts, plus an armor layer that absorbs the
   first hit per heart *unless* two+ attackers land hits within a short focus-
   fire window (then armor breaks instead of absorbing). Makes the "focused
@@ -491,8 +496,8 @@ drop).
   annihilate; keep scarce).
 - How N scales the budgets in practice.
 - **S-mine damage value** (1 heart + alarm vs 2 hearts; see Combat model).
-- **Healing model** (syrettes-in-shared-pool recommended; revive-window length
-  X TBD).
+- **Bleed-out timer length** (X sec) — the one down/heal dial left; tunes the
+  syrette-rescue drama. (The down→syrette→up→one-hit-dead loop itself is settled.)
 - **DF chase ergonomics watchpoint.** Hold-to-consult + ping every ~5s +
   driving + bearing-only stacks up; the documents pursuit may feel unwinnable
   for the defender. Playtest target: does the documents mission land as

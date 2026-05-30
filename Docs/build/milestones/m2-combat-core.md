@@ -29,18 +29,27 @@ time).
   and a lifestate machine:
 
   ```
-  Healthy ──hearts hit 0──► Downed ──revive completes──► Healthy (at 1 heart)
-                              │
-                              └──bleed-out timer expires / finished off──► Dead
+  Healthy ──drops to 1 heart──► Downed ──syrette──► Up (mobile, still 1 heart)
+   (3 / 2)                         │                       │
+                                   ├─bleed-out expires──► Dead
+                                   └─any further hit─────► Dead (0 hearts)
   ```
 
-  - **Downed:** crawl-only movement, can't fire, a bleed-out timer runs (length
-    = revive window X).
-  - **Dead:** permadeath for the round. The character goes inert and leaves play;
-    *where its dropped gear goes* is M6's concern, *what the dead player sees* is
-    M9's (shoulder-spectator). M2 only owns the transition.
-- **Config read:** `maxHearts`, `reviveWindowSec`.
-- **Seam exposed:** emits lifestate-change events (became-downed / revived /
+  - **Downed (at 1 heart):** immobile — can't move, can't fire — with a bleed-out
+    timer running (length `bleedOutSec`). The *only* exit back into play is a
+    **syrette**, applied to self or to a teammate you reach; there is no item-less
+    revive. (M2 assumes the syrette is freely available so the loop can be tuned;
+    M4 makes it a scarce drafted resource.)
+  - **Up (post-syrette, still 1 heart):** mobile and able to fight again — walk,
+    run, shoot "through the pain" — but the syrette restored *no* heart, so the
+    next hit is fatal.
+  - **Dead:** permadeath for the round, reached by **0 hearts however you get
+    there** — any hit while at 1 heart (downed or up), or the bleed-out timer
+    expiring. The character goes inert and leaves play; *where its dropped gear
+    goes* is M6's concern, *what the dead player sees* is M9's (shoulder-
+    spectator). M2 only owns the transition.
+- **Config read:** `maxHearts`, `bleedOutSec`.
+- **Seam exposed:** emits lifestate-change events (became-downed / got-up /
   died). M6 (loot drop), M9 (spectator) subscribe later. Life-state never reaches
   into those slices — it announces, they listen.
 
@@ -90,14 +99,14 @@ time).
 
 ## Config surface introduced
 
-| Key | Shape | Starting value |
-|---|---|---|
-| `maxHearts` | int | 3 |
-| `reviveWindowSec` | float | TBD (tunes rescue drama) |
-| `weapon.*` | profile: fireRate, damageHearts, baseSpread, rangeFalloff | tuned to Sten TTK @ 20m |
-| `accuracy.spreadCurve` | idleSpread / movingSpread / sprintSpread | TBD |
-| `focusFireWindowSec` | float | TBD |
-| `focusFireThreshold` | int | 2 |
+| Key                    | Shape                                                     | Starting value           |
+|------------------------|-----------------------------------------------------------|--------------------------|
+| `maxHearts`            | int                                                       | 3                        |
+| `bleedOutSec`          | float                                                     | TBD (tunes rescue drama) |
+| `weapon.*`             | profile: fireRate, damageHearts, baseSpread, rangeFalloff | tuned to Sten TTK @ 20m  |
+| `accuracy.spreadCurve` | idleSpread / movingSpread / sprintSpread                  | TBD                      |
+| `focusFireWindowSec`   | float                                                     | TBD                      |
+| `focusFireThreshold`   | int                                                       | 2                        |
 
 (All into the lobby-config system from M0.)
 
@@ -106,15 +115,15 @@ time).
 Each cue is triggered off a §1/§2 event and played positionally through the M0
 bus:
 - **Gunfire** (directional, distance-attenuated) — the loudest read in the raid.
-- **Hit / down / revive** cues, off the life-state transitions.
+- **Hit / down / got-up (syrette)** cues, off the life-state transitions.
 
 ## Open decisions to resolve in M2
 - Hitscan-with-deviation vs projectile (recommend hitscan).
 - Armor regen within a round (recommend no).
-- Downed crawl speed, and whether a downed player can be "finished off" early vs
-  only bleeding out.
-- Syrette healing — stub or in? *Recommend stub here*; the shared-gear-pool draft
-  that makes syrettes scarce is M4.
+- Bleed-out timer length (`bleedOutSec`) — the rescue-drama dial.
+- Syrette is **in** as the down→up mechanic (and the only revive); M2 assumes it's
+  freely available to tune the loop, the shared-gear-pool draft that makes it
+  scarce is M4.
 
 ## Done when
 - A small firefight (e.g. 2v1) on the greybox reads tactical, not twitch.
