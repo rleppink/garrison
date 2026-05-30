@@ -72,8 +72,8 @@ single commit.*
 | C2 | Orthographic follow-camera rig + local-player seam | ✅ Done | `e97912b` |
 | C3 | Mouse aim → `IAimSource` seam | ✅ Done | `e1c7d55` |
 | C4 | Aim-push camera (core feel-bet) | ✅ Done | `b18e50a` |
-| C5 | Return behaviour & coupling dials | ⏳ Next | — |
-| C6 | Movement feel + movement-state seam | — | — |
+| C5 | Return behaviour & coupling dials | ✅ Done | `b185aae` |
+| C6 | Movement feel + movement-state seam | ⏳ Next | — |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
 | C7 | Footsteps (first audio-bus consumer) | — | — |
 | C8 | Acceptance pass — go/no-go feel gate | — | — |
@@ -352,6 +352,18 @@ behind* — under the hard invariant that **the character never leaves the scree
 ---
 
 ## C5 — Return behaviour & coupling dials (the tuning surface)
+
+**Status:** Done (`b185aae`). `Vision/CameraRig` now has config-backed
+`CameraReturn` (snap vs lazy-follow), `CameraReturnSpeed`, and
+`CameraPushCoupling`, completing the M1 camera tuning surface alongside zoom and
+the C4 push extent/shape keys. Lazy return uses frame-rate-independent
+`Vector3.SmoothDamp`; snap mode updates immediately; the C4 safe-viewport clamp
+still applies after smoothing every frame. The separate-input coupling mode is
+exposed as a config value, but intentionally still uses aim in M1 because no
+separate push input exists yet. Compile clean (0 errors); `CameraRig` validates
+clean; walls and banned-pattern greps are clean; server-authoritative movement
+preserved (`_ownerAuth: 0`). Still not runtime-feel-verified — C8 owns the live
+two-instance verdict.
 
 **Goal:** complete the camera's config surface — how it *returns* when aim
 relaxes, and the coupling choice — so the feel is fully tunable for the gate.
