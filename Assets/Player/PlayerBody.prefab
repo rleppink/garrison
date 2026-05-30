@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 817fe5016bd0a2a49a95b6eb338bb132, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.NetworkTransform
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -80,7 +80,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
+  _invertedPathToNearestParent:
   _directChildren: []
   _syncPosition: 1
   _syncRotation: 1
@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4213734673864c8386d9c67227118f1e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerBody
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -111,7 +111,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
+  _invertedPathToNearestParent:
   _directChildren: []
   aim: {fileID: 8267471949978962232}
   footstepEmitter: {fileID: 5351614546556482813}
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1f734c582c8461387861445fd847b64, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerMovement
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -134,7 +134,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
+  _invertedPathToNearestParent:
   _directChildren: []
   body: {fileID: 11400002}
 --- !u!114 &11400004
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f449ad67f9e744118c149040040cafc6, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerInput
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -156,7 +156,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
+  _invertedPathToNearestParent:
   _directChildren: []
   capsule: {fileID: 11400002}
   movement: {fileID: 11400003}
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 80c473c2854d14669b8052bff0dac308, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerAim
   body: {fileID: 11400002}
 --- !u!114 &5351614546556482813
@@ -187,6 +187,18 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerFootstepEmitter
   movementSource: {fileID: 11400002}
-  footstepClip: {fileID: 0}
+  footstepClips:
+  - {fileID: 8300000, guid: 0db2f44bb74e54b54a8ea157fb25ad06, type: 3}
+  - {fileID: 8300000, guid: 552371e6025b146cf9f318b9d2159f7f, type: 3}
+  - {fileID: 8300000, guid: bec01b841cbfc48658a38b50a6130c52, type: 3}
+  - {fileID: 8300000, guid: fcc3c21be82324b17907ba0c6120b859, type: 3}
+  - {fileID: 8300000, guid: 950303c42381f495587191ec775d7de7, type: 3}
+  - {fileID: 8300000, guid: 4163089b8a30e48858cba34b59d82966, type: 3}
+  - {fileID: 8300000, guid: 7c58aabbf356241f590e381e1c69f19a, type: 3}
+  - {fileID: 8300000, guid: fc2d3f141a797428f9d8d3f3f5635178, type: 3}
+  - {fileID: 8300000, guid: cc8004727ec1c40a9b69c9c92bd430a4, type: 3}
+  - {fileID: 8300000, guid: 90d50d045679146758b215a8abf1306c, type: 3}
   walkInterval: 0.55
   sprintInterval: 0.36
+  volumeVariance: 0.08
+  pitchVariance: 0.06

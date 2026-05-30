@@ -7,12 +7,15 @@ namespace Garrison.Player
     public sealed class PlayerFootstepEmitter : MonoBehaviour
     {
         [SerializeField] private PlayerBody movementSource;
-        [SerializeField] private AudioClip footstepClip;
+        [SerializeField] private AudioClip[] footstepClips = System.Array.Empty<AudioClip>();
         [SerializeField, Min(0.05f)] private float walkInterval = 0.55f;
         [SerializeField, Min(0.05f)] private float sprintInterval = 0.36f;
+        [SerializeField, Range(0f, 0.5f)] private float volumeVariance = 0.08f;
+        [SerializeField, Range(0f, 0.5f)] private float pitchVariance = 0.06f;
 
         private IAudioBus audioBus;
         private float timeUntilNextStep;
+        private int lastClipIndex = -1;
 
         public void BindAudioBus(IAudioBus bus)
         {
@@ -36,16 +39,36 @@ namespace Garrison.Player
             if (timeUntilNextStep > 0f)
                 return;
 
-            if (audioBus != null && footstepClip != null)
-                audioBus.Play(AudioChannel.Footsteps, footstepClip, transform.position);
+            AudioClip clip = PickClip();
+            if (audioBus != null && clip != null)
+            {
+                float volume = 1f + Random.Range(-volumeVariance, volumeVariance);
+                float pitch = 1f + Random.Range(-pitchVariance, pitchVariance);
+                audioBus.Play(AudioChannel.Footsteps, clip, transform.position, volume, pitch);
+            }
 
             timeUntilNextStep = state == MovementState.Sprinting ? sprintInterval : walkInterval;
+        }
+
+        private AudioClip PickClip()
+        {
+            if (footstepClips == null || footstepClips.Length == 0)
+                return null;
+
+            int index = Random.Range(0, footstepClips.Length);
+            if (footstepClips.Length > 1 && index == lastClipIndex)
+                index = (index + 1) % footstepClips.Length;
+
+            lastClipIndex = index;
+            return footstepClips[index];
         }
 
         private void OnValidate()
         {
             walkInterval = Mathf.Max(0.05f, walkInterval);
             sprintInterval = Mathf.Max(0.05f, sprintInterval);
+            volumeVariance = Mathf.Clamp(volumeVariance, 0f, 0.5f);
+            pitchVariance = Mathf.Clamp(pitchVariance, 0f, 0.5f);
         }
     }
 }

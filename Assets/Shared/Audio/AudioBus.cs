@@ -26,12 +26,19 @@ namespace Garrison.Shared.Audio
 
         public void Play(AudioChannel channel, AudioClip clip, Vector3 worldPosition)
         {
+            Play(channel, clip, worldPosition, 1f, 1f);
+        }
+
+        public void Play(AudioChannel channel, AudioClip clip, Vector3 worldPosition, float volume, float pitch)
+        {
             if (!clip)
                 return;
 
             AudioSource source = GetSource();
             source.transform.position = worldPosition;
             source.clip = clip;
+            source.volume = Mathf.Max(0f, volume);
+            source.pitch = Mathf.Max(0.01f, pitch);
             source.outputAudioMixerGroup = groups.TryGetValue(channel, out AudioMixerGroup group) ? group : null;
             source.spatialBlend = spatialBlend;
             source.Play();
@@ -58,6 +65,8 @@ namespace Garrison.Shared.Audio
             AudioSource source = sourceObject.AddComponent<AudioSource>();
             source.playOnAwake = false;
             source.spatialBlend = spatialBlend;
+            source.volume = 1f;
+            source.pitch = 1f;
             source.rolloffMode = AudioRolloffMode.Linear;
             return source;
         }
