@@ -71,8 +71,8 @@ single commit.*
 | C1 | `Player/` slice + spawn-ownership handoff | ✅ Done | `ae9a9c5` |
 | C2 | Orthographic follow-camera rig + local-player seam | ✅ Done | `e97912b` |
 | C3 | Mouse aim → `IAimSource` seam | ✅ Done | `e1c7d55` |
-| C4 | Aim-push camera (core feel-bet) | ⏳ Next | — |
-| C5 | Return behaviour & coupling dials | — | — |
+| C4 | Aim-push camera (core feel-bet) | ✅ Done | `b18e50a` |
+| C5 | Return behaviour & coupling dials | ⏳ Next | — |
 | C6 | Movement feel + movement-state seam | — | — |
 | C6b | *(conditional)* PurrDiction prediction | — | — |
 | C7 | Footsteps (first audio-bus consumer) | — | — |
@@ -305,6 +305,18 @@ tracking folds into the C8 gate).
 ---
 
 ## C4 — Aim-push camera (the core feel-bet)
+
+**Status:** Done (`b18e50a`). `Vision/CameraRig` now reads
+`ILocalPlayerView.Aim` through the existing Shared local-player seam and offsets
+the orthographic frame target along the local aim vector, clamped after shaping
+so the body remains inside a configurable safe viewport inset even at extreme
+push extents. Added config defaults for `CameraPushExtent` and
+`CameraPushShape`, plus shape/safety parameters (`CameraPushHorizontalScale`,
+`CameraPushForwardScale`, `CameraPushBackwardScale`, `CameraSafeViewportInset`)
+so circle, ellipse, and asymmetric push are live-tunable through `IConfig`.
+Compile clean (0 errors); `CameraRig` validates clean; walls and banned-pattern
+greps are clean; server-authoritative movement preserved (`_ownerAuth: 0`).
+Still not runtime-feel-verified — C8 owns the live two-instance verdict.
 
 **Goal:** aiming farther pushes the camera toward the aim — *see ahead, go blind
 behind* — under the hard invariant that **the character never leaves the screen.**
