@@ -14,17 +14,17 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
+  m_Fog: 1
+  m_FogColor: {r: 0.3481666, g: 0.4528302, b: 0.3597959, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
-  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientSkyColor: {r: 0.18039216, g: 0.22745098, b: 0.2901961, a: 1}
+  m_AmbientEquatorColor: {r: 0.13725491, g: 0.16470589, b: 0.20392157, a: 1}
+  m_AmbientGroundColor: {r: 0.08627451, g: 0.08627451, b: 0.101960786, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.18, g: 0.22, b: 0.27, a: 0.92}
@@ -268,7 +268,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -291,7 +291,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text:
+  m_Text: 
 --- !u!222 &229005290
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -331,6 +331,7 @@ GameObject:
   - component: {fileID: 415818058}
   - component: {fileID: 415818057}
   - component: {fileID: 415818060}
+  - component: {fileID: 415818061}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -422,7 +423,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ca39170838d64b2aa23200c8efb7238, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Vision::Garrison.Vision.CameraRig
   targetCamera: {fileID: 415818058}
   localPlayerRegistrySource: {fileID: 1877830055}
@@ -439,6 +440,50 @@ MonoBehaviour:
   defaultReturnMode: 0
   defaultReturnSpeed: 8
   defaultPushCoupling: 0
+--- !u!114 &415818061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 415818056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 2
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &556404849
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,7 +531,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -548,7 +593,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b209ea84c81d44a1fb0a37dacb506279, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Lobby.LobbyUI
   lobbyController: {fileID: 1877830052}
   roleText: {fileID: 639361053}
@@ -565,7 +610,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -582,7 +627,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -671,7 +716,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -694,7 +739,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text:
+  m_Text: 
 --- !u!222 &639361054
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -769,7 +814,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -829,7 +874,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
   m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
@@ -860,7 +905,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
@@ -908,7 +953,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -959,6 +1004,55 @@ RectTransform:
   m_AnchoredPosition: {x: 180, y: -128}
   m_SizeDelta: {x: 300, y: 34}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1784627464
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1784627466}
+  - component: {fileID: 1784627465}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1784627465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784627464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 018724396390e43e489cc1f75ab44ec2, type: 2}
+--- !u!4 &1784627466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784627464}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 90.106606, y: 54.220856, z: 11.278431}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1877830047
 GameObject:
   m_ObjectHideFlags: 0
@@ -991,7 +1085,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7b4153f38f1c42dd97d954f5ea3de19, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Net.ConnectionLauncher
   networkManager: {fileID: 1877830050}
   transport: {fileID: 1877830049}
@@ -1007,7 +1101,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc64ff707d914a64e95f2ac0bf554c09, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.Transports.UDPTransport
   _automaticCloudSetups:
     _adaptToEdgegap: 1
@@ -1026,7 +1120,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: baacc2bfe126d544691d4f39fa3785f9, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.NetworkManager
   _stopPlayingOnDisconnect: 0
   _startServerFlags: 0
@@ -1066,7 +1160,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d18b28dce776e4f4eb088879a46565dd, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Lobby.LobbyController
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -1075,7 +1169,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent:
+  _invertedPathToNearestParent: 
   _directChildren: []
   configSource: {fileID: 1877830053}
   roundController: {fileID: 1987000003}
@@ -1089,7 +1183,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ed2c8d1dd99342c1813fd362a76d62b, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Config.ConfigService
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -1098,7 +1192,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent:
+  _invertedPathToNearestParent: 
   _directChildren: []
   defaults: {fileID: 11400000, guid: da94d9864e25448118a8ce8413a7202f, type: 2}
 --- !u!114 &1877830054
@@ -1111,7 +1205,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1e5280f70a340f1933cd1a3b71a7a8f, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Audio.AudioBus
   routes:
   - channel: 1
@@ -1128,7 +1222,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b55cc61a9e314bedb2cf57b002dacbd, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Player.LocalPlayerRegistry
   networkManager: {fileID: 1877830050}
   gameplayCamera: {fileID: 415818058}
@@ -1142,7 +1236,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3cdee0fb0b05487eafae061b76122a5, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Audio.AudioBusBinder
   networkManager: {fileID: 1877830050}
   audioBusSource: {fileID: 1877830054}
@@ -1191,7 +1285,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9bffe48c2844d48b38e2797f486ebfdc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Round.RoundController
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -1200,7 +1294,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent:
+  _invertedPathToNearestParent: 
   _directChildren: []
   configSource: {fileID: 1877830053}
   mapSceneName: Greybox
@@ -1214,7 +1308,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30c0d61169ee42a79e486cac71503d7d, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerSpawner
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -1223,7 +1317,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent:
+  _invertedPathToNearestParent: 
   _directChildren: []
   roundController: {fileID: 1987000003}
   configSource: {fileID: 1877830053}
@@ -1237,3 +1331,4 @@ SceneRoots:
   - {fileID: 638689509}
   - {fileID: 415818059}
   - {fileID: 723658222}
+  - {fileID: 1784627466}
