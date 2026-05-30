@@ -55,11 +55,6 @@ namespace Garrison.Player
                 footstepEmitter.BindAudioBus(audioBus);
         }
 
-        private void Awake()
-        {
-            EnsureVisual();
-        }
-
         private void OnEnable()
         {
             assignedPlayer.onChanged += OnAssignedPlayerChanged;
@@ -122,22 +117,6 @@ namespace Garrison.Player
         private void NotifyLocalViewStatusChanged()
         {
             LocalViewStatusChanged?.Invoke();
-        }
-
-        private void EnsureVisual()
-        {
-            if (transform.childCount > 0)
-                return;
-
-            GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            visual.name = "Visual";
-            visual.transform.SetParent(transform, false);
-            visual.transform.localPosition = Vector3.up;
-            visual.transform.localRotation = Quaternion.identity;
-            visual.transform.localScale = Vector3.one;
-
-            if (visual.TryGetComponent(out Collider visualCollider))
-                Destroy(visualCollider);
         }
     }
 }
