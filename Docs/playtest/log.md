@@ -117,3 +117,30 @@ moved server-authoritatively, visible to all. The walking-skeleton flow
 
 - Exercise the runtime config *set* path once a control is wired (later milestone).
 - Real AudioMixer asset/group routing verification.
+
+### Session 2026-05-31 — M2 combat acceptance
+
+**Config this session**
+
+| Config             | Value                           |
+|--------------------|---------------------------------|
+| Mode               | M2 combat acceptance            |
+| Defender durability| 4 hearts (no armor layer)       |
+| `bleedOutSec`      | 12                              |
+| Weapon             | Garand-style semi-auto rifle    |
+| Hit model          | Hitscan with deviation          |
+| Syrette            | Free M2 loop, attacker-only use |
+| Map                | Greybox                         |
+
+**Result**
+
+User/playtester acceptance: **"C9 accepted; feels good!"**
+
+**Notes / feel**
+
+- Tactical 2v1 feel: accepted; fight read tactical rather than twitch.
+- Movement penalty: accepted; run-and-gun was visibly punished.
+- Defender durability: accepted at extra heart / no armor.
+- TTK / weapon feel: accepted with the Garand-style semi-auto M2 stand-in.
+- Syrette loop: accepted; down → syrette → up → one-more-hit-dead read clearly.
+- Audio: accepted; gunfire, hit, down, and got-up cues read correctly.

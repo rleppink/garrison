@@ -61,9 +61,8 @@ time).
   once M3 lands, LOS) → on a connect, it applies damage to the target's §1
   life-state.
 - **Damage rule:** gunshot = 1 heart.
-- **Open decision to nail here:** hitscan-with-deviation vs projectile.
-  *Recommendation: hitscan-with-deviation* — most readable in a top-down view and
-  makes TTK a clean dial.
+- **Decision recorded:** M2 held on **hitscan-with-deviation** — the readable,
+  top-down-friendly option and the cleanest TTK dial.
 
 ### 3. Accuracy
 - **Responsibility:** turn movement into a fire-time penalty — the single biggest
@@ -88,9 +87,10 @@ time).
 ### 5. Test weapon
 - **Responsibility:** give §2/§3 something to fire and the bellwether something to
   tune.
-- **Owns:** one Sten-like weapon as a **data profile** (fire rate, damage = 1
-  heart, base spread, range/falloff), so the **Sten TTK @ 20m** is a number we
-  turn, not code we edit.
+- **Owns:** one Garand-style semi-auto rifle as the M2 **data-profile stand-in**
+  (fire rate, damage = 1 heart, base spread, range/falloff), so the **20m TTK**
+  stays a number we turn, not code we edit. The Sten framing remains the longer-
+  term bellwether; the rifle was accepted for M2.
 
 ## Config surface introduced
 
@@ -98,8 +98,8 @@ time).
 |------------------------|-----------------------------------------------------------|--------------------------|
 | `maxHearts`            | int                                                       | 3                        |
 | `defenderMaxHearts`    | int                                                       | 4                        |
-| `bleedOutSec`          | float                                                     | TBD (tunes rescue drama) |
-| `weapon.*`             | profile: fireRate, damageHearts, baseSpread, rangeFalloff | tuned to Sten TTK @ 20m  |
+| `bleedOutSec`          | float                                                     | 12                       |
+| `weapon.*`             | profile: fireRate, damageHearts, baseSpread, rangeFalloff | tuned to accepted 20m rifle feel |
 | `accuracy.spreadCurve` | idleSpread / movingSpread / sprintSpread                  | TBD                      |
 
 (All into the lobby-config system from M0.)
@@ -111,21 +111,22 @@ bus:
 - **Gunfire** (directional, distance-attenuated) — the loudest read in the raid.
 - **Hit / down / got-up (syrette)** cues, off the life-state transitions.
 
-## Open decisions to resolve in M2
-- Hitscan-with-deviation vs projectile (recommend hitscan).
-- Defender armor model — **resolved:** no focus-fire armor layer; defender has 4
-  hearts, attackers have 3.
-- Bleed-out timer length (`bleedOutSec`) — the rescue-drama dial.
-- Syrette is **in** as the down→up mechanic (and the only revive); M2 assumes it's
-  freely available to tune the loop, the shared-gear-pool draft that makes it
-  scarce is M4.
+## Decisions closed in M2 acceptance
+- Hitscan-with-deviation **held**.
+- Defender armor model — no focus-fire armor layer; defender has 4 hearts,
+  attackers have 3.
+- `bleedOutSec` landed at **12**.
+- Garand-style semi-auto rifle accepted as the M2 stand-in for the Sten
+  bellwether.
+- Syrette is **in** as the down→up mechanic (and the only revive); the loop was
+  accepted in M2 and scarcity remains M4's concern.
 
 ## Done when
 - A small firefight (e.g. 2v1) on the greybox reads tactical, not twitch.
 - The movement penalty visibly punishes run-and-gun.
 - Defender durability reads simply: the defender takes one more hit than an
   attacker, with no special armor rules.
-- The Sten TTK @ 20m feels right — and is reachable by turning the dial.
+- The accepted M2 rifle TTK/feel at 20m is reachable by turning the dial.
 
 ## Explicitly not in M2
 - S-mine damage (lands with mines in M5), fog/LOS (M3 — hit resolution gets its

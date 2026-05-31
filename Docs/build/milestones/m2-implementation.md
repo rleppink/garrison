@@ -170,14 +170,14 @@ both still shippable, in descending order of cleanliness.
 | Commit | What | Status | Hash |
 |--------|------|--------|------|
 | C1 | Composition spike + `Combatant` variant scaffold + side split (`DefenderSlot`) | ✅ Done (spike: **PASS**, host-side) | _backfill_ |
-| C2 | Networked aim-facing — the body turns to the cursor | ⏳ Not started | — |
-| C3 | Weapon visual (right-hand block) + local aim line | ⏳ Not started | — |
-| C4 | Life-state machine: hearts, downed, dead (+ HUD, down visual) | ⏳ Not started | — |
-| C5 | Accuracy: movement-state → spread | ⏳ Not started | — |
-| C6 | Test weapon profile + fire path + hit resolution (+ tracer/muzzle/gunfire) | ⏳ Not started | — |
-| C7 | Defender has 4 hearts instead of attacker 3 | ⏳ Not started | — |
+| C2 | Networked aim-facing — the body turns to the cursor | ✅ Done | `7a024d9` |
+| C3 | Weapon visual (right-hand block) + local aim line | ✅ Done | `f56f08d` |
+| C4 | Life-state machine: hearts, downed, dead (+ HUD, down visual) | ✅ Done | `a18eb78` |
+| C5 | Accuracy: movement-state → spread | ✅ Done | `cf94bb3` |
+| C6 | Test weapon profile + fire path + hit resolution (+ tracer/muzzle/gunfire) | ✅ Done | `29a829a` |
+| C7 | Defender has 4 hearts instead of attacker 3 | ✅ Done (replacing the superseded armor-focus commit) | `16a89bd` |
 | C8 | Syrette: down → up (the only revive) | ✅ Done (attackers only; self or downed teammate within reach) | _backfill_ |
-| C9 | Acceptance pass — the 2v1 feel gate + TTK bellwether | ⏳ Not started | — |
+| C9 | Acceptance pass — the 2v1 feel gate + TTK bellwether | ✅ Accepted (`2026-05-31`: "feels good") | _backfill_ |
 
 ### Verification discipline (what "Done" means here)
 
@@ -610,6 +610,13 @@ available in M2 so the loop can be tuned.
 
 ## C9 — Acceptance pass: the 2v1 feel gate + the TTK bellwether
 
+**Status — accepted (`2026-05-31`).** Playtester verdict: **"C9 accepted; feels
+good!"** The acceptance record closes the remaining M2 feel decisions as:
+hitscan-with-deviation held; defender durability stayed at "extra heart, no armor
+layer"; `BleedOutSec` landed at **12**; the Garand-style semi-auto rifle was an
+acceptable M2 stand-in for the Sten bellwether; the syrette down→up loop and
+combat audio cues were accepted.
+
 **Goal:** render M2's verdict. A small firefight (2v1) on the greybox: does it read
 **tactical, not twitch** — and is the rifle TTK @ 20m reachable by turning a dial?
 
@@ -636,11 +643,11 @@ available in M2 so the loop can be tuned.
   bleed-out) and re-judge; escalate only if a dial can't reach it.
 
 **Record (the open decisions closed here)**
-- Hitscan-with-deviation — **chosen** (note it held up or didn't).
+- Hitscan-with-deviation — **held**.
 - Defender armor — **cut**; defender uses 4 max hearts instead.
-- `BleedOutSec` — the landed value.
-- Garand-semi-auto substitution for the Sten — note whether the rifle was a fine
-  bellwether stand-in or the Sten should come back before M3.
+- `BleedOutSec` — **12**.
+- Garand-semi-auto substitution for the Sten — **accepted** as the M2 bellwether
+  stand-in.
 
 **Done when**
 - The checklist passes with real instances on a LAN (host defender + 2 attacker
