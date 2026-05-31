@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Garrison.Player
 {
-    public sealed class PlayerMovement : NetworkBehaviour
+    public sealed class PlayerMovement : NetworkBehaviour, IConfigConsumer
     {
         [SerializeField] private PlayerBody body;
 

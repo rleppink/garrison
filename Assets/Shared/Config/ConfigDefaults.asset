@@ -16,6 +16,9 @@ MonoBehaviour:
   moveSpeed: 4.5
   sprintSpeed: 5.8
   bodyTurnSpeed: 0
+  defenderSlot: 0
+  aimLineWidth: 0.025
+  aimLineLength: 7
   cameraZoom: 10
   cameraPushExtent: 8
   cameraPushShape: 0

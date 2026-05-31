@@ -18,6 +18,8 @@ namespace Garrison.Shared.Config
         // Index into the round's player list that gets Side.Defender (0 = host/first
         // player); everyone else is an attacker. Throwaway role picker until M4's lobby.
         [SerializeField] private int defenderSlot;
+        [SerializeField] private float aimLineWidth = 0.025f;
+        [SerializeField] private float aimLineLength = 7f;
 
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;
@@ -42,6 +44,8 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.SprintSpeed, ConfigValue.Float(sprintSpeed));
             yield return Pair(ConfigKey.BodyTurnSpeed, ConfigValue.Float(bodyTurnSpeed));
             yield return Pair(ConfigKey.DefenderSlot, ConfigValue.Int(defenderSlot));
+            yield return Pair(ConfigKey.AimLineWidth, ConfigValue.Float(aimLineWidth));
+            yield return Pair(ConfigKey.AimLineLength, ConfigValue.Float(aimLineLength));
             yield return Pair(ConfigKey.CameraZoom, ConfigValue.Float(cameraZoom));
             yield return Pair(ConfigKey.CameraPushExtent, ConfigValue.Float(cameraPushExtent));
             yield return Pair(ConfigKey.CameraPushShape, ConfigValue.Int(cameraPushShape));
