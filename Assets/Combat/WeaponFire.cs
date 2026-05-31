@@ -12,7 +12,6 @@ namespace Garrison.Combat
 {
     public sealed class WeaponFire : NetworkBehaviour, IConfigConsumer, IAudioBusSink
     {
-        private const float DefaultWeaponFireRate = 2.5f;
         private const int DefaultWeaponDamageHearts = 1;
         private const float DefaultWeaponBaseSpread = 0.35f;
         private const float DefaultWeaponRange = 60f;
@@ -44,6 +43,7 @@ namespace Garrison.Combat
         [SerializeField] private MonoBehaviour facingSource;
         [SerializeField] private LifeState lifeState;
         [SerializeField] private Accuracy accuracy;
+        [SerializeField] private WeaponRecoil recoil;
         [SerializeField] private Transform muzzle;
 
         [Header("Collision")]
@@ -61,7 +61,6 @@ namespace Garrison.Combat
         private Coroutine tracerRoutine;
         private Coroutine muzzleFlashRoutine;
         private Coroutine impactFlashRoutine;
-        private float nextAllowedShotTime;
 
         private IAssignedPlayer AssignedPlayerSource => assignedPlayerSource as IAssignedPlayer;
         private IWeaponFireInput FireInputSource => fireInputSource as IWeaponFireInput;
@@ -92,6 +91,11 @@ namespace Garrison.Combat
             if (!(FireInputSource?.FirePressedThisFrame ?? false))
                 return;
 
+            // Kick the local cosmetic recoil immediately so the aim line reacts on the
+            // click; the authoritative recoil is kicked server-side in RequestFire.
+            if (recoil != null)
+                recoil.KickLocal();
+
             RequestFire();
         }
 
@@ -108,18 +112,31 @@ namespace Garrison.Combat
             if (lifeState == null || !lifeState.CanAct || muzzle == null)
                 return;
 
-            float fireRate = Mathf.Max(0.01f, config?.GetFloat(ConfigKey.WeaponFireRate, DefaultWeaponFireRate) ?? DefaultWeaponFireRate);
-            if (Time.time < nextAllowedShotTime)
-                return;
-
-            nextAllowedShotTime = Time.time + (1f / fireRate);
-
+            // No fire-rate gate: every click fires. Spam is punished on accuracy instead.
             Vector2 planarFacing = FacingSource != null ? FacingSource.Facing : Vector2.zero;
             if (planarFacing.sqrMagnitude <= DirectionEpsilon)
                 return;
 
+            // Kick recoil BEFORE resolving the shot and steer this shot by the fresh
+            // offset directly, so the bullet reflects its own kick immediately — the same
+            // moment the local aim line shows it. (Reading body facing alone lags a tick
+            // and decays between clicks, which is why the tracer used to fire straight.)
+            //
+            // FacingSource.Facing already carries the recoil PlayerMovement applied last
+            // tick (appliedYaw). Rotating it by (shotYaw - appliedYaw) strips that stale
+            // value and re-applies this shot's offset, landing on rawAim + shotYaw — the
+            // same place the body yaws to. Exact while BodyTurnSpeed is 0 (the default);
+            // a non-zero turn speed makes the body lag, leaving a small approximation.
+            float appliedYaw = recoil != null ? recoil.YawOffsetDegrees : 0f;
+            if (recoil != null)
+                recoil.Kick();
+            float shotYaw = recoil != null ? recoil.YawOffsetDegrees : 0f;
+
             Vector3 origin = muzzle.position;
             Vector3 intendedDirection = new(planarFacing.x, 0f, planarFacing.y);
+            if (!Mathf.Approximately(shotYaw, appliedYaw))
+                intendedDirection = Quaternion.AngleAxis(shotYaw - appliedYaw, Vector3.up) * intendedDirection;
+
             Vector3 shotDirection = ApplySpread(intendedDirection, accuracy != null ? accuracy.GetCurrentSpreadDegrees(GetWeaponBaseSpread()) : GetWeaponBaseSpread());
 
             float weaponRange = Mathf.Max(0f, config?.GetFloat(ConfigKey.WeaponRange, DefaultWeaponRange) ?? DefaultWeaponRange);

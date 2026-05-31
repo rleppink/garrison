@@ -24,10 +24,12 @@ namespace Garrison.Shared.Config
         AccuracyIdleSpread = 19,
         AccuracyMovingSpread = 20,
         AccuracySprintSpread = 21,
-        WeaponFireRate = 22,
-        WeaponDamageHearts = 23,
-        WeaponBaseSpread = 24,
-        WeaponRange = 25,
-        WeaponFalloff = 26
+        WeaponDamageHearts = 22,
+        WeaponBaseSpread = 23,
+        WeaponRange = 24,
+        WeaponFalloff = 25,
+        RecoilPerShot = 26,
+        RecoilMax = 27,
+        RecoilSettleTime = 28
     }
 }

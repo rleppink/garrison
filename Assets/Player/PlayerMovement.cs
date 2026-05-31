@@ -9,6 +9,7 @@ namespace Garrison.Player
     {
         [SerializeField] private PlayerBody body;
         [SerializeField] private MonoBehaviour lifeStateSource;
+        [SerializeField] private MonoBehaviour recoilSource;
 
         // Server simulation rate. Deliberately NOT Unity's physics FixedUpdate: this is
         // kinematic (transform writes, no Rigidbody), so it runs on its own fixed-step
@@ -26,6 +27,7 @@ namespace Garrison.Player
         private float tickAccumulator;
 
         private ILifeState LifeState => lifeStateSource as ILifeState;
+        private IAimRecoil Recoil => recoilSource as IAimRecoil;
 
         public void Configure(IConfig source)
         {
@@ -90,6 +92,14 @@ namespace Garrison.Player
                 return;
 
             Quaternion targetRotation = Quaternion.LookRotation(new Vector3(aimDirectionInput.x, 0f, aimDirectionInput.y), Vector3.up);
+
+            // Layer server-authoritative recoil on top of the aimed facing, so the body
+            // visibly kicks (synced to everyone) and the shot — which fires along this
+            // facing — follows it. Zero when settled.
+            float recoilYaw = Recoil?.YawOffsetDegrees ?? 0f;
+            if (recoilYaw != 0f)
+                targetRotation = Quaternion.AngleAxis(recoilYaw, Vector3.up) * targetRotation;
+
             float bodyTurnSpeed = config?.GetFloat(ConfigKey.BodyTurnSpeed, 0f) ?? 0f;
 
             transform.rotation = bodyTurnSpeed > 0f

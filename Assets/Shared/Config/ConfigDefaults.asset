@@ -24,11 +24,13 @@ MonoBehaviour:
   accuracyIdleSpread: 0
   accuracyMovingSpread: 2
   accuracySprintSpread: 5
-  weaponFireRate: 2.5
   weaponDamageHearts: 1
   weaponBaseSpread: 0.35
   weaponRange: 60
   weaponFalloff: 20
+  recoilPerShot: 6
+  recoilMax: 40
+  recoilSettleTime: 0.4
   cameraZoom: 10
   cameraPushExtent: 8
   cameraPushShape: 0

@@ -16,6 +16,7 @@ namespace Garrison.Combat
         private const float DirectionEpsilon = 0.0001f;
 
         [SerializeField] private MonoBehaviour localViewSource;
+        [SerializeField] private MonoBehaviour recoilSource;
         [SerializeField] private Transform muzzle;
         [SerializeField] private LineRenderer lineRenderer;
         [SerializeField] private Color lineColor = new(0.5f, 0.82f, 0.96f, 0.8f);
@@ -24,6 +25,8 @@ namespace Garrison.Combat
 
         private IConfig config;
         private ILocalPlayerView localView;
+
+        private IAimRecoil Recoil => recoilSource as IAimRecoil;
 
         public void BindLocalView(MonoBehaviour source)
         {
@@ -99,6 +102,14 @@ namespace Garrison.Combat
             }
 
             direction.Normalize();
+
+            // Cosmetic recoil mirror: kick the line in lockstep with the local fire so
+            // the reticle communicates current inaccuracy. Same tuning as the server's
+            // authoritative recoil, but an independent draw — the line indicates spread,
+            // it does not predict the exact bullet (the tracer shows the true shot).
+            float recoilYaw = Recoil?.LocalYawOffsetDegrees ?? 0f;
+            if (recoilYaw != 0f)
+                direction = Quaternion.AngleAxis(recoilYaw, Vector3.up) * direction;
 
             float length = config?.GetFloat(ConfigKey.AimLineLength, DefaultLength) ?? DefaultLength;
             length = ClampLengthToCollision(origin, direction, length);

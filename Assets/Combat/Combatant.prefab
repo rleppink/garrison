@@ -601,6 +601,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400003, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+      propertyPath: recoilSource
+      value: 
+      objectReference: {fileID: 7778882064478264867}
+    - target: {fileID: 11400003, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
       propertyPath: lifeStateSource
       value: 
       objectReference: {fileID: 6412617728156789001}
@@ -645,6 +649,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4100000000000000031}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7778882064478264867}
   m_SourcePrefab: {fileID: 100100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
 --- !u!1 &1085582586730301998 stripped
 GameObject:
@@ -774,6 +781,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.CombatAimLine
   localViewSource: {fileID: 0}
+  recoilSource: {fileID: 7778882064478264867}
   muzzle: {fileID: 1466904502755976464}
   lineRenderer: {fileID: 5971727462868717328}
   lineColor: {r: 0.5, g: 0.82, b: 0.96, a: 0.8}
@@ -879,6 +887,7 @@ MonoBehaviour:
   facingSource: {fileID: 1085582586736328652}
   lifeState: {fileID: 6412617728156789001}
   accuracy: {fileID: 1198368590594727489}
+  recoil: {fileID: 7778882064478264867}
   muzzle: {fileID: 1466904502755976464}
   hitMask:
     serializedVersion: 2
@@ -888,6 +897,27 @@ MonoBehaviour:
   muzzleFlashRenderer: {fileID: 4100000000000000013}
   impactFlashRenderer: {fileID: 4100000000000000023}
   gunfireClip: {fileID: 8300000, guid: fd64f2c7041ef4f85bf0e68a8f7bc24e, type: 3}
+--- !u!114 &7778882064478264867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085582586730301998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc94053bf81fb48ebabb46fb839f09cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.WeaponRecoil
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
 --- !u!4 &1085582586730731022 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
