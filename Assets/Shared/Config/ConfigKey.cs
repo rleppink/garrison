@@ -30,8 +30,6 @@ namespace Garrison.Shared.Config
         WeaponFalloff = 25,
         RecoilPerShot = 26,
         RecoilMax = 27,
-        RecoilSettleTime = 28,
-        FocusFireWindowSec = 29,
-        FocusFireThreshold = 30
+        RecoilSettleTime = 28
     }
 }

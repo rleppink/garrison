@@ -21,8 +21,6 @@ MonoBehaviour:
   aimLineLength: 1000
   maxHearts: 3
   bleedOutSec: 12
-  focusFireWindowSec: 2
-  focusFireThreshold: 2
   accuracyIdleSpread: 0
   accuracyMovingSpread: 2
   accuracySprintSpread: 5
