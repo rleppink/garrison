@@ -12,6 +12,8 @@ namespace Garrison.Combat
         private const int DefaultMaxHearts = 3;
         private const float DefaultBleedOutSec = 12f;
 
+        [SerializeField] private DefenderArmor defenderArmor;
+
         private readonly SyncVar<int> hearts = new(DefaultMaxHearts);
         private readonly SyncVar<int> lifeState = new((int)SharedLifeState.Healthy);
 
@@ -77,12 +79,12 @@ namespace Garrison.Combat
 
         public void ApplyHit(PlayerID attacker)
         {
-            _ = attacker;
-
             if (!isServer || State == SharedLifeState.Dead)
                 return;
 
-            // Armor-first plugs in here in C7. C4 applies damage straight to hearts.
+            if (defenderArmor != null && !defenderArmor.TryConsumeHeartHit(attacker, hearts.value))
+                return;
+
             if (hearts.value <= 1)
             {
                 Die();

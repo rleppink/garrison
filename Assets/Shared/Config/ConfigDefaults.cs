@@ -24,6 +24,8 @@ namespace Garrison.Shared.Config
         [SerializeField] private float aimLineLength = 1000f;
         [SerializeField, Min(1)] private int maxHearts = 3;
         [SerializeField, Min(0f)] private float bleedOutSec = 12f;
+        [SerializeField, Min(0f)] private float focusFireWindowSec = 2f;
+        [SerializeField, Min(1)] private int focusFireThreshold = 2;
         [SerializeField, Min(0f)] private float accuracyIdleSpread;
         [SerializeField, Min(0f)] private float accuracyMovingSpread = 2f;
         [SerializeField, Min(0f)] private float accuracySprintSpread = 5f;
@@ -67,6 +69,8 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.AimLineLength, ConfigValue.Float(aimLineLength));
             yield return Pair(ConfigKey.MaxHearts, ConfigValue.Int(maxHearts));
             yield return Pair(ConfigKey.BleedOutSec, ConfigValue.Float(bleedOutSec));
+            yield return Pair(ConfigKey.FocusFireWindowSec, ConfigValue.Float(focusFireWindowSec));
+            yield return Pair(ConfigKey.FocusFireThreshold, ConfigValue.Int(focusFireThreshold));
             yield return Pair(ConfigKey.AccuracyIdleSpread, ConfigValue.Float(accuracyIdleSpread));
             yield return Pair(ConfigKey.AccuracyMovingSpread, ConfigValue.Float(accuracyMovingSpread));
             yield return Pair(ConfigKey.AccuracySprintSpread, ConfigValue.Float(accuracySprintSpread));

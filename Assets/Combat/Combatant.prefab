@@ -652,6 +652,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7778882064478264867}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5302019236115188205}
   m_SourcePrefab: {fileID: 100100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
 --- !u!1 &1085582586730301998 stripped
 GameObject:
@@ -778,7 +781,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cbbba2032c47459b992029a06f2132a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.CombatAimLine
   localViewSource: {fileID: 0}
   recoilSource: {fileID: 7778882064478264867}
@@ -799,7 +802,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c592cd287ca94027a467c1234e574626, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.LifeState
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -808,8 +811,9 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
+  _invertedPathToNearestParent:
   _directChildren: []
+  defenderArmor: {fileID: 5302019236115188205}
 --- !u!114 &8037663511907425190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -820,10 +824,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eea5db2afd104549a8fdf80c9a72cd76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.CombatHeartsHud
   localViewSource: {fileID: 0}
   lifeState: {fileID: 6412617728156789001}
+  defenderArmor: {fileID: 5302019236115188205}
   screenOffset: {x: 16, y: 16}
   healthyColor: {r: 0.93, g: 0.95, b: 0.98, a: 1}
   downedColor: {r: 0.98, g: 0.8, b: 0.42, a: 1}
@@ -838,7 +843,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4af84f74f28b46e3bd9007f30419397c, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.CombatLifePresentation
   lifeState: {fileID: 6412617728156789001}
   visualRoot: {fileID: 8826808216745419861}
@@ -858,7 +863,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 988e7a85aaa884d82a1fd97869c75617, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.Accuracy
   movementStateSource: {fileID: 1085582586736328652}
 --- !u!114 &4100000000000000031
@@ -871,7 +876,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8575533e4df074f9a90784c596d25a36, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.WeaponFire
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -880,7 +885,7 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
+  _invertedPathToNearestParent:
   _directChildren: []
   assignedPlayerSource: {fileID: 1085582586736328652}
   fireInputSource: {fileID: 1085582586736328650}
@@ -907,7 +912,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc94053bf81fb48ebabb46fb839f09cc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.WeaponRecoil
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
@@ -916,8 +921,30 @@ MonoBehaviour:
   _componentIndex: -2147483648
   _shouldBePooled: 0
   _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
+  _invertedPathToNearestParent:
   _directChildren: []
+--- !u!114 &5302019236115188205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085582586730301998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce75514bcc76b46c89ee0f9c724e012c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.DefenderArmor
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent:
+  _directChildren: []
+  playerSideSource: {fileID: 1085582586736328652}
 --- !u!4 &1085582586730731022 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
@@ -932,7 +959,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f449ad67f9e744118c149040040cafc6, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerInput
 --- !u!114 &1085582586736328652 stripped
 MonoBehaviour:
@@ -943,7 +970,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4213734673864c8386d9c67227118f1e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerBody
 --- !u!4 &8826808216745419861 stripped
 Transform:
