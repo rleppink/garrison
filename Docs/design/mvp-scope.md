@@ -50,7 +50,7 @@ Anything we'd want to tweak between rounds is a host-settable lobby config optio
   downed & immobile, 0 = dead**; no healing — a syrette (drafted item, = the only
   revive) gets a downed player up and mobile but still at 1 heart, so the next hit
   kills; otherwise they bleed out.
-- Defender armor (absorbs first hit per heart unless focus-fired by 2+).
+- Defender durability: the defender has 4 hearts instead of the attackers' 3.
 - Defender respawn from outpost, drives back in (~15–30s, configurable).
 - Attacker permadeath → shoulder-spectator (locked to one living teammate's
   exact view, switchable).

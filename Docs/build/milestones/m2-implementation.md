@@ -75,8 +75,8 @@ the design steers from the planning session). Each is recorded again in C9.
 
 - **Hitscan-with-deviation, not projectile** (milestone recommendation) — most
   readable top-down, makes TTK a clean dial.
-- **No armor regen within a round** (milestone recommendation) — armor is a
-  one-shot buffer per heart.
+- **Defender armor is cut for M2.** The defender simply has 4 max hearts instead
+  of the attackers' 3. No focus-fire tracker, no armor regen, no armor pips.
 - **Test weapon = an M1-Garand-style semi-auto rifle, fired one shot per click**,
   *not* the Sten, for M2. The weapon stays a **data profile** (§5), so a full-auto
   Sten is a re-seed of the same keys later — the "Sten TTK @ 20m" bellwether
@@ -89,7 +89,7 @@ the design steers from the planning session). Each is recorded again in C9.
   "read facing from posture" tell. It's cheap — `NetworkTransform` already
   replicates rotation.
 - **Defender vs attacker for M2 is a config stopgap** — `ConfigKey.DefenderSlot`
-  (default 0 = host/first player) picks the one armored defender. The real
+  (default 0 = host/first player) picks the one 4-heart defender. The real
   role/lobby picker is **M4's**; this is throwaway (C1).
 - **Feedback is "lightweight but real,"** plus a presentation steer: a thin
   **local aim line** (where you're pointing) that is visually distinct from a
@@ -118,7 +118,7 @@ Player/PlayerBody.prefab     pure Player base (M1 + C2 facing): NetworkTransform
         │  «variant of»      No weapon, no combat. Fully functional on its own.
         ▼
 Combat/Combatant.prefab      Combat owns it. Adds to the base identity:
-                             LifeState, Accuracy, WeaponFire, DefenderArmor,
+                             LifeState, Accuracy, WeaponFire,
                              Syrette + weapon visual + Muzzle + aim line / HUD.
 
 PlayerSpawner (Player) keeps `[SerializeField] GameObject` body-prefab,
@@ -175,7 +175,7 @@ both still shippable, in descending order of cleanliness.
 | C4 | Life-state machine: hearts, downed, dead (+ HUD, down visual) | ⏳ Not started | — |
 | C5 | Accuracy: movement-state → spread | ⏳ Not started | — |
 | C6 | Test weapon profile + fire path + hit resolution (+ tracer/muzzle/gunfire) | ⏳ Not started | — |
-| C7 | Defender armor + focus-fire tracker | ⏳ Not started | — |
+| C7 | Defender has 4 hearts instead of attacker 3 | ⏳ Not started | — |
 | C8 | Syrette: down → up (the only revive) | ⏳ Not started | — |
 | C9 | Acceptance pass — the 2v1 feel gate + TTK bellwether | ⏳ Not started | — |
 
@@ -190,7 +190,7 @@ Status is recorded (same bar as M1):
   slice); `Combat` asmdef references only `Garrison.Shared` + `PurrNet.Runtime`.
 - No banned patterns — `Find`/`FindObjectOfType`/`Camera.main`/`*.Instance`/
   static singletons/`DontDestroyOnLoad` (explanatory comments allowed).
-- Server-authoritative combat — hits, hearts, armor, lifestate transitions are
+- Server-authoritative combat — hits, hearts, lifestate transitions are
   **server-decided**; clients never self-report a hit. The base
   `PlayerBody.prefab` `NetworkTransform` `_ownerAuth` stays **0** (the `Combatant`
   variant inherits it — re-check after any MCP prefab edit, per M1's caveat).
@@ -213,7 +213,8 @@ and functional.
   forward). Written by Player on the **base** (C2), read by Combat hit
   resolution (C6).
 - **`IPlayerSide`** — `Side { Attacker, Defender }`. Implemented on the **base**
-  body, set by `PlayerSpawner` (C1), read by Combat armor (C7).
+  body, set by `PlayerSpawner` (C1), read by Combat life-state for defender max
+  hearts (C7).
 - **`ILifeState`** — `LifeState { Healthy, Downed, Up, Dead }` + `bool CanAct`
   + lifestate-change events. Owned by **Combat** on the variant (C4). Player
   consumes it as an **optional hook**: `PlayerMovement`/`PlayerInput` hold an
@@ -227,7 +228,7 @@ and functional.
 
 **Goal:** prove the prefab-variant composition actually replicates under PurrNet,
 stand up the empty `Combatant` variant the rest of M2 builds onto, and give every
-body a side so armor (C7) and the 2v1 setup have something to read.
+body a side so defender durability (C7) and the 2v1 setup have something to read.
 
 **Status — done.** Spike verdict: **PASS (host-side
 confirmation).** `Combat/Combatant.prefab` exists as a true prefab *variant* of
@@ -424,8 +425,7 @@ events later slices subscribe to. The first real `Combat/` component.
   names Combat.
 - A server damage entry — `ApplyHit(PlayerID attacker)` — that C6 calls (and a
   `#if`-guarded debug key to exercise it before C6 exists). Damage rule:
-  **1 heart per hit**; application order **armor-first** is C7's insertion point —
-  for now apply straight to hearts.
+  **1 heart per hit**.
 - **Lightweight feedback:**
   - **Hearts HUD** — a `Combat/` component on the variant that renders only when
     `IsLocalView` (base seam) and reads its own `LifeState` directly (same prefab),
@@ -513,9 +513,7 @@ muzzle flash / gunfire that make a firefight readable. The milestone's core.
   3. hitscan the ray to `WeaponRange` with falloff; **server decides** the target
      (raycast against body colliders — the legitimate runtime `GetComponent` case
      from the architecture doc: `hit.collider.TryGetComponent(out LifeState)`);
-  4. on a connect, call the target's `LifeState.ApplyHit(attacker)` — **1 heart**,
-     **armor-first then hearts** (C7 fills the armor branch; for now straight to
-     hearts).
+  4. on a connect, call the target's `LifeState.ApplyHit(attacker)` — **1 heart**.
 - **Replicated fire event** — server raises an `[ObserversRpc]` carrying the shot
   line (origin + resolved end point) and the shooter. Every client renders:
   - **Tracer** — a **thick**, momentary line along the resolved (deviated) shot,
@@ -535,8 +533,8 @@ muzzle flash / gunfire that make a firefight readable. The milestone's core.
   unreliable, facing is current enough for a click rifle.)
 - M2 has **no LOS check** — M3 inserts it into this same resolution path. Leave the
   seam obvious (a single "does the ray reach the target" step LOS will gate).
-- Friendly fire / valid targets: M2 applies damage regardless of side (side only
-  gates armor in C7). Don't build team rules here.
+- Friendly fire / valid targets: M2 applies damage regardless of side. Don't build
+  team rules here.
 - The `WeaponFire` muzzle reference is wired **within the variant** via
   `[SerializeField]` to the C3 `Muzzle` transform — both live on `Combatant`, so
   it's a plain prefab wiring, not a `Find`.
@@ -550,43 +548,25 @@ muzzle flash / gunfire that make a firefight readable. The milestone's core.
 
 ---
 
-## C7 — Defender armor + focus-fire tracker
-
-**Goal:** "focused fire breaks the defender" as a legible rule on the same 3-heart
-numerics — armor absorbs a lone shooter, breaks under 2+ coordinated attackers.
+## C7 — Defender has 4 hearts
 
 **Build**
-- `Combat/DefenderArmor.cs` on the **`Combatant` variant**, active only when
-  `IPlayerSide.Side == Defender` (read the C1 seam). Server owns:
-  - per-heart **"armor intact"** flags (replicate as a primitive bitmask
-    `SyncVar<int>`);
-  - a short **focus-fire tracker** — recent hits tagged by **distinct** attacker
-    `PlayerID`, within `ConfigKey.FocusFireWindowSec`.
-- Insert into C6's damage application, **before hearts** (this is the "armor-first"
-  branch C6 left open): a hit that would cost a heart is **absorbed** by that
-  heart's armor — **unless ≥ `ConfigKey.FocusFireThreshold` (=2) distinct
-  attackers have landed hits inside the window**, in which case armor **breaks and
-  the heart is lost** instead.
-- **No regen** within a round (decision) — once absorbed/broken, that heart's armor
-  is spent.
-- Config: `ConfigKey.FocusFireWindowSec` (float), `FocusFireThreshold` (int, 2).
-- Lightweight visual: armor pips next to the defender's hearts on the HUD, and/or a
-  brief absorb flash distinct from the C6 hit flash.
+- `Combat/LifeState.cs` reads `IPlayerSide` through the C1 seam.
+- On server spawn, attackers seed from `ConfigKey.MaxHearts` (default 3) and the
+  defender seeds from `ConfigKey.DefenderMaxHearts` (default 4).
+- Gunshots still remove exactly 1 heart. There is no armor layer and no focus-fire
+  branch in damage resolution.
+- Config: `ConfigKey.DefenderMaxHearts` (int, 4).
 
 **Notes**
-- Attackers have **no armor** — `DefenderArmor` simply isn't engaged for their
-  bodies (or the component no-ops on `Side.Attacker`). Keep both sides on the same
-  3-heart `LifeState`; armor is the *only* defender asymmetry.
-- "Distinct attackers" means a single shooter hammering alone never breaks armor
-  no matter the fire rate — it's the **count of distinct `PlayerID`s** in the
-  window that crosses the threshold. That's the combined-arms rule made legible.
-- This is the cleanest place a balance bug hides — verify the window/threshold
-  logic with a deliberate 1-shooter-vs-2-shooter test in C9.
+- This replaces the previous focus-fire armor plan. The MVP rule is intentionally
+  plain: defender = one extra hit to kill.
+- Keep `MaxHearts` as the attacker baseline so later role/lobby work can still
+  tune the two sides separately.
 
 **Done when**
-- A lone attacker's hits are absorbed by the defender's armor (hearts hold); two
-  attackers landing hits inside `FocusFireWindowSec` break armor and start
-  dropping hearts. Attackers themselves have no armor. No regen.
+- With `DefenderSlot = 0`, the defender spawns with 4 hearts and attackers spawn
+  with 3. Hits reduce hearts normally on both sides.
 
 ---
 
@@ -637,8 +617,7 @@ available in M2 so the loop can be tuned.
 - [ ] A 2v1 firefight on the greybox reads **tactical, not twitch.**
 - [ ] The **movement penalty visibly punishes run-and-gun** — the aim-line-vs-
       tracer gap widens when moving/sprinting, and shots stray.
-- [ ] **Defender armor tanks a lone shooter** but **breaks under coordinated 2+
-      fire** inside `FocusFireWindowSec`.
+- [ ] The defender's 4-heart durability reads clearly against 3-heart attackers.
 - [ ] **TTK @ 20m feels right** and is reachable by turning the weapon-profile /
       spread dials (no code edit).
 - [ ] The down→syrette→up→one-more-hit-dead loop plays out; bleed-out drama reads
@@ -650,15 +629,15 @@ available in M2 so the loop can be tuned.
 
 **The gate (the deliverable)**
 - **Pass:** caution beats aggression, the triple-tradeoff (inaccurate + exposed +
-  blind-behind) reads as deliberate, armor's combined-arms rule is legible → M2 is
+  blind-behind) reads as deliberate, and defender durability is legible → M2 is
   go; proceed.
-- **Fail (valid, useful):** run-and-gun dominates, TTK feels twitchy, or armor
-  feels binary → tune the dials (spreads, fire rate, focus-fire window/threshold,
+- **Fail (valid, useful):** run-and-gun dominates, TTK feels twitchy, or defender
+  durability feels wrong → tune the dials (spreads, fire rate, max hearts,
   bleed-out) and re-judge; escalate only if a dial can't reach it.
 
 **Record (the open decisions closed here)**
 - Hitscan-with-deviation — **chosen** (note it held up or didn't).
-- Armor regen — **none** (note if playtest demanded otherwise).
+- Defender armor — **cut**; defender uses 4 max hearts instead.
 - `BleedOutSec` — the landed value.
 - Garand-semi-auto substitution for the Sten — note whether the rifle was a fine
   bellwether stand-in or the Sten should come back before M3.
@@ -685,22 +664,22 @@ C4 life-state (hearts/downed/dead) ─► C6 weapon + fire path + hit resolution
       ▲                                 │      ▲
 C5 accuracy (movement → spread) ────────┘      │
                                                │
-                          C7 defender armor ───┘ (inserts armor-first into C6's damage path)
+                          C7 defender 4 hearts ─┘
                                                │
                           C8 syrette (down → up)
                                                │
                           C9 acceptance — 2v1 feel gate + TTK ◄── all
 ```
 
-- **C1 is the foundation** for the side-dependent armor; **C2 the foundation** for
+- **C1 is the foundation** for side-dependent max hearts; **C2 the foundation** for
   the weapon visual and the shot direction.
 - The **life-state chain (C4)** and the **fire chain (C2→C3 + C5→C6)** are largely
   independent and can be split between two engineers; they **rejoin at C6**, where
   firing applies damage to the life-state.
-- **C7 inserts into C6's** already-built damage path (armor-first), so build C6
-  applying straight to hearts, then wrap it.
+- **C7 adjusts C4's** max-heart seeding by side; C6 keeps applying damage straight
+  to hearts.
 - Config keys land **inline**: `DefenderSlot` (C1); `BodyTurnSpeed` (C2);
   `AimLineWidth`/`AimLineLength` (C3); `MaxHearts`/`BleedOutSec` (C4);
-  `Accuracy*Spread` (C5); `Weapon*` profile (C6); `FocusFireWindowSec`/
-  `FocusFireThreshold` (C7); `SyretteReachRadius` (C8). The config *system* is
+  `Accuracy*Spread` (C5); `Weapon*` profile (C6); `DefenderMaxHearts` (C7);
+  `SyretteReachRadius` (C8). The config *system* is
   M0's; M2 only adds keys.

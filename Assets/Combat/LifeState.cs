@@ -10,7 +10,10 @@ namespace Garrison.Combat
     public sealed class LifeState : NetworkBehaviour, ILifeState, IConfigConsumer
     {
         private const int DefaultMaxHearts = 3;
+        private const int DefaultDefenderMaxHearts = 4;
         private const float DefaultBleedOutSec = 12f;
+
+        [SerializeField] private MonoBehaviour playerSideSource;
 
         private readonly SyncVar<int> hearts = new(DefaultMaxHearts);
         private readonly SyncVar<int> lifeState = new((int)SharedLifeState.Healthy);
@@ -33,10 +36,12 @@ namespace Garrison.Combat
 
         public float BleedOutRemaining => bleedOutRemaining;
 
+        private IPlayerSide PlayerSide => playerSideSource as IPlayerSide;
+
         public void Configure(IConfig source)
         {
             config = source;
-            maxHearts = Mathf.Max(1, config?.GetInt(ConfigKey.MaxHearts, DefaultMaxHearts) ?? DefaultMaxHearts);
+            maxHearts = Mathf.Max(GetConfiguredMaxHearts(), hearts.value);
         }
 
         private void OnEnable()
@@ -52,10 +57,12 @@ namespace Garrison.Combat
 
         protected override void OnSpawned(bool asServer)
         {
+            maxHearts = Mathf.Max(GetConfiguredMaxHearts(), hearts.value);
+
             if (!asServer)
                 return;
 
-            maxHearts = Mathf.Max(1, config?.GetInt(ConfigKey.MaxHearts, DefaultMaxHearts) ?? DefaultMaxHearts);
+            maxHearts = GetConfiguredMaxHearts();
             hearts.value = maxHearts;
 
             SharedLifeState initialState = maxHearts > 1
@@ -116,6 +123,14 @@ namespace Garrison.Combat
                 return;
 
             SetState(SharedLifeState.Downed);
+        }
+
+        private int GetConfiguredMaxHearts()
+        {
+            if (PlayerSide?.Side == Side.Defender)
+                return Mathf.Max(1, config?.GetInt(ConfigKey.DefenderMaxHearts, DefaultDefenderMaxHearts) ?? DefaultDefenderMaxHearts);
+
+            return Mathf.Max(1, config?.GetInt(ConfigKey.MaxHearts, DefaultMaxHearts) ?? DefaultMaxHearts);
         }
 
         private void Die()

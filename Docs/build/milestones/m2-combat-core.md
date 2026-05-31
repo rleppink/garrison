@@ -25,8 +25,8 @@ time).
 ### 1. Life-state
 - **Responsibility:** the single source of truth for whether a character is up,
   down, or out.
-- **Owns:** `hearts` (current / max), `armorPerHeart` (defender only — see §4),
-  and a lifestate machine:
+- **Owns:** `hearts` (current / max), with attackers at 3 max hearts and the
+  defender at 4 max hearts (see §4), and a lifestate machine:
 
   ```
   Healthy ──drops to 1 heart──► Downed ──syrette──► Up (mobile, still 1 heart)
@@ -48,20 +48,19 @@ time).
     expiring. The character goes inert and leaves play; *where its dropped gear
     goes* is M6's concern, *what the dead player sees* is M9's (shoulder-
     spectator). M2 only owns the transition.
-- **Config read:** `maxHearts`, `bleedOutSec`.
+- **Config read:** `maxHearts`, `defenderMaxHearts`, `bleedOutSec`.
 - **Seam exposed:** emits lifestate-change events (became-downed / got-up /
   died). M6 (loot drop), M9 (spectator) subscribe later. Life-state never reaches
   into those slices — it announces, they listen.
 
 ### 2. Hit resolution (server-authoritative)
 - **Responsibility:** the one server-side path that turns "someone fired" into
-  "hearts/armor removed." Clients never self-report hits.
+  "hearts removed." Clients never self-report hits.
 - **Flow (the seam):** client sends a *fire input* → server decides whether it
   connects, using shooter position + aim + the accuracy deviation from §3 (and,
   once M3 lands, LOS) → on a connect, it applies damage to the target's §1
   life-state.
-- **Damage rule:** gunshot = 1 heart. Application order is **armor first (if any,
-  and unbroken), then hearts.**
+- **Damage rule:** gunshot = 1 heart.
 - **Open decision to nail here:** hitscan-with-deviation vs projectile.
   *Recommendation: hitscan-with-deviation* — most readable in a top-down view and
   makes TTK a clean dial.
@@ -76,19 +75,15 @@ time).
 - **Seam consumed:** read by §2 at fire time. Adds no new networking — it's an
   input to the server's hit check.
 
-### 4. Defender armor
-- **Responsibility:** make "focused fire breaks the defender" a legible rule
-  while keeping both sides on the same 3-heart numerics.
-- **Owns:** per-heart "armor intact" flags, plus a short **focus-fire tracker**
-  (recent hits tagged by distinct attacker).
-- **Rule:** a hit that would cost a heart is *absorbed* by that heart's armor —
-  **unless ≥ `focusFireThreshold` distinct attackers have landed hits inside
-  `focusFireWindowSec`,** in which case armor breaks and the heart is lost
-  instead.
-- **Config read:** `focusFireWindowSec`, `focusFireThreshold` (= 2).
-- **Open decision to nail here:** does absorbed armor regenerate within a round?
-  *Recommendation: no regen for MVP* — armor is a one-shot buffer per heart;
-  revisit only if playtest demands it.
+### 4. Defender durability
+- **Responsibility:** give the solo defender a small durability edge without a
+  second armor subsystem.
+- **Rule:** the defender has 4 max hearts. Attackers have 3 max hearts. Gunshots
+  still remove exactly 1 heart.
+- **Config read:** `defenderMaxHearts` (default 4), alongside attacker
+  `maxHearts` (default 3).
+- **Decision recorded:** the previous focus-fire armor idea was cut during M2
+  implementation as needless complexity. Armor is just extra hearts for the MVP.
 
 ### 5. Test weapon
 - **Responsibility:** give §2/§3 something to fire and the bellwether something to
@@ -102,11 +97,10 @@ time).
 | Key                    | Shape                                                     | Starting value           |
 |------------------------|-----------------------------------------------------------|--------------------------|
 | `maxHearts`            | int                                                       | 3                        |
+| `defenderMaxHearts`    | int                                                       | 4                        |
 | `bleedOutSec`          | float                                                     | TBD (tunes rescue drama) |
 | `weapon.*`             | profile: fireRate, damageHearts, baseSpread, rangeFalloff | tuned to Sten TTK @ 20m  |
 | `accuracy.spreadCurve` | idleSpread / movingSpread / sprintSpread                  | TBD                      |
-| `focusFireWindowSec`   | float                                                     | TBD                      |
-| `focusFireThreshold`   | int                                                       | 2                        |
 
 (All into the lobby-config system from M0.)
 
@@ -119,7 +113,8 @@ bus:
 
 ## Open decisions to resolve in M2
 - Hitscan-with-deviation vs projectile (recommend hitscan).
-- Armor regen within a round (recommend no).
+- Defender armor model — **resolved:** no focus-fire armor layer; defender has 4
+  hearts, attackers have 3.
 - Bleed-out timer length (`bleedOutSec`) — the rescue-drama dial.
 - Syrette is **in** as the down→up mechanic (and the only revive); M2 assumes it's
   freely available to tune the loop, the shared-gear-pool draft that makes it
@@ -128,8 +123,8 @@ bus:
 ## Done when
 - A small firefight (e.g. 2v1) on the greybox reads tactical, not twitch.
 - The movement penalty visibly punishes run-and-gun.
-- Defender armor tanks a lone shooter but breaks under coordinated 2+ fire inside
-  the focus-fire window.
+- Defender durability reads simply: the defender takes one more hit than an
+  attacker, with no special armor rules.
 - The Sten TTK @ 20m feels right — and is reachable by turning the dial.
 
 ## Explicitly not in M2

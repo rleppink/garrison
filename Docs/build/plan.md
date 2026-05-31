@@ -76,7 +76,7 @@ now — before we've built a game on top of it.
 The `Combat/` slice.
 - 3 hearts; gunshot = 1 heart; movement-reduces-accuracy live; downed at 0 +
   teammate revive window; attacker permadeath.
-- Defender armor (absorbs first hit per heart unless focus-fired by 2+).
+- Defender durability: the defender has 4 hearts instead of the attackers' 3.
 - One test weapon tuned toward the **Sten TTK @ 20m bellwether**.
 
 **Proves:** a firefight reads as tactical, not twitch. The bellwether number.

@@ -161,9 +161,9 @@ and a *counter* — lethal if unseen, beatable if seen. Scouting time *is* the
 "pay attention" tax. A **kill box** = a spot the defender has rigged so a
 careless crew is torn up and an attentive crew walks around.
 
-**Defender = quick-reaction force (QRF):** armored (armor degrades under
-*focused* fire — one attacker can't break it, two or three coordinating can),
-home-field aware, decisive on prepared ground ("defender's advantage"). But the
+**Defender = quick-reaction force (QRF):** tougher than an attacker (4 hearts
+instead of 3), home-field aware, decisive on prepared ground ("defender's
+advantage"). But the
 **autonomous defenses are the backbone** — they must hold the line even while
 the defender is dead/away, or killing the defender becomes a free win. The
 defender tips *marginal* fights and plugs the gap the crew is currently
@@ -412,11 +412,9 @@ Discrete and readable; tactical-shooter shape inside a top-down camera.
   planning ("do we bring 2 syrettes or trade them for an extra grenade?") and
   carried as one of the shared-pool items. **Revive *is* the syrette** — there's
   no item-less revive. Defender has no syrettes; their recovery *is* respawn.
-- **Defender armor.** Same 3 hearts, plus an armor layer that absorbs the
-  first hit per heart *unless* two+ attackers land hits within a short focus-
-  fire window (then armor breaks instead of absorbing). Makes the "focused
-  fire breaks the defender" rule legible and keeps numerics consistent across
-  both sides.
+- **Defender durability.** The defender has 4 hearts instead of the attackers'
+  3. The previous focus-fire armor layer was cut for the MVP; armor is just
+  extra hearts.
 
 Combination check: 3 hearts + movement inaccuracy + Hotline-Miami camera-push
 is a *new* combination. Hotline Miami got away with aim-pans-camera because

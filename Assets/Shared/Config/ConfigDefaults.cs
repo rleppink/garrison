@@ -23,6 +23,7 @@ namespace Garrison.Shared.Config
         // zoom; the camera frustum clips it and collision/blockers trim it shorter.
         [SerializeField] private float aimLineLength = 1000f;
         [SerializeField, Min(1)] private int maxHearts = 3;
+        [SerializeField, Min(1)] private int defenderMaxHearts = 4;
         [SerializeField, Min(0f)] private float bleedOutSec = 12f;
         [SerializeField, Min(0f)] private float accuracyIdleSpread;
         [SerializeField, Min(0f)] private float accuracyMovingSpread = 2f;
@@ -66,6 +67,7 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.AimLineWidth, ConfigValue.Float(aimLineWidth));
             yield return Pair(ConfigKey.AimLineLength, ConfigValue.Float(aimLineLength));
             yield return Pair(ConfigKey.MaxHearts, ConfigValue.Int(maxHearts));
+            yield return Pair(ConfigKey.DefenderMaxHearts, ConfigValue.Int(defenderMaxHearts));
             yield return Pair(ConfigKey.BleedOutSec, ConfigValue.Float(bleedOutSec));
             yield return Pair(ConfigKey.AccuracyIdleSpread, ConfigValue.Float(accuracyIdleSpread));
             yield return Pair(ConfigKey.AccuracyMovingSpread, ConfigValue.Float(accuracyMovingSpread));

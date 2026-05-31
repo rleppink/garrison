@@ -20,6 +20,7 @@ MonoBehaviour:
   aimLineWidth: 0.025
   aimLineLength: 1000
   maxHearts: 3
+  defenderMaxHearts: 4
   bleedOutSec: 12
   accuracyIdleSpread: 0
   accuracyMovingSpread: 2
