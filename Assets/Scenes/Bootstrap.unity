@@ -1321,7 +1321,7 @@ MonoBehaviour:
   _directChildren: []
   roundController: {fileID: 1987000003}
   configSource: {fileID: 1877830053}
-  playerBodyPrefab: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+  playerBodyPrefab: {fileID: 1085582586730301998, guid: b59cf6d9d69dd40b2a264da66e921658, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

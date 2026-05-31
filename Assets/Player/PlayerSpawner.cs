@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Garrison.Shared.Config;
+using Garrison.Shared.Player;
 using Garrison.Shared.Round;
 using PurrNet;
 using UnityEngine;
@@ -46,6 +47,10 @@ namespace Garrison.Player
             SpawnPoints spawnPoints = FindSpawnPoints(mapScene);
             IReadOnlyList<PlayerID> players = networkManager.players;
 
+            // Throwaway role picker (real one is M4): the player at DefenderSlot is the
+            // lone armored defender, everyone else attacks. Same index the spawn points use.
+            int defenderSlot = Config != null ? Config.GetInt(ConfigKey.DefenderSlot) : 0;
+
             for (int i = 0; i < players.Count; i++)
             {
                 PlayerID player = players[i];
@@ -69,6 +74,7 @@ namespace Garrison.Player
                 // initial network state. Spawning first can let multiple clients see
                 // the same default owner and route local input to the same body.
                 body.Assign(player);
+                body.AssignSide(i == defenderSlot ? Side.Defender : Side.Attacker);
                 if (bodyObject.TryGetComponent(out PlayerMovement movement))
                     movement.Configure(Config);
 

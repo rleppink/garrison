@@ -13,6 +13,11 @@ namespace Garrison.Shared.Config
         [SerializeField] private float moveSpeed = 4.5f;
         [SerializeField] private float sprintSpeed = 5.8f;
 
+        [Header("Combat")]
+        // Index into the round's player list that gets Side.Defender (0 = host/first
+        // player); everyone else is an attacker. Throwaway role picker until M4's lobby.
+        [SerializeField] private int defenderSlot;
+
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;
         [SerializeField] private float cameraPushExtent = 8f;
@@ -34,6 +39,7 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.PlayerCount, ConfigValue.Int(playerCount));
             yield return Pair(ConfigKey.MoveSpeed, ConfigValue.Float(moveSpeed));
             yield return Pair(ConfigKey.SprintSpeed, ConfigValue.Float(sprintSpeed));
+            yield return Pair(ConfigKey.DefenderSlot, ConfigValue.Int(defenderSlot));
             yield return Pair(ConfigKey.CameraZoom, ConfigValue.Float(cameraZoom));
             yield return Pair(ConfigKey.CameraPushExtent, ConfigValue.Float(cameraPushExtent));
             yield return Pair(ConfigKey.CameraPushShape, ConfigValue.Int(cameraPushShape));

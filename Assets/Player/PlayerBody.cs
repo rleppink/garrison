@@ -10,13 +10,17 @@ namespace Garrison.Player
     // Implements the Shared ILocalPlayerView seam so local-presentation services (the
     // Vision camera) can follow it without referencing the Player slice. The local
     // check lives here because only the Player slice knows about AssignedPlayer.
-    public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView, IMovementState, IAudioBusSink
+    public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView, IMovementState, IPlayerSide, IAudioBusSink
     {
         [SerializeField] private PlayerAim aim;
         [SerializeField] private PlayerFootstepEmitter footstepEmitter;
 
         private readonly SyncVar<PlayerID> assignedPlayer = new(PlayerID.Server);
         private readonly SyncVar<int> movementState = new((int)MovementState.Idle);
+
+        // Replicated as a primitive int (not the Side enum directly): a custom enum in
+        // SyncVar<T> is the M1 hasher crash. Decode back to Side through the seam.
+        private readonly SyncVar<int> side = new((int)Shared.Player.Side.Attacker);
 
         public event Action LocalViewStatusChanged;
 
@@ -31,6 +35,9 @@ namespace Garrison.Player
         public IAimSource Aim => aim;
 
         public IMovementState Movement => this;
+
+        // Role for the round (attacker/defender), decoded from the replicated int.
+        public Side Side => DecodeSide(side.value);
 
         public MovementState State => DecodeMovementState(movementState.value);
 
@@ -83,6 +90,14 @@ namespace Garrison.Player
             NotifyLocalViewStatusChanged();
         }
 
+        // Server-only, symmetric with Assign(PlayerID): set before NetworkIdentity.Spawn
+        // so the side ships in the initial network state. DefenderSlot (config) picks who.
+        public void AssignSide(Side side)
+        {
+            if (!isSpawned || isServer)
+                this.side.value = (int)side;
+        }
+
         public void SetMovementState(MovementState state)
         {
             if (isServer)
@@ -107,6 +122,13 @@ namespace Garrison.Player
                 (int)MovementState.Sprinting => MovementState.Sprinting,
                 _ => MovementState.Idle
             };
+        }
+
+        private static Side DecodeSide(int value)
+        {
+            return value == (int)Shared.Player.Side.Defender
+                ? Shared.Player.Side.Defender
+                : Shared.Player.Side.Attacker;
         }
 
         private void OnAssignedPlayerChanged(PlayerID _)
