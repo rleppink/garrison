@@ -242,6 +242,16 @@ slice owns spawning it* — `Shared` no longer references any player type.
 
 ## C2 — Orthographic camera rig that follows the local body
 
+> **Superseded (M2 feel pass):** the projection was later switched from
+> orthographic to a **subtle low-FOV perspective** so buildings read as solid
+> volumes and reveal a side as you flank them. `CameraRig.ApplyProjection` now
+> sets `orthographic = false` and derives `fieldOfView = 2·atan(zoom / distance)`,
+> so `zoom` keeps its meaning (world half-height at the body's focus plane) and
+> `distance` becomes the perspective-strength dial. The follow/seam architecture
+> and the safe-viewport clamp below are unchanged — the clamp still uses `zoom` as
+> the focus-plane half-height (the `orthographicSize` references in C2/C4 are the
+> as-built M1 state). See `concept.md` → "Camera & vision".
+
 **Status:** Done (`e97912b`). `Vision/CameraRig` (local `MonoBehaviour`, not
 networked) drives the persistent Bootstrap Main Camera: orthographic, fixed
 top-down/iso angle (serialized `viewDirection`/`distance` dials), zoom via

@@ -355,10 +355,13 @@ gold & heavy gear make the *carry* the hard part but let you vanish.
 
 ## Camera & vision
 
-The view is **top-down 3D / isometric**, zoomed in enough that off-screen
-props (e.g. DF towers) aren't typically visible during play. That's the central
-craft problem of the genre: the *player* sees less than their *character*
-diegetically would. Resolved cluster of decisions:
+The view is **top-down 3D through a subtle low-FOV perspective** (settled in the
+M2 feel pass — *not* orthographic/isometric: a narrow field of view keeps the
+tactical read clean while letting buildings read as solid volumes and reveal a
+side as you flank them). It's zoomed in enough that off-screen props (e.g. DF
+towers) aren't typically visible during play. That's the central craft problem of
+the genre: the *player* sees less than their *character* diegetically would.
+Resolved cluster of decisions:
 
 - **Aim extends the camera (Hotline Miami style).** Aiming farther pushes the
   camera in that direction, with a hard rule: *your character never leaves

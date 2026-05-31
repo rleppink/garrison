@@ -18,8 +18,10 @@ gamble in the design, and it's testable with 2 people before a single objective
 exists. If it's bad, this is the cheapest possible moment to learn it.
 
 ## The camera system
-- **Responsibility:** present a top-down/iso view that follows the character and
-  extends toward where they aim — under one hard invariant.
+- **Responsibility:** present a top-down 3D view that follows the character and
+  extends toward where they aim — under one hard invariant. (Projection: M1
+  shipped orthographic; the M2 feel pass swapped it for a subtle low-FOV
+  perspective — see `concept.md` → "Camera & vision".)
 - **Owns:** the camera's target framing, derived from (character position, aim
   vector, push dials).
 - **Invariant (non-negotiable):** *the character never leaves the screen.* Every

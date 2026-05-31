@@ -19,7 +19,9 @@ namespace Garrison.Shared.Config
         // player); everyone else is an attacker. Throwaway role picker until M4's lobby.
         [SerializeField] private int defenderSlot;
         [SerializeField] private float aimLineWidth = 0.025f;
-        [SerializeField] private float aimLineLength = 7f;
+        // Max aim-line reach. Far past the screen so it always reaches the edge at any
+        // zoom; the camera frustum clips it and collision/blockers trim it shorter.
+        [SerializeField] private float aimLineLength = 1000f;
 
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;

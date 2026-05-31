@@ -6,10 +6,19 @@ namespace Garrison.Vision
 {
     // Local presentation only — NOT networked. Drives the persistent Bootstrap
     // Main Camera to frame the local player's body from a fixed top-down/iso angle,
-    // orthographic, with zoom and aim-push driven by config. It reads the body only
+    // PERSPECTIVE, with zoom and aim-push driven by config. It reads the body only
     // through the Shared ILocalPlayerRegistry seam, so Vision never touches the
     // Player slice. The push is clamped after all shaping so the body stays inside
     // the safe viewport inset.
+    //
+    // Projection: a deliberately LOW field of view (telephoto), derived so the body's
+    // focus plane frames the same world half-height the old orthographic size did
+    // (FOV = 2·atan(zoom / distance)). `zoom` keeps its meaning — world half-height at
+    // the body — and `distance` becomes the perspective-strength dial: farther back =
+    // narrower FOV = subtler convergence. Subtle (not strong) perspective on purpose:
+    // buildings read as solid volumes and reveal a side as you flank them, while
+    // verticals barely lean and the screen↔ground mapping stays near-linear, which
+    // keeps the aim-push fair and the view readable (kill-boxes, MG arcs, LOS fog).
     public sealed class CameraRig : MonoBehaviour
     {
         private const int PushShapeCircle = 0;
@@ -35,7 +44,12 @@ namespace Garrison.Vision
         // WASD mapping. Keep z POSITIVE: flipping it puts the camera north-of-body
         // looking south, which mirrors both screen axes (W moves down, D moves left).
         [SerializeField] private Vector3 viewDirection = new(0f, -1f, 0.5f);
-        [SerializeField] private float distance = 20f;
+
+        // Camera setback from the focus plane AND the perspective-strength dial: the
+        // FOV is derived as 2·atan(zoom / distance), so a larger distance narrows the
+        // FOV for subtler convergence while preserving the body's framing. Lower it to
+        // make buildings reveal their sides more aggressively (wider FOV, more lean).
+        [SerializeField] private float distance = 35f;
 
         // Fallbacks used until config delivers values (e.g. before the client connects).
         [SerializeField] private float defaultZoom = 10f;
@@ -249,8 +263,13 @@ namespace Garrison.Vision
             if (targetCamera == null)
                 return;
 
-            targetCamera.orthographic = true;
-            targetCamera.orthographicSize = zoom;
+            // Low-FOV perspective. The body sits exactly `distance` along the view axis
+            // from the camera, so a frustum half-height of `zoom` at that depth matches
+            // the old orthographicSize framing. Guard distance so a degenerate 0 can't
+            // blow the FOV up to 180°.
+            float safeDistance = Mathf.Max(0.01f, distance);
+            targetCamera.orthographic = false;
+            targetCamera.fieldOfView = 2f * Mathf.Atan2(zoom, safeDistance) * Mathf.Rad2Deg;
         }
     }
 }

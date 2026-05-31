@@ -8,10 +8,12 @@ namespace Garrison.Combat
     public sealed class CombatAimLine : MonoBehaviour, IConfigConsumer, ILocalPlayerViewConsumer
     {
         private const float DefaultWidth = 0.025f;
-        private const float DefaultLength = 7f;
-        private const float ViewportMin = 0f;
-        private const float ViewportMax = 1f;
-        private const float ViewportEpsilon = 0.0001f;
+        // Deliberately far past the screen so the line always reaches the edge at any
+        // zoom; the camera frustum clips the overshoot (free) and ClampLengthToCollision
+        // trims it at blockers. Solid-color line, so the long stretch costs nothing — if
+        // a patterned/scrolling texture is ever added, switch the LineRenderer to Tile.
+        private const float DefaultLength = 1000f;
+        private const float DirectionEpsilon = 0.0001f;
 
         [SerializeField] private MonoBehaviour localViewSource;
         [SerializeField] private Transform muzzle;
@@ -89,7 +91,7 @@ namespace Garrison.Combat
             Vector3 origin = muzzle.position;
             Vector2 planarDirection = localView.Aim != null ? localView.Aim.AimDirection : Vector2.zero;
             Vector3 direction = new(planarDirection.x, 0f, planarDirection.y);
-            if (direction.sqrMagnitude <= ViewportEpsilon)
+            if (direction.sqrMagnitude <= DirectionEpsilon)
             {
                 lineRenderer.SetPosition(0, origin);
                 lineRenderer.SetPosition(1, origin);
@@ -98,11 +100,7 @@ namespace Garrison.Combat
 
             direction.Normalize();
 
-            float fallbackLength = config?.GetFloat(ConfigKey.AimLineLength, DefaultLength) ?? DefaultLength;
-            float length = TryGetScreenEdgeLength(origin, direction, localView.ViewCamera, out float screenLength)
-                ? screenLength
-                : fallbackLength;
-
+            float length = config?.GetFloat(ConfigKey.AimLineLength, DefaultLength) ?? DefaultLength;
             length = ClampLengthToCollision(origin, direction, length);
 
             lineRenderer.SetPosition(0, origin);
@@ -118,43 +116,6 @@ namespace Garrison.Combat
                 return hit.distance;
 
             return maxLength;
-        }
-
-        private static bool TryGetScreenEdgeLength(Vector3 origin, Vector3 direction, Camera camera, out float length)
-        {
-            length = 0f;
-
-            if (camera == null || !camera.orthographic)
-                return false;
-
-            Vector3 viewportOrigin = camera.WorldToViewportPoint(origin);
-            Vector3 viewportStep = camera.WorldToViewportPoint(origin + direction) - viewportOrigin;
-            Vector2 viewportDelta = new(viewportStep.x, viewportStep.y);
-
-            if (viewportDelta.sqrMagnitude <= ViewportEpsilon)
-                return false;
-
-            float candidate = float.PositiveInfinity;
-            TryUseViewportBoundary(viewportOrigin.x, viewportDelta.x, ViewportMin, ref candidate);
-            TryUseViewportBoundary(viewportOrigin.x, viewportDelta.x, ViewportMax, ref candidate);
-            TryUseViewportBoundary(viewportOrigin.y, viewportDelta.y, ViewportMin, ref candidate);
-            TryUseViewportBoundary(viewportOrigin.y, viewportDelta.y, ViewportMax, ref candidate);
-
-            if (float.IsInfinity(candidate))
-                return false;
-
-            length = Mathf.Max(0f, candidate);
-            return true;
-        }
-
-        private static void TryUseViewportBoundary(float origin, float delta, float boundary, ref float best)
-        {
-            if (Mathf.Abs(delta) <= ViewportEpsilon)
-                return;
-
-            float distance = (boundary - origin) / delta;
-            if (distance > 0f && distance < best)
-                best = distance;
         }
 
         private bool CanRender()

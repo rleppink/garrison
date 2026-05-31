@@ -359,10 +359,16 @@ renders tracers over.
   origin C6 needs). Keep its name/position stable; C6 wires to it within the variant.
 - Add a local-only **aim line** as a `Combat/` component on the variant
   (`LineRenderer`-based), owner-gated on `IsLocalView`, drawing a **thin** line from
-  the muzzle along the body's `IAimSource.AimDirection` (read via the Shared seam)
-  out to a modest length. Local presentation only — never networked. Config its
-  width/length/colour (`ConfigKey.AimLineWidth`, `AimLineLength`) so it tunes
-  distinct from the tracer.
+  the muzzle along the body's `IAimSource.AimDirection` (read via the Shared seam).
+  Local presentation only — never networked. Config its width/length/colour
+  (`ConfigKey.AimLineWidth`, `AimLineLength`) so it tunes distinct from the tracer.
+  - **Reach:** `AimLineLength` is a single large value (far past the screen); the
+    camera frustum clips the overshoot for free and a collision raycast trims it at
+    blockers. **No screen-edge / viewport math** — an earlier orthographic-only
+    version computed the exact edge distance, but under the perspective camera
+    (M2 feel pass) that's both wrong and unnecessary: overshoot + frustum clip is
+    visually identical at any zoom. (If a *patterned* line texture is ever added,
+    switch the `LineRenderer` to `Tile` so the long stretch doesn't smear it.)
 
 **Notes**
 - The aim line is a **deliberate assist** (the game isn't about aim precision) and

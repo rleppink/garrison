@@ -61,7 +61,8 @@ config plumbing are real.
 
 ### M1 — The camera & movement feel-bet *(the riskiest thing, so it's first)*
 Build the `Vision/` slice's camera before anything shoots.
-- Top-down/iso camera; aim-extends-camera (Hotline-Miami); hard rule "character
+- Top-down 3D camera (subtle low-FOV perspective; M1 shipped orthographic, swapped
+  in the M2 feel pass); aim-extends-camera (Hotline-Miami); hard rule "character
   never leaves the screen"; camera-push UX dials (snap vs lazy-follow, push
   radius/shape) all as config.
 - Movement tuned toward "tactical, not rush-B," with the hooks for
