@@ -9,7 +9,21 @@ namespace Garrison.Shared.Audio
     {
         [SerializeField] private ChannelRoute[] routes = Array.Empty<ChannelRoute>();
         [SerializeField] private int initialPoolSize = 8;
-        [SerializeField] private float spatialBlend = 1f;
+
+        [Header("3D falloff")]
+        // Full 3D so position drives panning and volume. Lower toward 0 to bleed in a
+        // non-positional (2D) component if the spatialization ever feels too aggressive.
+        [SerializeField, Range(0f, 1f)] private float spatialBlend = 1f;
+
+        // Logarithmic so loudness drops naturally with distance (roughly halving each time
+        // the distance doubles past minDistance), rather than the flat Linear ramp.
+        [SerializeField] private AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
+
+        // World units. The camera frames ~10 units half-height, so a full screen is ~20-35
+        // units across: minDistance keeps sounds at the character full volume, maxDistance
+        // (~a few screens) is where they fade to the floor.
+        [SerializeField, Min(0.1f)] private float minDistance = 5f;
+        [SerializeField, Min(0.2f)] private float maxDistance = 80f;
 
         private readonly Dictionary<AudioChannel, AudioMixerGroup> groups = new();
         private readonly List<AudioSource> sources = new();
@@ -67,7 +81,9 @@ namespace Garrison.Shared.Audio
             source.spatialBlend = spatialBlend;
             source.volume = 1f;
             source.pitch = 1f;
-            source.rolloffMode = AudioRolloffMode.Linear;
+            source.rolloffMode = rolloffMode;
+            source.minDistance = minDistance;
+            source.maxDistance = Mathf.Max(minDistance + 0.1f, maxDistance);
             return source;
         }
 

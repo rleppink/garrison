@@ -329,7 +329,6 @@ GameObject:
   m_Component:
   - component: {fileID: 415818059}
   - component: {fileID: 415818058}
-  - component: {fileID: 415818057}
   - component: {fileID: 415818060}
   - component: {fileID: 415818061}
   m_Layer: 0
@@ -339,14 +338,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &415818057
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 415818056}
-  m_Enabled: 1
 --- !u!20 &415818058
 Camera:
   m_ObjectHideFlags: 0
@@ -1004,6 +995,60 @@ RectTransform:
   m_AnchoredPosition: {x: 180, y: -128}
   m_SizeDelta: {x: 300, y: 34}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1707042752
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1707042755}
+  - component: {fileID: 1707042754}
+  - component: {fileID: 1707042753}
+  m_Layer: 0
+  m_Name: Local Audio Listener
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1707042753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707042752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cbbd3f465961428584f668d27a9ba9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Audio.LocalAudioListener
+  localPlayerRegistrySource: {fileID: 1877830055}
+--- !u!81 &1707042754
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707042752}
+  m_Enabled: 1
+--- !u!4 &1707042755
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707042752}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1784627464
 GameObject:
   m_ObjectHideFlags: 0
@@ -1213,6 +1258,9 @@ MonoBehaviour:
     group: {fileID: 1731151059409001014, guid: 008b37f0fd4f4456488fffb612312cae, type: 2}
   initialPoolSize: 8
   spatialBlend: 1
+  rolloffMode: 0
+  minDistance: 5
+  maxDistance: 80
 --- !u!114 &1877830055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1251,7 +1299,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b335634fb8be4eb0852ebb523af841d, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Config.ConfigConsumerBinder
   networkManager: {fileID: 1877830050}
   configSource: {fileID: 1877830053}
@@ -1347,3 +1395,4 @@ SceneRoots:
   - {fileID: 415818059}
   - {fileID: 723658222}
   - {fileID: 1784627466}
+  - {fileID: 1707042755}
