@@ -15,7 +15,7 @@ namespace Garrison.Combat
         private const float DefaultWeaponFireRate = 2.5f;
         private const int DefaultWeaponDamageHearts = 1;
         private const float DefaultWeaponBaseSpread = 0.35f;
-        private const float DefaultWeaponRange = 20f;
+        private const float DefaultWeaponRange = 60f;
         private const float DefaultWeaponFalloff = 20f;
         private const float DefaultTracerWidth = 0.075f;
         private const float DefaultMuzzleFlashWidth = 0.12f;
@@ -27,6 +27,10 @@ namespace Garrison.Combat
         private const float MuzzleFlashLength = 0.32f;
         private const float ImpactFlashLength = 0.18f;
         private const int MaxRaycastHits = 8;
+        // Per-shot variance so repeated fire doesn't sound mechanically identical. Pitch is
+        // symmetric around 1; volume only ever dips (caps at the clip's authored 1.0).
+        private const float GunfirePitchVariance = 0.08f;
+        private const float GunfireVolumeVariance = 0.15f;
 
         private static readonly Color TracerColor = new(1f, 0.88f, 0.52f, 0.95f);
         private static readonly Color MuzzleFlashColor = new(1f, 0.74f, 0.34f, 1f);
@@ -208,7 +212,11 @@ namespace Garrison.Combat
             }
 
             if (audioBus != null && gunfireClip != null)
-                audioBus.Play(AudioChannel.Weapons, gunfireClip, origin);
+            {
+                float pitch = 1f + UnityEngine.Random.Range(-GunfirePitchVariance, GunfirePitchVariance);
+                float volume = 1f - UnityEngine.Random.Range(0f, GunfireVolumeVariance);
+                audioBus.Play(AudioChannel.Weapons, gunfireClip, origin, volume, pitch);
+            }
         }
 
         private bool CanReadLocalFireInput()

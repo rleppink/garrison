@@ -18,7 +18,7 @@ MonoBehaviour:
   bodyTurnSpeed: 0
   defenderSlot: 0
   aimLineWidth: 0.025
-  aimLineLength: 7
+  aimLineLength: 1000
   maxHearts: 3
   bleedOutSec: 12
   accuracyIdleSpread: 0
@@ -27,7 +27,7 @@ MonoBehaviour:
   weaponFireRate: 2.5
   weaponDamageHearts: 1
   weaponBaseSpread: 0.35
-  weaponRange: 20
+  weaponRange: 60
   weaponFalloff: 20
   cameraZoom: 10
   cameraPushExtent: 8

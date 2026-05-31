@@ -30,7 +30,7 @@ namespace Garrison.Shared.Config
         [SerializeField, Min(0.01f)] private float weaponFireRate = 2.5f;
         [SerializeField, Min(1)] private int weaponDamageHearts = 1;
         [SerializeField, Min(0f)] private float weaponBaseSpread = 0.35f;
-        [SerializeField, Min(0f)] private float weaponRange = 20f;
+        [SerializeField, Min(0f)] private float weaponRange = 60f;
         [SerializeField, Min(0f)] private float weaponFalloff = 20f;
 
         [Header("Camera")]
