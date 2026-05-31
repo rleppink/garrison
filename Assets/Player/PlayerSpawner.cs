@@ -76,7 +76,6 @@ namespace Garrison.Player
                 body.Assign(player);
                 body.AssignSide(i == defenderSlot ? Side.Defender : Side.Attacker);
                 ConfigureConsumers(bodyObject, Config);
-                BindLocalViewConsumers(bodyObject, body);
 
                 NetworkIdentity.Spawn(bodyObject, playerBodyPrefab, networkManager);
                 spawnedBodies[player] = body;
@@ -123,19 +122,6 @@ namespace Garrison.Player
             {
                 if (behaviours[i] is IConfigConsumer consumer)
                     consumer.Configure(config);
-            }
-        }
-
-        private static void BindLocalViewConsumers(GameObject root, PlayerBody body)
-        {
-            if (!root || body == null)
-                return;
-
-            MonoBehaviour[] behaviours = root.GetComponentsInChildren<MonoBehaviour>(true);
-            for (int i = 0; i < behaviours.Length; i++)
-            {
-                if (behaviours[i] is ILocalPlayerViewConsumer consumer)
-                    consumer.BindLocalView(body);
             }
         }
     }

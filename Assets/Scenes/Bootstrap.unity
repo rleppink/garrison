@@ -1068,6 +1068,7 @@ GameObject:
   - component: {fileID: 1877830054}
   - component: {fileID: 1877830055}
   - component: {fileID: 1877830056}
+  - component: {fileID: 1877830057}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -1240,6 +1241,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Audio.AudioBusBinder
   networkManager: {fileID: 1877830050}
   audioBusSource: {fileID: 1877830054}
+--- !u!114 &1877830057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877830047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b335634fb8be4eb0852ebb523af841d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Garrison.Shared::Garrison.Shared.Config.ConfigConsumerBinder
+  networkManager: {fileID: 1877830050}
+  configSource: {fileID: 1877830053}
 --- !u!1 &1987000001
 GameObject:
   m_ObjectHideFlags: 0

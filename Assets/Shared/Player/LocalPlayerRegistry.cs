@@ -18,6 +18,10 @@ namespace Garrison.Shared.Player
     // uses for ScenesModule). Spawn and SyncVar/local-player-id ordering differs
     // between host and remote clients, so this registry keeps candidate views and
     // re-evaluates whenever a view says its local status may have changed.
+    //
+    // Caveat: consumer binding here is only for local-view presentation components on
+    // the same spawned identity. It is deliberately not a general dependency-injection
+    // layer for gameplay state.
     public sealed class LocalPlayerRegistry : MonoBehaviour, ILocalPlayerRegistry
     {
         [SerializeField] private NetworkManager networkManager;
@@ -170,7 +174,10 @@ namespace Garrison.Shared.Player
         private void OnIdentityAdded(NetworkIdentity identity)
         {
             if (identity is ILocalPlayerView view)
+            {
                 AddCandidate(view);
+                BindLocalViewConsumers(identity, view);
+            }
         }
 
         private void OnIdentityRemoved(NetworkIdentity identity)
@@ -183,7 +190,22 @@ namespace Garrison.Shared.Player
                 if (wasCurrent)
                     SetCurrent(null);
 
+                BindLocalViewConsumers(identity, null);
                 ReevaluateCurrent();
+            }
+        }
+
+        private static void BindLocalViewConsumers(NetworkIdentity identity, ILocalPlayerView view)
+        {
+            if (identity == null)
+                return;
+
+            MonoBehaviour source = view as MonoBehaviour;
+            MonoBehaviour[] behaviours = identity.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i] is ILocalPlayerViewConsumer consumer)
+                    consumer.BindLocalView(source);
             }
         }
 
