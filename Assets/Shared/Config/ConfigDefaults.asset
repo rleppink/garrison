@@ -32,6 +32,7 @@ MonoBehaviour:
   recoilPerShot: 6
   recoilMax: 40
   recoilSettleTime: 0.4
+  syretteReachRadius: 2.5
   cameraZoom: 10
   cameraPushExtent: 8
   cameraPushShape: 0

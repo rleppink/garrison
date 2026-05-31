@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace Garrison.Player
 {
-    public sealed class PlayerInput : NetworkBehaviour, IWeaponFireInput
+    public sealed class PlayerInput : NetworkBehaviour, IWeaponFireInput, ISyretteInput
     {
         [SerializeField] private PlayerBody capsule;
         [SerializeField] private PlayerMovement movement;
@@ -23,6 +23,7 @@ namespace Garrison.Player
 
         private ILifeState LifeState => lifeStateSource as ILifeState;
         public bool FirePressedThisFrame => HasLocalInputAuthority() && ReadFirePressedThisFrame();
+        public bool UseSyrettePressedThisFrame => HasLocalInputAuthority() && ReadUseSyrettePressedThisFrame();
 
         private void Update()
         {
@@ -79,6 +80,14 @@ namespace Garrison.Player
         {
             Mouse mouse = Mouse.current;
             return mouse != null && mouse.leftButton.wasPressedThisFrame;
+        }
+
+        private static bool ReadUseSyrettePressedThisFrame()
+        {
+            Keyboard keyboard = Keyboard.current;
+            // M2 still reads raw keys directly; keep the syrette on the existing interact
+            // key until the shared action-map path lands.
+            return keyboard != null && keyboard.eKey.wasPressedThisFrame;
         }
 
         private Vector2 ReadAimDirection()

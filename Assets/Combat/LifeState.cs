@@ -25,10 +25,12 @@ namespace Garrison.Combat
 
         public event Action<SharedLifeState> StateChanged;
         public event Action BecameDowned;
+        public event Action GotUp;
         public event Action Died;
 
         public int Hearts => hearts.value;
         public int MaxHearts => maxHearts;
+        public Side Side => PlayerSide?.Side ?? Side.Attacker;
 
         public SharedLifeState State => DecodeLifeState(lifeState.value);
 
@@ -157,6 +159,9 @@ namespace Garrison.Combat
 
             if (nextState == SharedLifeState.Downed && previousState != SharedLifeState.Downed)
                 BecameDowned?.Invoke();
+
+            if (nextState == SharedLifeState.Up && previousState == SharedLifeState.Downed)
+                GotUp?.Invoke();
 
             if (nextState == SharedLifeState.Dead && previousState != SharedLifeState.Dead)
                 Died?.Invoke();

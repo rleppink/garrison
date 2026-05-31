@@ -176,7 +176,7 @@ both still shippable, in descending order of cleanliness.
 | C5 | Accuracy: movement-state → spread | ⏳ Not started | — |
 | C6 | Test weapon profile + fire path + hit resolution (+ tracer/muzzle/gunfire) | ⏳ Not started | — |
 | C7 | Defender has 4 hearts instead of attacker 3 | ⏳ Not started | — |
-| C8 | Syrette: down → up (the only revive) | ⏳ Not started | — |
+| C8 | Syrette: down → up (the only revive) | ✅ Done (attackers only; self or downed teammate within reach) | _backfill_ |
 | C9 | Acceptance pass — the 2v1 feel gate + TTK bellwether | ⏳ Not started | — |
 
 ### Verification discipline (what "Done" means here)

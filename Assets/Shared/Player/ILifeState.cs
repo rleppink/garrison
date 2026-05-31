@@ -9,6 +9,7 @@ namespace Garrison.Shared.Player
 
         event Action<LifeState> StateChanged;
         event Action BecameDowned;
+        event Action GotUp;
         event Action Died;
     }
 }

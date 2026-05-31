@@ -652,6 +652,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7778882064478264867}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7605935764671338876}
   m_SourcePrefab: {fileID: 100100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
 --- !u!1 &1085582586730301998 stripped
 GameObject:
@@ -919,6 +922,36 @@ MonoBehaviour:
   _parent: {fileID: 0}
   _invertedPathToNearestParent: 
   _directChildren: []
+--- !u!114 &7605935764671338876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085582586730301998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f701bba784a04d8ca49d074ad7e0aa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.Syrette
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  assignedPlayerSource: {fileID: 1085582586736328652}
+  inputSource: {fileID: 1085582586736328650}
+  playerSideSource: {fileID: 1085582586736328652}
+  lifeState: {fileID: 6412617728156789001}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  triggerInteraction: 1
+  gotUpClip: {fileID: 8300000, guid: 90d50d045679146758b215a8abf1306c, type: 3}
 --- !u!4 &1085582586730731022 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
