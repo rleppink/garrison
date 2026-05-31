@@ -15,6 +15,7 @@ namespace Garrison.Shared.Config
         CameraReturnSpeed = 10,
         CameraPushCoupling = 11,
         SprintSpeed = 12,
-        DefenderSlot = 13
+        DefenderSlot = 13,
+        BodyTurnSpeed = 14
     }
 }

@@ -5,8 +5,8 @@ namespace Garrison.Player
 {
     // Computes the local player's mouse-aim each frame and exposes it via the Shared
     // IAimSource seam. Runs ONLY for the local/owner body (gated on PlayerBody.IsLocalView);
-    // on remote bodies it stays idle and reports zero — aim is per-client local
-    // presentation and is never networked in M1.
+    // on remote bodies it stays idle and reports zero. In M2, PlayerInput streams the
+    // local AimDirection to the server inside the existing input packet.
     //
     // The cursor is projected onto a flat ground math-plane at y = body.y via a plain
     // ray-plane intersection (no physics raycast — the greybox has no geometry to hit).

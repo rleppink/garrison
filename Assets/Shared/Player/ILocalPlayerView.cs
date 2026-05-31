@@ -25,6 +25,10 @@ namespace Garrison.Shared.Player
         // Symmetric with ViewTarget: a consumer holding registry.Current reads it here.
         IAimSource Aim { get; }
 
+        // The server-truth facing derived from the body's rotation. Surfaced through
+        // the same seam as Aim/Movement so later combat reads posture, not client claims.
+        IFacingSource Facing { get; }
+
         // Server-derived movement state, replicated by the body and surfaced as a seam
         // for future slices without referencing Player internals.
         IMovementState Movement { get; }

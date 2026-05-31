@@ -15,6 +15,7 @@ MonoBehaviour:
   playerCount: 6
   moveSpeed: 4.5
   sprintSpeed: 5.8
+  bodyTurnSpeed: 0
   cameraZoom: 10
   cameraPushExtent: 8
   cameraPushShape: 0

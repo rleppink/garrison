@@ -14,7 +14,7 @@ namespace Garrison.Player
         // On Unreliable, every tick is a fresh snapshot so a dropped packet self-corrects
         // on the next one (last wins). Sending faster than the server steps just gets
         // overwritten unconsumed; slower undersamples the sim. So match the server tick.
-        [SerializeField] private float sendInterval = 1f / 60f;
+        private const float SendInterval = 1f / 60f;
 
         private float nextSendTime;
 
@@ -26,8 +26,8 @@ namespace Garrison.Player
             if (Time.unscaledTime < nextSendTime)
                 return;
 
-            nextSendTime = Time.unscaledTime + sendInterval;
-            SendMoveInput(ReadMoveInput(), ReadSprintInput());
+            nextSendTime = Time.unscaledTime + SendInterval;
+            SendMoveInput(ReadMoveInput(), ReadSprintInput(), ReadAimDirection());
         }
 
         private static Vector2 ReadMoveInput()
@@ -56,13 +56,25 @@ namespace Garrison.Player
             return keyboard != null && keyboard.leftShiftKey.isPressed;
         }
 
+        private Vector2 ReadAimDirection()
+        {
+            var aimSource = capsule != null ? capsule.Aim : null;
+            if (aimSource == null)
+                return Vector2.zero;
+
+            Vector2 aimDirection = aimSource.AimDirection;
+            return aimDirection.sqrMagnitude > Mathf.Epsilon
+                ? aimDirection.normalized
+                : Vector2.zero;
+        }
+
         [ServerRpc(channel: Channel.Unreliable, requireOwnership: false)]
-        private void SendMoveInput(Vector2 moveInput, bool sprint, RPCInfo info = default)
+        private void SendMoveInput(Vector2 moveInput, bool sprint, Vector2 aimDirection, RPCInfo info = default)
         {
             if (info.sender != capsule.AssignedPlayer)
                 return;
 
-            movement.SetMoveInput(moveInput, sprint);
+            movement.SetInputSnapshot(moveInput, sprint, aimDirection);
         }
     }
 }

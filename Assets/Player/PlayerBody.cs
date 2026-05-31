@@ -10,7 +10,7 @@ namespace Garrison.Player
     // Implements the Shared ILocalPlayerView seam so local-presentation services (the
     // Vision camera) can follow it without referencing the Player slice. The local
     // check lives here because only the Player slice knows about AssignedPlayer.
-    public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView, IMovementState, IPlayerSide, IAudioBusSink
+    public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView, IFacingSource, IMovementState, IPlayerSide, IAudioBusSink
     {
         [SerializeField] private PlayerAim aim;
         [SerializeField] private PlayerFootstepEmitter footstepEmitter;
@@ -34,6 +34,8 @@ namespace Garrison.Player
         // The mouse-aim source for this body, surfaced through the local-player view seam.
         public IAimSource Aim => aim;
 
+        IFacingSource ILocalPlayerView.Facing => this;
+
         public IMovementState Movement => this;
 
         // Role for the round (attacker/defender), decoded from the replicated int.
@@ -46,6 +48,20 @@ namespace Garrison.Player
         public bool IsWalking => State == MovementState.Walking;
 
         public bool IsSprinting => State == MovementState.Sprinting;
+
+        Vector2 IFacingSource.Facing
+        {
+            get
+            {
+                Vector3 planarForward = transform.forward;
+                planarForward.y = 0f;
+
+                float magnitude = planarForward.magnitude;
+                return magnitude > Mathf.Epsilon
+                    ? new Vector2(planarForward.x, planarForward.z) / magnitude
+                    : Vector2.zero;
+            }
+        }
 
         // Registry hands over the persistent gameplay camera when this body becomes the
         // current local view; forward it to the aim component, which needs it for the

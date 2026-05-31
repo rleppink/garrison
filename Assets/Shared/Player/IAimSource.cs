@@ -5,8 +5,8 @@ namespace Garrison.Shared.Player
     // Cross-slice seam: the player's mouse-derived aim, in world space. Produced in
     // the Player slice (local body only) and consumed by other slices through the
     // local-player registry (ILocalPlayerView.Aim), the same way ViewTarget is
-    // surfaced. M1 use: the camera-push (C4) reads this. Local presentation only —
-    // aim is NOT networked in M1; nothing server-side reads it until M2 (accuracy).
+    // surfaced. M1 use: the camera-push (C4) reads this. In M2, PlayerInput streams
+    // AimDirection to the server as part of the existing owner-input packet.
     public interface IAimSource
     {
         // World point on the ground math-plane (y = body.y) under the cursor.

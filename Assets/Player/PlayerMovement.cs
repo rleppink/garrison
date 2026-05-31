@@ -19,6 +19,7 @@ namespace Garrison.Player
         private const float MaxAccumulated = 0.25f;
 
         private Vector2 moveInput;
+        private Vector2 aimDirectionInput;
         private bool sprintInput;
         private IConfig config;
         private float tickAccumulator;
@@ -28,13 +29,14 @@ namespace Garrison.Player
             config = source;
         }
 
-        public void SetMoveInput(Vector2 input, bool sprint)
+        public void SetInputSnapshot(Vector2 moveInput, bool sprint, Vector2 aimDirection)
         {
             if (!isServer)
                 return;
 
-            moveInput = input.sqrMagnitude > 1f ? input.normalized : input;
+            this.moveInput = moveInput.sqrMagnitude > 1f ? moveInput.normalized : moveInput;
             sprintInput = sprint;
+            aimDirectionInput = NormalizeAimDirection(aimDirection);
         }
 
         private void Update()
@@ -53,6 +55,8 @@ namespace Garrison.Player
 
         private void Step(float delta)
         {
+            ApplyFacing(delta);
+
             bool isMoving = moveInput != Vector2.zero;
             bool isSprinting = isMoving && sprintInput;
             body.SetMovementState(isMoving
@@ -67,6 +71,26 @@ namespace Garrison.Player
                 : config?.GetFloat(ConfigKey.MoveSpeed, 4.5f) ?? 4.5f;
             Vector3 delta3 = new(moveInput.x, 0f, moveInput.y);
             transform.position += delta3 * (speed * delta);
+        }
+
+        private void ApplyFacing(float delta)
+        {
+            if (aimDirectionInput == Vector2.zero)
+                return;
+
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(aimDirectionInput.x, 0f, aimDirectionInput.y), Vector3.up);
+            float bodyTurnSpeed = config?.GetFloat(ConfigKey.BodyTurnSpeed, 0f) ?? 0f;
+
+            transform.rotation = bodyTurnSpeed > 0f
+                ? Quaternion.RotateTowards(transform.rotation, targetRotation, bodyTurnSpeed * delta)
+                : targetRotation;
+        }
+
+        private static Vector2 NormalizeAimDirection(Vector2 direction)
+        {
+            return direction.sqrMagnitude > Mathf.Epsilon
+                ? direction.normalized
+                : Vector2.zero;
         }
     }
 }
