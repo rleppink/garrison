@@ -8,6 +8,7 @@ namespace Garrison.Player
     public sealed class PlayerMovement : NetworkBehaviour, IConfigConsumer
     {
         [SerializeField] private PlayerBody body;
+        [SerializeField] private MonoBehaviour lifeStateSource;
 
         // Server simulation rate. Deliberately NOT Unity's physics FixedUpdate: this is
         // kinematic (transform writes, no Rigidbody), so it runs on its own fixed-step
@@ -23,6 +24,8 @@ namespace Garrison.Player
         private bool sprintInput;
         private IConfig config;
         private float tickAccumulator;
+
+        private ILifeState LifeState => lifeStateSource as ILifeState;
 
         public void Configure(IConfig source)
         {
@@ -55,6 +58,14 @@ namespace Garrison.Player
 
         private void Step(float delta)
         {
+            if (!(LifeState?.CanAct ?? true))
+            {
+                moveInput = Vector2.zero;
+                sprintInput = false;
+                body.SetMovementState(MovementState.Idle);
+                return;
+            }
+
             ApplyFacing(delta);
 
             bool isMoving = moveInput != Vector2.zero;

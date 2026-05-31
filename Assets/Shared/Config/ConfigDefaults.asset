@@ -19,6 +19,8 @@ MonoBehaviour:
   defenderSlot: 0
   aimLineWidth: 0.025
   aimLineLength: 7
+  maxHearts: 3
+  bleedOutSec: 12
   cameraZoom: 10
   cameraPushExtent: 8
   cameraPushShape: 0

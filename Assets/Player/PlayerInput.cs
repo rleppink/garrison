@@ -1,5 +1,6 @@
 using PurrNet;
 using PurrNet.Transports;
+using Garrison.Shared.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,7 @@ namespace Garrison.Player
     {
         [SerializeField] private PlayerBody capsule;
         [SerializeField] private PlayerMovement movement;
+        [SerializeField] private MonoBehaviour lifeStateSource;
 
         // Stream input at the server's simulation rate (PlayerMovement.tickRate, 60Hz).
         // On Unreliable, every tick is a fresh snapshot so a dropped packet self-corrects
@@ -17,11 +19,22 @@ namespace Garrison.Player
         private const float SendInterval = 1f / 60f;
 
         private float nextSendTime;
+        private bool sentDisabledSnapshot;
+
+        private ILifeState LifeState => lifeStateSource as ILifeState;
 
         private void Update()
         {
             if (!isClient || !localPlayer.HasValue || capsule.AssignedPlayer != localPlayer.Value)
                 return;
+
+            if (!(LifeState?.CanAct ?? true))
+            {
+                SendDisabledSnapshot();
+                return;
+            }
+
+            sentDisabledSnapshot = false;
 
             if (Time.unscaledTime < nextSendTime)
                 return;
@@ -66,6 +79,16 @@ namespace Garrison.Player
             return aimDirection.sqrMagnitude > Mathf.Epsilon
                 ? aimDirection.normalized
                 : Vector2.zero;
+        }
+
+        private void SendDisabledSnapshot()
+        {
+            if (sentDisabledSnapshot)
+                return;
+
+            sentDisabledSnapshot = true;
+            nextSendTime = Time.unscaledTime + SendInterval;
+            SendMoveInput(Vector2.zero, false, Vector2.zero);
         }
 
         [ServerRpc(channel: Channel.Unreliable, requireOwnership: false)]

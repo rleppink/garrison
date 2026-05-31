@@ -18,6 +18,8 @@ namespace Garrison.Shared.Config
         DefenderSlot = 13,
         BodyTurnSpeed = 14,
         AimLineWidth = 15,
-        AimLineLength = 16
+        AimLineLength = 16,
+        MaxHearts = 17,
+        BleedOutSec = 18
     }
 }

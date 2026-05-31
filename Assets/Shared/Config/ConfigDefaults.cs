@@ -22,6 +22,8 @@ namespace Garrison.Shared.Config
         // Max aim-line reach. Far past the screen so it always reaches the edge at any
         // zoom; the camera frustum clips it and collision/blockers trim it shorter.
         [SerializeField] private float aimLineLength = 1000f;
+        [SerializeField, Min(1)] private int maxHearts = 3;
+        [SerializeField, Min(0f)] private float bleedOutSec = 12f;
 
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;
@@ -48,6 +50,8 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.DefenderSlot, ConfigValue.Int(defenderSlot));
             yield return Pair(ConfigKey.AimLineWidth, ConfigValue.Float(aimLineWidth));
             yield return Pair(ConfigKey.AimLineLength, ConfigValue.Float(aimLineLength));
+            yield return Pair(ConfigKey.MaxHearts, ConfigValue.Int(maxHearts));
+            yield return Pair(ConfigKey.BleedOutSec, ConfigValue.Float(bleedOutSec));
             yield return Pair(ConfigKey.CameraZoom, ConfigValue.Float(cameraZoom));
             yield return Pair(ConfigKey.CameraPushExtent, ConfigValue.Float(cameraPushExtent));
             yield return Pair(ConfigKey.CameraPushShape, ConfigValue.Int(cameraPushShape));

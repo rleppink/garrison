@@ -138,6 +138,7 @@ MonoBehaviour:
   _invertedPathToNearestParent: 
   _directChildren: []
   body: {fileID: 11400002}
+  lifeStateSource: {fileID: 0}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,6 +162,7 @@ MonoBehaviour:
   _directChildren: []
   capsule: {fileID: 11400002}
   movement: {fileID: 11400003}
+  lifeStateSource: {fileID: 0}
   sendInterval: 0.05
 --- !u!114 &8267471949978962232
 MonoBehaviour:
