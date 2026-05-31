@@ -23,6 +23,11 @@ namespace Garrison.Shared.Config
         BleedOutSec = 18,
         AccuracyIdleSpread = 19,
         AccuracyMovingSpread = 20,
-        AccuracySprintSpread = 21
+        AccuracySprintSpread = 21,
+        WeaponFireRate = 22,
+        WeaponDamageHearts = 23,
+        WeaponBaseSpread = 24,
+        WeaponRange = 25,
+        WeaponFalloff = 26
     }
 }

@@ -10,7 +10,7 @@ namespace Garrison.Player
     // Implements the Shared ILocalPlayerView seam so local-presentation services (the
     // Vision camera) can follow it without referencing the Player slice. The local
     // check lives here because only the Player slice knows about AssignedPlayer.
-    public sealed class PlayerBody : NetworkBehaviour, ILocalPlayerView, IFacingSource, IMovementState, IPlayerSide, IAudioBusSink
+    public sealed class PlayerBody : NetworkBehaviour, IAssignedPlayer, ILocalPlayerView, IFacingSource, IMovementState, IPlayerSide, IAudioBusSink
     {
         [SerializeField] private PlayerAim aim;
         [SerializeField] private PlayerFootstepEmitter footstepEmitter;

@@ -75,14 +75,25 @@ namespace Garrison.Shared.Audio
 
         private void OnIdentityAdded(NetworkIdentity identity)
         {
-            if (identity is IAudioBusSink sink)
-                sink.BindAudioBus(AudioBus);
+            BindAudioSinks(identity, AudioBus);
         }
 
         private void OnIdentityRemoved(NetworkIdentity identity)
         {
-            if (identity is IAudioBusSink sink)
-                sink.BindAudioBus(null);
+            BindAudioSinks(identity, null);
+        }
+
+        private static void BindAudioSinks(NetworkIdentity identity, IAudioBus audioBus)
+        {
+            if (identity == null)
+                return;
+
+            MonoBehaviour[] behaviours = identity.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i] is IAudioBusSink sink)
+                    sink.BindAudioBus(audioBus);
+            }
         }
     }
 }

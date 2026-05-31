@@ -27,6 +27,11 @@ namespace Garrison.Shared.Config
         [SerializeField, Min(0f)] private float accuracyIdleSpread;
         [SerializeField, Min(0f)] private float accuracyMovingSpread = 2f;
         [SerializeField, Min(0f)] private float accuracySprintSpread = 5f;
+        [SerializeField, Min(0.01f)] private float weaponFireRate = 2.5f;
+        [SerializeField, Min(1)] private int weaponDamageHearts = 1;
+        [SerializeField, Min(0f)] private float weaponBaseSpread = 0.35f;
+        [SerializeField, Min(0f)] private float weaponRange = 20f;
+        [SerializeField, Min(0f)] private float weaponFalloff = 20f;
 
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;
@@ -58,6 +63,11 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.AccuracyIdleSpread, ConfigValue.Float(accuracyIdleSpread));
             yield return Pair(ConfigKey.AccuracyMovingSpread, ConfigValue.Float(accuracyMovingSpread));
             yield return Pair(ConfigKey.AccuracySprintSpread, ConfigValue.Float(accuracySprintSpread));
+            yield return Pair(ConfigKey.WeaponFireRate, ConfigValue.Float(weaponFireRate));
+            yield return Pair(ConfigKey.WeaponDamageHearts, ConfigValue.Int(weaponDamageHearts));
+            yield return Pair(ConfigKey.WeaponBaseSpread, ConfigValue.Float(weaponBaseSpread));
+            yield return Pair(ConfigKey.WeaponRange, ConfigValue.Float(weaponRange));
+            yield return Pair(ConfigKey.WeaponFalloff, ConfigValue.Float(weaponFalloff));
             yield return Pair(ConfigKey.CameraZoom, ConfigValue.Float(cameraZoom));
             yield return Pair(ConfigKey.CameraPushExtent, ConfigValue.Float(cameraPushExtent));
             yield return Pair(ConfigKey.CameraPushShape, ConfigValue.Int(cameraPushShape));
