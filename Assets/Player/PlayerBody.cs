@@ -21,12 +21,15 @@ namespace Garrison.Player
         // Replicated as a primitive int (not the Side enum directly): a custom enum in
         // SyncVar<T> is the M1 hasher crash. Decode back to Side through the seam.
         private readonly SyncVar<int> side = new((int)Shared.Player.Side.Attacker);
+        private Camera viewCamera;
 
         public event Action LocalViewStatusChanged;
 
         public PlayerID AssignedPlayer => assignedPlayer.value;
 
         public Transform ViewTarget => transform;
+
+        public Camera ViewCamera => viewCamera;
 
         // True only on the client whose own body this is (mirrors PlayerInput's check).
         public bool IsLocalView => isClient && localPlayer.HasValue && assignedPlayer.value == localPlayer.Value;
@@ -68,6 +71,8 @@ namespace Garrison.Player
         // cursor->ground raycast. No lookup happens anywhere on the Player side.
         public void BindCamera(Camera camera)
         {
+            viewCamera = camera;
+
             if (aim != null)
                 aim.SetCamera(camera);
         }

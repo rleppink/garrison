@@ -9,11 +9,16 @@ namespace Garrison.Combat
     {
         private const float DefaultWidth = 0.025f;
         private const float DefaultLength = 7f;
+        private const float ViewportMin = 0f;
+        private const float ViewportMax = 1f;
+        private const float ViewportEpsilon = 0.0001f;
 
         [SerializeField] private MonoBehaviour localViewSource;
         [SerializeField] private Transform muzzle;
         [SerializeField] private LineRenderer lineRenderer;
         [SerializeField] private Color lineColor = new(0.5f, 0.82f, 0.96f, 0.8f);
+        [SerializeField] private LayerMask collisionMask = Physics.DefaultRaycastLayers;
+        [SerializeField] private QueryTriggerInteraction triggerInteraction = QueryTriggerInteraction.Ignore;
 
         private IConfig config;
         private ILocalPlayerView localView;
@@ -84,10 +89,72 @@ namespace Garrison.Combat
             Vector3 origin = muzzle.position;
             Vector2 planarDirection = localView.Aim != null ? localView.Aim.AimDirection : Vector2.zero;
             Vector3 direction = new(planarDirection.x, 0f, planarDirection.y);
-            float length = config?.GetFloat(ConfigKey.AimLineLength, DefaultLength) ?? DefaultLength;
+            if (direction.sqrMagnitude <= ViewportEpsilon)
+            {
+                lineRenderer.SetPosition(0, origin);
+                lineRenderer.SetPosition(1, origin);
+                return;
+            }
+
+            direction.Normalize();
+
+            float fallbackLength = config?.GetFloat(ConfigKey.AimLineLength, DefaultLength) ?? DefaultLength;
+            float length = TryGetScreenEdgeLength(origin, direction, localView.ViewCamera, out float screenLength)
+                ? screenLength
+                : fallbackLength;
+
+            length = ClampLengthToCollision(origin, direction, length);
 
             lineRenderer.SetPosition(0, origin);
             lineRenderer.SetPosition(1, origin + direction * length);
+        }
+
+        private float ClampLengthToCollision(Vector3 origin, Vector3 direction, float maxLength)
+        {
+            if (maxLength <= 0f)
+                return 0f;
+
+            if (Physics.Raycast(origin, direction, out RaycastHit hit, maxLength, collisionMask, triggerInteraction))
+                return hit.distance;
+
+            return maxLength;
+        }
+
+        private static bool TryGetScreenEdgeLength(Vector3 origin, Vector3 direction, Camera camera, out float length)
+        {
+            length = 0f;
+
+            if (camera == null || !camera.orthographic)
+                return false;
+
+            Vector3 viewportOrigin = camera.WorldToViewportPoint(origin);
+            Vector3 viewportStep = camera.WorldToViewportPoint(origin + direction) - viewportOrigin;
+            Vector2 viewportDelta = new(viewportStep.x, viewportStep.y);
+
+            if (viewportDelta.sqrMagnitude <= ViewportEpsilon)
+                return false;
+
+            float candidate = float.PositiveInfinity;
+            TryUseViewportBoundary(viewportOrigin.x, viewportDelta.x, ViewportMin, ref candidate);
+            TryUseViewportBoundary(viewportOrigin.x, viewportDelta.x, ViewportMax, ref candidate);
+            TryUseViewportBoundary(viewportOrigin.y, viewportDelta.y, ViewportMin, ref candidate);
+            TryUseViewportBoundary(viewportOrigin.y, viewportDelta.y, ViewportMax, ref candidate);
+
+            if (float.IsInfinity(candidate))
+                return false;
+
+            length = Mathf.Max(0f, candidate);
+            return true;
+        }
+
+        private static void TryUseViewportBoundary(float origin, float delta, float boundary, ref float best)
+        {
+            if (Mathf.Abs(delta) <= ViewportEpsilon)
+                return;
+
+            float distance = (boundary - origin) / delta;
+            if (distance > 0f && distance < best)
+                best = distance;
         }
 
         private bool CanRender()

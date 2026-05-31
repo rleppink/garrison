@@ -16,6 +16,11 @@ namespace Garrison.Shared.Player
         // The transform a follower frames. For M1 this is the body itself.
         Transform ViewTarget { get; }
 
+        // The persistent gameplay camera currently bound to this view. Presentation
+        // consumers use this to stay in the same camera context as aim/camera-push
+        // without doing Camera.main / scene lookups.
+        Camera ViewCamera { get; }
+
         // True only on the client that owns this view (its own body): the body
         // decides locality from its assigned player vs the local player, keeping
         // that Player-specific check out of Shared.
