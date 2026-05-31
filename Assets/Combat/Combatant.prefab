@@ -176,11 +176,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11400003, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
       propertyPath: lifeStateSource
-      value:
+      value: 
       objectReference: {fileID: 6412617728156789001}
     - target: {fileID: 11400004, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
       propertyPath: lifeStateSource
-      value:
+      value: 
       objectReference: {fileID: 6412617728156789001}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -204,6 +204,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2728531861178037744}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1198368590594727489}
   m_SourcePrefab: {fileID: 100100000, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
 --- !u!1 &1085582586730301998 stripped
 GameObject:
@@ -330,12 +333,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cbbba2032c47459b992029a06f2132a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.CombatAimLine
   localViewSource: {fileID: 0}
   muzzle: {fileID: 1466904502755976464}
   lineRenderer: {fileID: 5971727462868717328}
   lineColor: {r: 0.5, g: 0.82, b: 0.96, a: 0.8}
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  triggerInteraction: 1
 --- !u!114 &6412617728156789001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,8 +353,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c592cd287ca94027a467c1234e574626, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.LifeState
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
 --- !u!114 &8037663511907425190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,7 +374,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eea5db2afd104549a8fdf80c9a72cd76, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.CombatHeartsHud
   localViewSource: {fileID: 0}
   lifeState: {fileID: 6412617728156789001}
@@ -376,7 +392,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4af84f74f28b46e3bd9007f30419397c, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.CombatLifePresentation
   lifeState: {fileID: 6412617728156789001}
   visualRoot: {fileID: 8826808216745419861}
@@ -386,6 +402,30 @@ MonoBehaviour:
   healthyTint: {r: 1, g: 1, b: 1, a: 1}
   downedTint: {r: 0.9, g: 0.8, b: 0.58, a: 1}
   deadTint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
+--- !u!114 &1198368590594727489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085582586730301998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 988e7a85aaa884d82a1fd97869c75617, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Combat::Garrison.Combat.Accuracy
+  movementStateSource: {fileID: 1085582586736328652}
+--- !u!114 &1085582586736328652 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11400002, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}
+  m_PrefabInstance: {fileID: 1085582586730335374}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085582586730301998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4213734673864c8386d9c67227118f1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Player::Garrison.Player.PlayerBody
 --- !u!4 &8826808216745419861 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8462225023312423131, guid: 25ab061a88494d22aa7adcaf2beac35b, type: 3}

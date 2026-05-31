@@ -20,6 +20,9 @@ namespace Garrison.Shared.Config
         AimLineWidth = 15,
         AimLineLength = 16,
         MaxHearts = 17,
-        BleedOutSec = 18
+        BleedOutSec = 18,
+        AccuracyIdleSpread = 19,
+        AccuracyMovingSpread = 20,
+        AccuracySprintSpread = 21
     }
 }
