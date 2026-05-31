@@ -3,8 +3,7 @@
     "rootNamespace": "Garrison.Combat",
     "references": [
         "Garrison.Shared",
-        "PurrNet.Runtime",
-        "Unity.InputSystem"
+        "PurrNet.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

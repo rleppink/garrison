@@ -7,7 +7,6 @@ using Garrison.Shared.Player;
 using PurrNet;
 using PurrNet.Transports;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Garrison.Combat
 {
@@ -37,6 +36,7 @@ namespace Garrison.Combat
 
         [Header("Seams")]
         [SerializeField] private MonoBehaviour assignedPlayerSource;
+        [SerializeField] private MonoBehaviour fireInputSource;
         [SerializeField] private MonoBehaviour facingSource;
         [SerializeField] private LifeState lifeState;
         [SerializeField] private Accuracy accuracy;
@@ -60,6 +60,7 @@ namespace Garrison.Combat
         private float nextAllowedShotTime;
 
         private IAssignedPlayer AssignedPlayerSource => assignedPlayerSource as IAssignedPlayer;
+        private IWeaponFireInput FireInputSource => fireInputSource as IWeaponFireInput;
         private IFacingSource FacingSource => facingSource as IFacingSource;
 
         public void Configure(IConfig source)
@@ -84,8 +85,7 @@ namespace Garrison.Combat
             if (!CanReadLocalFireInput())
                 return;
 
-            Mouse mouse = Mouse.current;
-            if (mouse == null || !mouse.leftButton.wasPressedThisFrame)
+            if (!(FireInputSource?.FirePressedThisFrame ?? false))
                 return;
 
             RequestFire();

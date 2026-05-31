@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace Garrison.Player
 {
-    public sealed class PlayerInput : NetworkBehaviour
+    public sealed class PlayerInput : NetworkBehaviour, IWeaponFireInput
     {
         [SerializeField] private PlayerBody capsule;
         [SerializeField] private PlayerMovement movement;
@@ -22,10 +22,11 @@ namespace Garrison.Player
         private bool sentDisabledSnapshot;
 
         private ILifeState LifeState => lifeStateSource as ILifeState;
+        public bool FirePressedThisFrame => HasLocalInputAuthority() && ReadFirePressedThisFrame();
 
         private void Update()
         {
-            if (!isClient || !localPlayer.HasValue || capsule.AssignedPlayer != localPlayer.Value)
+            if (!HasLocalInputAuthority())
                 return;
 
             if (!(LifeState?.CanAct ?? true))
@@ -41,6 +42,11 @@ namespace Garrison.Player
 
             nextSendTime = Time.unscaledTime + SendInterval;
             SendMoveInput(ReadMoveInput(), ReadSprintInput(), ReadAimDirection());
+        }
+
+        private bool HasLocalInputAuthority()
+        {
+            return isClient && localPlayer.HasValue && capsule != null && capsule.AssignedPlayer == localPlayer.Value;
         }
 
         private static Vector2 ReadMoveInput()
@@ -67,6 +73,12 @@ namespace Garrison.Player
         {
             Keyboard keyboard = Keyboard.current;
             return keyboard != null && keyboard.leftShiftKey.isPressed;
+        }
+
+        private static bool ReadFirePressedThisFrame()
+        {
+            Mouse mouse = Mouse.current;
+            return mouse != null && mouse.leftButton.wasPressedThisFrame;
         }
 
         private Vector2 ReadAimDirection()
