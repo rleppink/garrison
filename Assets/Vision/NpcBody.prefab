@@ -209,6 +209,8 @@ GameObject:
   - component: {fileID: 6287918057432625259}
   - component: {fileID: 7424012273162243542}
   - component: {fileID: 4833912904910141516}
+  - component: {fileID: 5185812555704477177}
+  - component: {fileID: 4941938304668652249}
   m_Layer: 0
   m_Name: NpcBody
   m_TagString: Untagged
@@ -335,6 +337,42 @@ MonoBehaviour:
   _directChildren: []
   sweepHalfAngle: 45
   sweepPeriodSeconds: 4
+--- !u!114 &5185812555704477177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6091987198070306886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eecbfc2d76f314b9fb6c91c28683377f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Vision::Garrison.Vision.NpcPerception
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  npcBody: {fileID: 7424012273162243542}
+--- !u!114 &4941938304668652249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6091987198070306886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9b26e54ccf5a4a08b347a387ce34537, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Vision::Garrison.Vision.NpcAlertCue
+  perceptionSource: {fileID: 5185812555704477177}
+  alertClip: {fileID: 0}
 --- !u!1 &6349410066504434552
 GameObject:
   m_ObjectHideFlags: 0

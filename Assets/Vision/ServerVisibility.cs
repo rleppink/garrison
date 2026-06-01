@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Garrison.Shared.Config;
 using Garrison.Shared.Player;
@@ -28,6 +29,19 @@ namespace Garrison.Vision
         private HierarchyFactory serverHierarchy;
         private float tickAccumulator;
         private bool visibilityDirty;
+
+        public readonly struct TrackedPlayer
+        {
+            public TrackedPlayer(PlayerID playerId, IVisionAgent visionAgent)
+            {
+                PlayerId = playerId;
+                VisionAgent = visionAgent;
+            }
+
+            public PlayerID PlayerId { get; }
+
+            public IVisionAgent VisionAgent { get; }
+        }
 
         private sealed class TrackedAgent
         {
@@ -140,6 +154,25 @@ namespace Garrison.Vision
 
             visibleTargets = null;
             return false;
+        }
+
+        public int GetTrackedPlayers(List<TrackedPlayer> results)
+        {
+            if (results == null)
+                throw new ArgumentNullException(nameof(results));
+
+            results.Clear();
+
+            for (int i = 0; i < trackedAgents.Count; i++)
+            {
+                TrackedAgent trackedAgent = trackedAgents[i];
+                if (trackedAgent.AssignedPlayer == null || trackedAgent.VisionAgent == null)
+                    continue;
+
+                results.Add(new TrackedPlayer(trackedAgent.AssignedPlayer.AssignedPlayer, trackedAgent.VisionAgent));
+            }
+
+            return results.Count;
         }
 
         private void SubscribeHierarchy(bool logFailure)
