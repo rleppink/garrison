@@ -32,6 +32,8 @@ namespace Garrison.Shared.Config
         RecoilMax = 27,
         RecoilSettleTime = 28,
         DefenderMaxHearts = 29,
-        SyretteReachRadius = 30
+        SyretteReachRadius = 30,
+        ViewDistance = 31,
+        LosTickRate = 32
     }
 }
