@@ -3,7 +3,7 @@ namespace Garrison.Shared.Player
     public enum MovementState
     {
         Idle = 0,
-        Walking = 1,
+        Running = 1,
         Sprinting = 2
     }
 }

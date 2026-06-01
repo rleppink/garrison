@@ -4,7 +4,7 @@ namespace Garrison.Shared.Player
     {
         MovementState State { get; }
         bool IsIdle { get; }
-        bool IsWalking { get; }
+        bool IsRunning { get; }
         bool IsSprinting { get; }
     }
 }

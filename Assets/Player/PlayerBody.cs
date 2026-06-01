@@ -48,7 +48,7 @@ namespace Garrison.Player
 
         public bool IsIdle => State == MovementState.Idle;
 
-        public bool IsWalking => State == MovementState.Walking;
+        public bool IsRunning => State == MovementState.Running;
 
         public bool IsSprinting => State == MovementState.Sprinting;
 
@@ -129,7 +129,7 @@ namespace Garrison.Player
         {
             return state switch
             {
-                MovementState.Walking => (int)MovementState.Walking,
+                MovementState.Running => (int)MovementState.Running,
                 MovementState.Sprinting => (int)MovementState.Sprinting,
                 _ => (int)MovementState.Idle
             };
@@ -139,7 +139,7 @@ namespace Garrison.Player
         {
             return value switch
             {
-                (int)MovementState.Walking => MovementState.Walking,
+                (int)MovementState.Running => MovementState.Running,
                 (int)MovementState.Sprinting => MovementState.Sprinting,
                 _ => MovementState.Idle
             };

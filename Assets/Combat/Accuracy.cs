@@ -36,7 +36,7 @@ namespace Garrison.Combat
             return Movement?.State switch
             {
                 MovementState.Sprinting => config?.GetFloat(ConfigKey.AccuracySprintSpread, DefaultSprintSpreadDegrees) ?? DefaultSprintSpreadDegrees,
-                MovementState.Walking => config?.GetFloat(ConfigKey.AccuracyMovingSpread, DefaultMovingSpreadDegrees) ?? DefaultMovingSpreadDegrees,
+                MovementState.Running => config?.GetFloat(ConfigKey.AccuracyMovingSpread, DefaultMovingSpreadDegrees) ?? DefaultMovingSpreadDegrees,
                 _ => config?.GetFloat(ConfigKey.AccuracyIdleSpread, DefaultIdleSpreadDegrees) ?? DefaultIdleSpreadDegrees
             };
         }

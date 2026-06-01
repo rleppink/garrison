@@ -18,6 +18,24 @@ Companion to `../design/concept.md` (what we're building) and
 
 ---
 
+## World scale: 1 unit = 1 metre
+
+**One Unity unit is one metre. No exceptions, no per-asset scale factors.** This
+is the reference frame every other number is read against: movement speeds are
+m/s, weapon ranges and sight cones are metres, map dimensions are metres. When
+you see `weaponRange = 60` it means 60 m; when you see `moveSpeed = 4.5` it means
+4.5 m/s. Author models and import scales so a 1.8 m human is 1.8 units tall, and
+keep physics gravity at the real-world default (Unity's −9.81 already assumes
+this convention).
+
+Why pin it: the moment one slice quietly works in centimetres or "feels about
+right" units, every tuning number stops being comparable to reality and to each
+other, and sanity-checking a speed or a range against "is that a plausible human
+/ rifle / room?" no longer works. Holding the convention is what lets us reason
+about config values in human terms.
+
+---
+
 ## Scenes & object lifetime
 
 **A persistent `Bootstrap` scene is the lifetime spine — not

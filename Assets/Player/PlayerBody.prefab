@@ -201,7 +201,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: fc2d3f141a797428f9d8d3f3f5635178, type: 3}
   - {fileID: 8300000, guid: cc8004727ec1c40a9b69c9c92bd430a4, type: 3}
   - {fileID: 8300000, guid: 90d50d045679146758b215a8abf1306c, type: 3}
-  walkInterval: 0.55
+  runInterval: 0.55
   sprintInterval: 0.36
   volumeVariance: 0.08
   pitchVariance: 0.06

@@ -8,7 +8,7 @@ namespace Garrison.Player
     {
         [SerializeField] private PlayerBody movementSource;
         [SerializeField] private AudioClip[] footstepClips = System.Array.Empty<AudioClip>();
-        [SerializeField, Min(0.05f)] private float walkInterval = 0.55f;
+        [SerializeField, Min(0.05f)] private float runInterval = 0.55f;
         [SerializeField, Min(0.05f)] private float sprintInterval = 0.36f;
         [SerializeField, Range(0f, 0.5f)] private float volumeVariance = 0.08f;
         [SerializeField, Range(0f, 0.5f)] private float pitchVariance = 0.06f;
@@ -29,7 +29,7 @@ namespace Garrison.Player
 
             IMovementState movement = movementSource.Movement;
             MovementState state = movement.State;
-            if (state != MovementState.Walking && state != MovementState.Sprinting)
+            if (state != MovementState.Running && state != MovementState.Sprinting)
             {
                 timeUntilNextStep = 0f;
                 return;
@@ -47,7 +47,7 @@ namespace Garrison.Player
                 audioBus.Play(AudioChannel.Footsteps, clip, transform.position, volume, pitch);
             }
 
-            timeUntilNextStep = state == MovementState.Sprinting ? sprintInterval : walkInterval;
+            timeUntilNextStep = state == MovementState.Sprinting ? sprintInterval : runInterval;
         }
 
         private AudioClip PickClip()
@@ -65,7 +65,7 @@ namespace Garrison.Player
 
         private void OnValidate()
         {
-            walkInterval = Mathf.Max(0.05f, walkInterval);
+            runInterval = Mathf.Max(0.05f, runInterval);
             sprintInterval = Mathf.Max(0.05f, sprintInterval);
             volumeVariance = Mathf.Clamp(volumeVariance, 0f, 0.5f);
             pitchVariance = Mathf.Clamp(pitchVariance, 0f, 0.5f);

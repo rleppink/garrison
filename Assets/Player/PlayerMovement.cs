@@ -73,7 +73,7 @@ namespace Garrison.Player
             bool isMoving = moveInput != Vector2.zero;
             bool isSprinting = isMoving && sprintInput;
             body.SetMovementState(isMoving
-                ? isSprinting ? MovementState.Sprinting : MovementState.Walking
+                ? isSprinting ? MovementState.Sprinting : MovementState.Running
                 : MovementState.Idle);
 
             if (!isMoving)
