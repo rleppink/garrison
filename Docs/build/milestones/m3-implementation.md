@@ -154,7 +154,7 @@ reach a player?" and raising an event. Don't conflate the two.)*
 | Commit | What | Status | Hash |
 |--------|------|--------|------|
 | C1 | Per-observer visibility spike + `Vision` visibility-service scaffold + `IVisionAgent` seam | ✅ Done (spike: **PASS**) | — |
-| C2 | LOS computation (per-object, fixed tick) + throwaway sight-blockers + config | ⏳ Planned | — |
+| C2 | LOS computation (per-object, fixed tick) + throwaway sight-blockers + config | ✅ Done | 6652d2b |
 | C3 | Wire LOS → PurrNet observers — the fog trust boundary goes live | ⏳ Planned | — |
 | C4 | Minimal NPC body + visible sweeping cone (the tell), hand-placed throwaway | ⏳ Planned | — |
 | C5 | NPC perception: cone+range+LOS can-see → acquired/lost seam + alert cue | ⏳ Planned | — |
