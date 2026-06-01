@@ -6,7 +6,8 @@
 > server-authoritative, not client-trusted.
 
 Detail for M3 in [`../plan.md`](../plan.md). See "Camera & vision" in
-[`../../design/concept.md`](../../design/concept.md).
+[`../../design/concept.md`](../../design/concept.md). The commit-by-commit build
+order is in [`m3-implementation.md`](m3-implementation.md).
 
 ## Why here
 
@@ -29,9 +30,10 @@ the systems below are described with the authority/data-flow front and centre.
   posture/animation only, preserving human unpredictability.
 - **Seam:** once both exist, M2's hit resolution consults this for LOS;
   rendering/observation consumes the visible-set.
-- **Open decisions to nail:** visibility granularity (per-object vs
-  per-tile/region) and update cadence (per-tick vs throttled). *Recommendation:
-  per-object on a fixed tick* — cheapest that still feels responsive.
+- **Resolved (impl plan):** *per-object on a fixed tick* (was: per-object vs
+  per-tile/region; cadence per-tick vs throttled) — cheapest that still feels
+  responsive. Fog = **entity hide/reveal**, server-*withheld* (the client never
+  receives out-of-LOS state), not a terrain shroud.
 
 ### NPC perception stub
 - **Responsibility:** the first body that can "see" — a cone you can read and
