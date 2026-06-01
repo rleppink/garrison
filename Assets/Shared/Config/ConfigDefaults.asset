@@ -37,6 +37,7 @@ MonoBehaviour:
   losTickRate: 10
   npcConeArc: 70
   npcConeRange: 8
+  fogObserverWithholding: 0
   cameraZoom: 10
   cameraPushExtent: 8
   cameraPushShape: 0

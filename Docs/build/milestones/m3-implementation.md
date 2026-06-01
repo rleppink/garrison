@@ -158,7 +158,19 @@ reach a player?" and raising an event. Don't conflate the two.)*
 | C3 | Wire LOS → PurrNet observers — the fog trust boundary goes live | ✅ Done | 17bd5a1 |
 | C4 | Minimal NPC body + visible sweeping cone (the tell), hand-placed throwaway | ✅ Done | b824101 |
 | C5 | NPC perception: cone+range+LOS can-see → acquired/lost seam + alert cue | ✅ Done | 44febd6 |
-| C6 | Acceptance pass — fog/trust gate + "is that nest crewed?" cone read | ⏳ Planned | — |
+| C6 | Acceptance pass — fog/trust gate + "is that nest crewed?" cone read | ⛔ Blocked (LAN trust pass pending) | — |
+
+### Lead fix note — 2026-06-01
+
+C6 exposed two runtime issues before acceptance:
+- `RoundStarted` could fire after Unity loaded `Greybox` but before PurrNet had a
+  hierarchy for that scene, leaving `Combatant(Clone)` / `NpcBody(Clone)` as plain
+  unspawned GameObjects. `RoundController` now unloads stale non-network map scenes,
+  reloads through PurrNet, and waits for the map hierarchy before slices spawn.
+- Observer withholding is behind `ConfigKey.FogObserverWithholding`, default
+  `false`, so the baseline round remains playable while C6 is rerun on a real
+  host+client setup. LOS sets, NPC cone, and NPC perception still run; the
+  trust-boundary enforcement is the part gated for acceptance.
 
 ### Verification discipline (what "Done" means here)
 

@@ -81,7 +81,25 @@ namespace Garrison.Shared.Round
                 yield break;
             }
 
+            if (!networkManager.TryGetModule(true, out HierarchyFactory hierarchyFactory))
+            {
+                Debug.LogError("Cannot start round: PurrNet HierarchyFactory is unavailable.");
+                yield break;
+            }
+
             Scene mapScene = SceneManager.GetSceneByName(mapSceneName);
+            if (mapScene.isLoaded && !hierarchyFactory.TryGetHierarchy(mapScene, out _))
+            {
+                AsyncOperation unloadOperation = SceneManager.UnloadSceneAsync(mapScene);
+                if (unloadOperation != null)
+                {
+                    while (!unloadOperation.isDone)
+                        yield return null;
+                }
+
+                mapScene = SceneManager.GetSceneByName(mapSceneName);
+            }
+
             if (!mapScene.isLoaded)
             {
                 AsyncOperation loadOperation = scenes.LoadSceneAsync(mapSceneName, LoadSceneMode.Additive);
@@ -95,9 +113,22 @@ namespace Garrison.Shared.Round
             }
 
             if (mapScene.IsValid() && mapScene.isLoaded)
+            {
+                yield return WaitForNetworkHierarchy(hierarchyFactory, mapScene);
                 RoundStarted?.Invoke(mapScene);
+            }
 
             spawnRoutine = null;
+        }
+
+        private IEnumerator WaitForNetworkHierarchy(HierarchyFactory hierarchyFactory, Scene mapScene)
+        {
+            while (mapScene.IsValid()
+                && mapScene.isLoaded
+                && !hierarchyFactory.TryGetHierarchy(mapScene, out _))
+            {
+                yield return null;
+            }
         }
 
         private void UnloadMapScene()
