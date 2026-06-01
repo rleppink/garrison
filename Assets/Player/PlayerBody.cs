@@ -1,6 +1,7 @@
 using System;
 using Garrison.Shared.Audio;
 using Garrison.Shared.Player;
+using Garrison.Shared.Vision;
 using PurrNet;
 using UnityEngine;
 
@@ -10,10 +11,11 @@ namespace Garrison.Player
     // Implements the Shared ILocalPlayerView seam so local-presentation services (the
     // Vision camera) can follow it without referencing the Player slice. The local
     // check lives here because only the Player slice knows about AssignedPlayer.
-    public sealed class PlayerBody : NetworkBehaviour, IAssignedPlayer, ILocalPlayerView, IFacingSource, IMovementState, IPlayerSide, IAudioBusSink
+    public sealed class PlayerBody : NetworkBehaviour, IAssignedPlayer, ILocalPlayerView, IFacingSource, IMovementState, IPlayerSide, IAudioBusSink, IVisionAgent
     {
         [SerializeField] private PlayerAim aim;
         [SerializeField] private PlayerFootstepEmitter footstepEmitter;
+        [SerializeField, Min(0f)] private float eyeHeight = 1.6f;
 
         private readonly SyncVar<PlayerID> assignedPlayer = new(PlayerID.Server);
         private readonly SyncVar<int> movementState = new((int)MovementState.Idle);
@@ -30,6 +32,8 @@ namespace Garrison.Player
         public Transform ViewTarget => transform;
 
         public Camera ViewCamera => viewCamera;
+
+        public Vector3 EyePosition => transform.position + Vector3.up * eyeHeight;
 
         // True only on the client whose own body this is (mirrors PlayerInput's check).
         public bool IsLocalView => isClient && localPlayer.HasValue && assignedPlayer.value == localPlayer.Value;

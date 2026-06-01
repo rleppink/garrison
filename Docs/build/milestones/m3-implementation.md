@@ -153,7 +153,7 @@ reach a player?" and raising an event. Don't conflate the two.)*
 
 | Commit | What | Status | Hash |
 |--------|------|--------|------|
-| C1 | Per-observer visibility spike + `Vision` visibility-service scaffold + `IVisionAgent` seam | ⏳ Planned | — |
+| C1 | Per-observer visibility spike + `Vision` visibility-service scaffold + `IVisionAgent` seam | ✅ Done (spike: **PASS**) | — |
 | C2 | LOS computation (per-object, fixed tick) + throwaway sight-blockers + config | ⏳ Planned | — |
 | C3 | Wire LOS → PurrNet observers — the fog trust boundary goes live | ⏳ Planned | — |
 | C4 | Minimal NPC body + visible sweeping cone (the tell), hand-placed throwaway | ⏳ Planned | — |
@@ -219,6 +219,22 @@ the throwaway placement is discarded.
 client at runtime (server-controlled observers), stand up the empty server-side
 visibility service the fog half fills, and give bodies the `IVisionAgent` seam the
 service enumerates.
+
+**Status — done.** Spike verdict: **PASS (local source verification; runtime
+mechanism confirmed in PurrNet `1.19.1`).** The relevant public API is
+`NetworkIdentity.BlacklistPlayer(PlayerID)` / `RemoveBlacklistPlayer(PlayerID)`,
+followed by `NetworkIdentity.EvaluateVisibility(PlayerID)` (or
+`EvaluateVisibility()` for all players). In the pinned package source,
+`NetworkIdentity.TryAddObserver` / `TryRemoveObserver` are **internal**, but the
+visibility pass in `VisibilityV2.Evaluate(...)` consumes the public
+whitelist/blacklist state and mutates observers there, and
+`HierarchyV2.OnVisibilityChanged(...)` sends the spawn/despawn packets when a
+player gains or loses visibility. `NetworkVisibilityRuleSet` /
+`INetworkVisibilityRule` also exist for rule-driven visibility, but C1's verdict
+is that **dynamic per-observer withholding is supported** through the public
+blacklist/evaluate path, so M3 can proceed without falling back to client-side
+renderer hiding. This commit does **not** change observers yet; it only records the
+verified API and stands up the server-side registry scaffold C2/C3 will drive.
 
 **Build**
 - **Spike first (throwaway — do not keep).** With two bodies spawned two-client,
