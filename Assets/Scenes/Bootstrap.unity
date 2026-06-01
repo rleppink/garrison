@@ -1317,6 +1317,7 @@ GameObject:
   - component: {fileID: 1987000003}
   - component: {fileID: 1987000004}
   - component: {fileID: 1987000005}
+  - component: {fileID: 1987000006}
   m_Layer: 0
   m_Name: NetworkedSystems
   m_TagString: Untagged
@@ -1412,6 +1413,30 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &1987000006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 755129078d37940f6989cb4232de2a77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Garrison.Vision::Garrison.Vision.NpcSpawner
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  roundController: {fileID: 1987000003}
+  configSource: {fileID: 1877830053}
+  npcBodyPrefab: {fileID: 6091987198070306886, guid: 92184a431651a4d45977bba957ced391, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

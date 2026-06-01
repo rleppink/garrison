@@ -34,6 +34,8 @@ namespace Garrison.Shared.Config
         DefenderMaxHearts = 29,
         SyretteReachRadius = 30,
         ViewDistance = 31,
-        LosTickRate = 32
+        LosTickRate = 32,
+        NpcConeArc = 33,
+        NpcConeRange = 34
     }
 }

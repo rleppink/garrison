@@ -35,6 +35,8 @@ MonoBehaviour:
   syretteReachRadius: 2.5
   viewDistance: 25
   losTickRate: 10
+  npcConeArc: 70
+  npcConeRange: 8
   cameraZoom: 10
   cameraPushExtent: 8
   cameraPushShape: 0

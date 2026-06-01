@@ -41,8 +41,12 @@ namespace Garrison.Shared.Config
         [SerializeField, Min(0f)] private float recoilMax = 40f;
         [SerializeField, Min(0.0001f)] private float recoilSettleTime = 0.4f;
         [SerializeField, Min(0f)] private float syretteReachRadius = 2.5f;
+
+        [Header("Vision")]
         [SerializeField, Min(0f)] private float viewDistance = 25f;
         [SerializeField, Min(0.0001f)] private float losTickRate = 10f;
+        [SerializeField, Range(1f, 179f)] private float npcConeArc = 70f;
+        [SerializeField, Min(0f)] private float npcConeRange = 8f;
 
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;
@@ -85,6 +89,8 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.SyretteReachRadius, ConfigValue.Float(syretteReachRadius));
             yield return Pair(ConfigKey.ViewDistance, ConfigValue.Float(viewDistance));
             yield return Pair(ConfigKey.LosTickRate, ConfigValue.Float(losTickRate));
+            yield return Pair(ConfigKey.NpcConeArc, ConfigValue.Float(npcConeArc));
+            yield return Pair(ConfigKey.NpcConeRange, ConfigValue.Float(npcConeRange));
             yield return Pair(ConfigKey.CameraZoom, ConfigValue.Float(cameraZoom));
             yield return Pair(ConfigKey.CameraPushExtent, ConfigValue.Float(cameraPushExtent));
             yield return Pair(ConfigKey.CameraPushShape, ConfigValue.Int(cameraPushShape));
