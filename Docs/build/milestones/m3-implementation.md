@@ -157,7 +157,7 @@ reach a player?" and raising an event. Don't conflate the two.)*
 | C2 | LOS computation (per-object, fixed tick) + throwaway sight-blockers + config | ✅ Done | 6652d2b |
 | C3 | Wire LOS → PurrNet observers — the fog trust boundary goes live | ✅ Done | 17bd5a1 |
 | C4 | Minimal NPC body + visible sweeping cone (the tell), hand-placed throwaway | ✅ Done | b824101 |
-| C5 | NPC perception: cone+range+LOS can-see → acquired/lost seam + alert cue | ⏳ Planned | — |
+| C5 | NPC perception: cone+range+LOS can-see → acquired/lost seam + alert cue | ✅ Done | 44febd6 |
 | C6 | Acceptance pass — fog/trust gate + "is that nest crewed?" cone read | ⏳ Planned | — |
 
 ### Verification discipline (what "Done" means here)
