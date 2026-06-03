@@ -13,6 +13,7 @@ namespace Garrison.Vision
         [SerializeField] private AudioClip alertClip;
 
         private IAudioBus audioBus;
+        private bool warnedMissingClip;
 
         private IPerception Perception => perceptionSource as IPerception;
 
@@ -23,6 +24,7 @@ namespace Garrison.Vision
 
         private void OnEnable()
         {
+            ValidateConfiguration();
             Subscribe(true);
         }
 
@@ -33,7 +35,19 @@ namespace Garrison.Vision
 
         private void OnTargetAcquired(PlayerID _)
         {
+            if (!alertClip || audioBus == null)
+                return;
+
             audioBus?.Play(AudioChannel.Alarms, alertClip, transform.position);
+        }
+
+        private void ValidateConfiguration()
+        {
+            if (alertClip || warnedMissingClip)
+                return;
+
+            warnedMissingClip = true;
+            Debug.LogWarning("NpcAlertCue has no alert clip wired; NPC acquire events will be silent.", this);
         }
 
         private void Subscribe(bool subscribe)

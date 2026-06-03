@@ -61,6 +61,25 @@ the systems below are described with the authority/data-flow front and centre.
   cheating.
 - An NPC cone visibly sweeps, and you can break its LOS with terrain.
 
+## Acceptance — 2026-06-03
+
+M3 is accepted. Live host + client testing confirmed that peeking and flanking
+matter, the throwaway blockers break sight and movement, the NPC cone reads and
+drops perception behind cover, and scouting the NPC costs exposure because the NPC
+and cone are fogged until a player gets LOS.
+
+Decisions closed:
+- Fog remains entity hide/reveal, not terrain shroud. Remote clients are gated by
+  PurrNet observer withholding; listen-host presentation uses local renderer
+  culling because the host is also the server.
+- LOS remains per-object on a fixed tick: `ViewDistance = 35`,
+  `LosTickRate = 10`.
+- The NPC remains a minimal perception stub: `NpcConeArc = 70`,
+  `NpcConeRange = 8`, with `IPerception` positioned for M5 and no M3 behaviour
+  consumer.
+- Fog remains per-character. No team vision union or defender home-field reveal
+  was added.
+
 ## Explicitly not in M3
 - NPC patrol/sentry/gunner behaviour (M5), planning-time NPC placement (M4), the
   See tools — searchlights/flares (M5).

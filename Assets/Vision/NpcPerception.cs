@@ -152,6 +152,7 @@ namespace Garrison.Vision
             {
                 PlayerID player = removedTargets[i];
                 currentTargets.Remove(player);
+                Debug.Log($"NpcPerception lost target {player}.", this);
                 TargetLost?.Invoke(player);
             }
 
@@ -160,6 +161,7 @@ namespace Garrison.Vision
                 if (!currentTargets.Add(player))
                     continue;
 
+                Debug.Log($"NpcPerception acquired target {player}.", this);
                 TargetAcquired?.Invoke(player);
             }
         }

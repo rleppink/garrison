@@ -10,6 +10,10 @@ namespace Garrison.Player
         [SerializeField] private PlayerBody body;
         [SerializeField] private MonoBehaviour lifeStateSource;
         [SerializeField] private MonoBehaviour recoilSource;
+        [SerializeField] private LayerMask collisionMask = 1 << 8;
+        [SerializeField, Min(0.01f)] private float collisionRadius = 0.5f;
+        [SerializeField, Min(0.01f)] private float collisionHeight = 2f;
+        [SerializeField, Min(0f)] private float collisionSkin = 0.02f;
 
         // Server simulation rate. Deliberately NOT Unity's physics FixedUpdate: this is
         // kinematic (transform writes, no Rigidbody), so it runs on its own fixed-step
@@ -82,8 +86,38 @@ namespace Garrison.Player
             float speed = isSprinting
                 ? config?.GetFloat(ConfigKey.SprintSpeed, 5.8f) ?? 5.8f
                 : config?.GetFloat(ConfigKey.MoveSpeed, 4.5f) ?? 4.5f;
-            Vector3 delta3 = new(moveInput.x, 0f, moveInput.y);
-            transform.position += delta3 * (speed * delta);
+            Vector3 delta3 = new Vector3(moveInput.x, 0f, moveInput.y) * (speed * delta);
+            MoveWithCollision(delta3);
+        }
+
+        private void MoveWithCollision(Vector3 delta)
+        {
+            float distance = delta.magnitude;
+            if (distance <= Mathf.Epsilon)
+                return;
+
+            Vector3 direction = delta / distance;
+            GetCapsulePoints(transform.position, out Vector3 bottom, out Vector3 top);
+
+            if (!Physics.CapsuleCast(bottom, top, collisionRadius, direction, out RaycastHit hit, distance + collisionSkin, collisionMask, QueryTriggerInteraction.Ignore))
+            {
+                transform.position += delta;
+                return;
+            }
+
+            float travel = Mathf.Max(0f, hit.distance - collisionSkin);
+            transform.position += direction * Mathf.Min(travel, distance);
+        }
+
+        private void GetCapsulePoints(Vector3 position, out Vector3 bottom, out Vector3 top)
+        {
+            float radius = Mathf.Max(0.01f, collisionRadius);
+            float height = Mathf.Max(radius * 2f, collisionHeight);
+            float halfSegment = (height * 0.5f) - radius;
+            Vector3 center = position + Vector3.up * (height * 0.5f);
+
+            bottom = center + Vector3.down * halfSegment;
+            top = center + Vector3.up * halfSegment;
         }
 
         private void ApplyFacing(float delta)

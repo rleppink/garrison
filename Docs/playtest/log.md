@@ -144,3 +144,33 @@ User/playtester acceptance: **"C9 accepted; feels good!"**
 - TTK / weapon feel: accepted with the Garand-style semi-auto M2 stand-in.
 - Syrette loop: accepted; down → syrette → up → one-more-hit-dead read clearly.
 - Audio: accepted; gunfire, hit, down, and got-up cues read correctly.
+
+### Session 2026-06-03 — M3 fog / trust boundary + cone acceptance
+
+**Config this session**
+
+| Config                    | Value                        |
+|---------------------------|------------------------------|
+| Mode                      | M3 fog/cone acceptance       |
+| `ViewDistance`            | 35                           |
+| `LosTickRate`             | 10                           |
+| `FogObserverWithholding`  | true                         |
+| `NpcConeArc`              | 70                           |
+| `NpcConeRange`            | 8                            |
+| Map                       | Greybox with M3 LOS blockers |
+
+**Result**
+
+User/playtester acceptance: **"All works well!"** M3 is accepted.
+
+**Notes / feel**
+
+- Peeking and flanking read correctly: bodies disappear around cover and return
+  on reacquire.
+- Fog trust boundary held for remote clients through observer withholding. The
+  listen host remains a documented caveat: it uses presentation culling because
+  the host is also the server.
+- LOS blockers now function as physical cover as well as sight blockers.
+- The NPC cone visibly sweeps, is fogged with the NPC until scouted, and loses
+  targets when terrain breaks LOS.
+- `IPerception` remains a stub seam for M5; no NPC behaviour was added in M3.

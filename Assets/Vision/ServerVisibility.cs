@@ -46,14 +46,20 @@ namespace Garrison.Vision
 
         private sealed class TrackedAgent
         {
-            public TrackedAgent(NetworkIdentity identity, IVisionAgent visionAgent, IAssignedPlayer assignedPlayer)
+            public TrackedAgent(NetworkIdentity identity, NetworkIdentity[] identities, Renderer[] renderers, IVisionAgent visionAgent, IAssignedPlayer assignedPlayer)
             {
                 Identity = identity;
+                Identities = identities;
+                Renderers = renderers;
                 VisionAgent = visionAgent;
                 AssignedPlayer = assignedPlayer;
             }
 
             public NetworkIdentity Identity { get; }
+
+            public NetworkIdentity[] Identities { get; }
+
+            public Renderer[] Renderers { get; }
 
             public IVisionAgent VisionAgent { get; }
 
@@ -209,9 +215,16 @@ namespace Garrison.Vision
             if (identity is not IVisionAgent visionAgent || trackedAgentsByIdentity.ContainsKey(identity))
                 return;
 
-            TrackedAgent trackedAgent = new(identity, visionAgent, identity as IAssignedPlayer);
+            NetworkIdentity[] identities = identity.GetComponents<NetworkIdentity>();
+            Renderer[] renderers = identity.GetComponentsInChildren<Renderer>(true);
+            TrackedAgent trackedAgent = new(identity, identities, renderers, visionAgent, identity as IAssignedPlayer);
             trackedAgents.Add(trackedAgent);
-            trackedAgentsByIdentity.Add(identity, trackedAgent);
+            for (int i = 0; i < identities.Length; i++)
+            {
+                if (identities[i] != null)
+                    trackedAgentsByIdentity[identities[i]] = trackedAgent;
+            }
+
             visibilityDirty = true;
 
             Debug.Log($"ServerVisibility tracked '{identity.name}' (player: {DescribeAssignedPlayer(trackedAgent.AssignedPlayer)}). Total agents: {trackedAgents.Count}.", identity);
@@ -222,9 +235,14 @@ namespace Garrison.Vision
             if (!trackedAgentsByIdentity.TryGetValue(identity, out TrackedAgent trackedAgent))
                 return;
 
-            trackedAgentsByIdentity.Remove(identity);
+            for (int i = 0; i < trackedAgent.Identities.Length; i++)
+            {
+                if (trackedAgent.Identities[i] != null)
+                    trackedAgentsByIdentity.Remove(trackedAgent.Identities[i]);
+            }
+
             trackedAgents.Remove(trackedAgent);
-            RemoveFromVisibleSets(identity);
+            RemoveFromVisibleSets(trackedAgent.Identity);
             visibilityDirty = true;
 
             Debug.Log($"ServerVisibility untracked '{identity.name}' (player: {DescribeAssignedPlayer(trackedAgent.AssignedPlayer)}). Total agents: {trackedAgents.Count}.", identity);
@@ -238,7 +256,10 @@ namespace Garrison.Vision
                 if (trackedAgent.Identity != null)
                 {
                     foreach (PlayerID hiddenPlayer in trackedAgent.HiddenPlayers)
-                        trackedAgent.Identity.RemoveBlacklistPlayer(hiddenPlayer);
+                    {
+                        RemoveBlacklistPlayer(trackedAgent, hiddenPlayer);
+                        SetHostPresentationVisible(trackedAgent, hiddenPlayer, true);
+                    }
                 }
 
                 trackedAgent.VisibleTargets.Clear();
@@ -327,7 +348,7 @@ namespace Garrison.Vision
 
         private void ApplyObserverPolicy()
         {
-            bool observerWithholdingEnabled = Config?.GetBool(ConfigKey.FogObserverWithholding, false) ?? false;
+            bool observerWithholdingEnabled = Config?.GetBool(ConfigKey.FogObserverWithholding, true) ?? true;
             if (!observerWithholdingEnabled)
             {
                 if (observerWithholdingWasEnabled || HasAnyHiddenPlayers())
@@ -348,7 +369,7 @@ namespace Garrison.Vision
 
             foreach (PlayerID player in connectedPlayers)
             {
-                bool shouldObserve = target.DesiredObservers.Contains(player) || ShouldForceObservePlayer(player);
+                bool shouldObserve = target.DesiredObservers.Contains(player);
                 bool isHidden = target.HiddenPlayers.Contains(player);
 
                 if (shouldObserve)
@@ -357,8 +378,10 @@ namespace Garrison.Vision
                         continue;
 
                     target.HiddenPlayers.Remove(player);
-                    target.Identity.RemoveBlacklistPlayer(player);
+                    RemoveBlacklistPlayer(target, player);
                     target.Identity.EvaluateVisibility(player);
+                    SetHostPresentationVisible(target, player, true);
+                    Debug.Log($"ServerVisibility revealed '{target.Identity.name}' to {player}.", target.Identity);
                     continue;
                 }
 
@@ -366,8 +389,10 @@ namespace Garrison.Vision
                     continue;
 
                 target.HiddenPlayers.Add(player);
-                target.Identity.BlacklistPlayer(player);
+                BlacklistPlayer(target, player);
                 target.Identity.EvaluateVisibility(player);
+                SetHostPresentationVisible(target, player, false);
+                Debug.Log($"ServerVisibility hid '{target.Identity.name}' from {player}.", target.Identity);
             }
 
             staleHiddenPlayers.Clear();
@@ -381,7 +406,8 @@ namespace Garrison.Vision
             {
                 PlayerID stalePlayer = staleHiddenPlayers[i];
                 target.HiddenPlayers.Remove(stalePlayer);
-                target.Identity.RemoveBlacklistPlayer(stalePlayer);
+                RemoveBlacklistPlayer(target, stalePlayer);
+                SetHostPresentationVisible(target, stalePlayer, true);
             }
         }
 
@@ -414,7 +440,10 @@ namespace Garrison.Vision
                 trackedAgent.DesiredObservers.Remove(player);
 
                 if (trackedAgent.HiddenPlayers.Remove(player) && trackedAgent.Identity != null)
-                    trackedAgent.Identity.RemoveBlacklistPlayer(player);
+                {
+                    RemoveBlacklistPlayer(trackedAgent, player);
+                    SetHostPresentationVisible(trackedAgent, player, true);
+                }
             }
         }
 
@@ -438,8 +467,9 @@ namespace Garrison.Vision
                 {
                     foreach (PlayerID hiddenPlayer in trackedAgent.HiddenPlayers)
                     {
-                        trackedAgent.Identity.RemoveBlacklistPlayer(hiddenPlayer);
+                        RemoveBlacklistPlayer(trackedAgent, hiddenPlayer);
                         trackedAgent.Identity.EvaluateVisibility(hiddenPlayer);
+                        SetHostPresentationVisible(trackedAgent, hiddenPlayer, true);
                     }
                 }
 
@@ -448,16 +478,39 @@ namespace Garrison.Vision
             }
         }
 
-        private bool ShouldForceObservePlayer(PlayerID player)
-        {
-            return networkManagerSource != null
-                && networkManagerSource.isHost
-                && player == networkManagerSource.localPlayer;
-        }
-
         private bool HasLineOfSight(Vector3 fromEyePosition, Vector3 toEyePosition)
         {
             return !Physics.Linecast(fromEyePosition, toEyePosition, obstacleMask, QueryTriggerInteraction.Ignore);
+        }
+
+        private void SetHostPresentationVisible(TrackedAgent target, PlayerID player, bool visible)
+        {
+            if (networkManagerSource == null || !networkManagerSource.isHost || player != networkManagerSource.localPlayer)
+                return;
+
+            for (int i = 0; i < target.Renderers.Length; i++)
+            {
+                if (target.Renderers[i] != null)
+                    target.Renderers[i].enabled = visible;
+            }
+        }
+
+        private static void BlacklistPlayer(TrackedAgent target, PlayerID player)
+        {
+            for (int i = 0; i < target.Identities.Length; i++)
+            {
+                if (target.Identities[i] != null)
+                    target.Identities[i].BlacklistPlayer(player);
+            }
+        }
+
+        private static void RemoveBlacklistPlayer(TrackedAgent target, PlayerID player)
+        {
+            for (int i = 0; i < target.Identities.Length; i++)
+            {
+                if (target.Identities[i] != null)
+                    target.Identities[i].RemoveBlacklistPlayer(player);
+            }
         }
 
         private static string DescribeAssignedPlayer(IAssignedPlayer assignedPlayer)

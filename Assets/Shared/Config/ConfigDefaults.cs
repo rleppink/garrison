@@ -43,13 +43,13 @@ namespace Garrison.Shared.Config
         [SerializeField, Min(0f)] private float syretteReachRadius = 2.5f;
 
         [Header("Vision")]
-        [SerializeField, Min(0f)] private float viewDistance = 25f;
+        [SerializeField, Min(0f)] private float viewDistance = 35f;
         [SerializeField, Min(0.0001f)] private float losTickRate = 10f;
         [SerializeField, Range(1f, 179f)] private float npcConeArc = 70f;
         [SerializeField, Min(0f)] private float npcConeRange = 8f;
-        // C6 found runtime observer withholding is not accepted yet. Keep the
-        // trust-boundary path behind a dial so the baseline round remains playable.
-        [SerializeField] private bool fogObserverWithholding;
+        // M3's acceptance gate needs the trust-boundary path enabled by default.
+        // Disable only when deliberately comparing against the pre-fog baseline.
+        [SerializeField] private bool fogObserverWithholding = true;
 
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;

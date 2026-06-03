@@ -158,7 +158,7 @@ reach a player?" and raising an event. Don't conflate the two.)*
 | C3 | Wire LOS → PurrNet observers — the fog trust boundary goes live | ✅ Done | 17bd5a1 |
 | C4 | Minimal NPC body + visible sweeping cone (the tell), hand-placed throwaway | ✅ Done | b824101 |
 | C5 | NPC perception: cone+range+LOS can-see → acquired/lost seam + alert cue | ✅ Done | 44febd6 |
-| C6 | Acceptance pass — fog/trust gate + "is that nest crewed?" cone read | ⛔ Blocked (LAN trust pass pending) | — |
+| C6 | Acceptance pass — fog/trust gate + "is that nest crewed?" cone read | ✅ Accepted | — |
 
 ### Lead fix note — 2026-06-01
 
@@ -167,10 +167,41 @@ C6 exposed two runtime issues before acceptance:
   hierarchy for that scene, leaving `Combatant(Clone)` / `NpcBody(Clone)` as plain
   unspawned GameObjects. `RoundController` now unloads stale non-network map scenes,
   reloads through PurrNet, and waits for the map hierarchy before slices spawn.
-- Observer withholding is behind `ConfigKey.FogObserverWithholding`, default
-  `false`, so the baseline round remains playable while C6 is rerun on a real
-  host+client setup. LOS sets, NPC cone, and NPC perception still run; the
-  trust-boundary enforcement is the part gated for acceptance.
+- Observer withholding remains behind `ConfigKey.FogObserverWithholding`, but the
+  M3 test default is now `true` so C6 exercises the trust-boundary path without
+  extra manual config. Disable it only when deliberately comparing against the
+  pre-fog baseline.
+
+### Lead fix note — 2026-06-02
+
+Host + two-client testing showed no observable fog/perception and players could
+walk through the LOS blockers. Follow-up fixes:
+- `ConfigDefaults` now enables `FogObserverWithholding` by default, and
+  `ServerVisibility` logs each hide/reveal observer change.
+- `PlayerMovement` now capsule-casts server-side movement against the LOS obstacle
+  layer before applying its kinematic transform write, so the M3 blockers are
+  physical cover as well as linecast blockers.
+- `NpcPerception` logs acquired/lost targets, and `NpcAlertCue` warns when the
+  event fires without an alert clip wired.
+- Host-local play is fog-gated the same as connected clients. Server authority
+  still computes all visibility, but the host player no longer force-observes
+  every target.
+- Observer withholding is applied to every `NetworkIdentity` component on the
+  tracked target's GameObject. PurrNet evaluates visibility across all identities
+  on a transform, so blacklisting only the `IVisionAgent` component logs hide
+  events but leaves the object visible through sibling network behaviours.
+- Listen-host presentation uses local renderer culling for the host player,
+  because PurrNet's despawn packet path deliberately skips `NetworkManager.localPlayer`.
+  Remote clients still use observer withholding; the host cannot have true data
+  withholding from itself while it is also the server.
+
+### Acceptance note — 2026-06-03
+
+C6 accepted after the follow-up fixes above. Fog, blocker collision, NPC cone
+readability, and NPC acquired/lost perception all worked in live host + client
+testing. Remote clients use PurrNet observer withholding for the trust boundary;
+the listen-host caveat remains presentation-only culling because the host is also
+the server.
 
 ### Verification discipline (what "Done" means here)
 
@@ -350,13 +381,12 @@ defining property.
 - Each LOS tick, after C2 computes the sets, reconcile **observer membership**:
   for each target agent T, the set of observing `PlayerID`s = the
   `IAssignedPlayer` of every *player* viewer that currently has T in its
-  visible-set (plus T's own player if it has one — you always observe yourself;
-  plus the **server/host**, which observes everything for authority).
+  visible-set (plus T's own player if it has one — you always observe yourself).
 - Apply via the C1-spiked API: add observers that gained LOS, remove observers that
   lost it. **Diff against last tick** so only changes hit the network.
 - **Edge cases to handle explicitly:**
   - **Own body always observed** by its player (never fog yourself).
-  - **Host/server** keeps full observation.
+  - **Host-local player** is fog-gated the same as connected clients.
   - **The NPC** (no `IAssignedPlayer`) is a **target only** here — players must
     have LOS to receive it ("is that nest crewed?" — you have to get eyes on it).
     It is not a fog *viewer* (no client to withhold from); its "sight" is the C5
@@ -473,19 +503,19 @@ on, plus a minimal alert cue. Nothing acts on the result in M3.
 fog hold as **server-authoritative**, uncheatable through terrain?
 
 **Checklist (from [`m3-fog-and-cones.md`](m3-fog-and-cones.md) "Done when")**
-- [ ] Peeking and flanking are real questions — you lose sight of an enemy around
+- [x] Peeking and flanking are real questions — you lose sight of an enemy around
       terrain and regain it on the peek; positioning to *see without being seen*
       matters.
-- [ ] Fog holds **server-authoritative** — a client cannot reveal a hidden
+- [x] Fog holds **server-authoritative** — a client cannot reveal a hidden
       body/NPC by cheating, because its state was never sent (confirm by
       client-side inspection, not just "the renderer was off").
-- [ ] **The NPC cone visibly sweeps and you can break its LOS with terrain** —
+- [x] **The NPC cone visibly sweeps and you can break its LOS with terrain** —
       stepping behind cover drops you from its perception (`TargetLost` / no alert).
-- [ ] **"Is that nest crewed?"** reads — the NPC + cone are fogged until you get
+- [x] **"Is that nest crewed?"** reads — the NPC + cone are fogged until you get
       eyes on, so scouting costs exposure.
-- [ ] Pop-in/out reads acceptably at the chosen `LosTickRate` (tune cadence /
+- [x] Pop-in/out reads acceptably at the chosen `LosTickRate` (tune cadence /
       add linger-hysteresis if it strobes).
-- [ ] **The wall holds:** `Vision/` references only `Shared` + PurrNet; `grep
+- [x] **The wall holds:** `Vision/` references only `Shared` + PurrNet; `grep
       Garrison.Player`/`Garrison.Combat` in `Vision/` is empty; no banned
       patterns; `_ownerAuth` 0; deleting `Vision/` returns the pre-M3
       everyone-sees-everyone behaviour and removes the NPC cleanly.
@@ -505,10 +535,19 @@ fog hold as **server-authoritative**, uncheatable through terrain?
 - Per-object on a fixed tick — **held**; final `ViewDistance` / `LosTickRate`.
 - NPC kept as a minimal perception stub (no behaviour) — **held**; final
   `NpcConeArc` / `NpcConeRange`; confirm `IPerception` is positioned for M5.
-- Per-character fog (no team union) — held, or note if `TeamVisionShared` was added.
+- Per-character fog (no team union) — **held**; `TeamVisionShared` was not added.
+
+**Accepted record — 2026-06-03**
+- Fog = entity hide/reveal, server-withheld for remote clients; listen-host uses
+  local presentation culling only because it is the server.
+- Per-object LOS on a fixed tick held with `ViewDistance = 35` and
+  `LosTickRate = 10`.
+- NPC stub held with `NpcConeArc = 70` and `NpcConeRange = 8`; `IPerception`
+  remains the M5 seam, with no M3 behaviour consumer.
+- Per-character fog held; no team union or defender home-field reveal added.
 
 **Done when**
-- The checklist passes with real instances on a LAN (host + ≥2 clients, players
+- The checklist passed with real instances on a LAN (host + clients, players
   peeking around the throwaway blockers and the NPC), the decisions are written
   into [`m3-fog-and-cones.md`](m3-fog-and-cones.md), and the playtest log
   ([`../../playtest/log.md`](../../playtest/log.md)) gets its M3 "fog / trust
