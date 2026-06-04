@@ -12,6 +12,11 @@ namespace Garrison.Vision
         [SerializeField, Min(0f)] private float groundOffset = 0.02f;
         [SerializeField, Range(3, 64)] private int segmentCount = 24;
 
+        [Header("Outline")]
+        [SerializeField] private LineRenderer outline;
+        [SerializeField, Min(0f)] private float outlineWidth = 0.08f;
+        [SerializeField, Min(0f)] private float outlineLift = 0.015f;
+
         private const float DefaultConeArc = 70f;
         private const float DefaultConeRange = 8f;
 
@@ -49,6 +54,11 @@ namespace Garrison.Vision
 
         private void EnsureMesh()
         {
+            // Outline can live on the same GameObject as the cone renderer; resolve it lazily
+            // so the prefab does not need an explicit serialized reference.
+            if (outline == null)
+                outline = GetComponentInChildren<LineRenderer>(true);
+
             if (meshFilter == null)
                 return;
 
@@ -116,6 +126,33 @@ namespace Garrison.Vision
             coneMesh.uv = uvs;
             coneMesh.triangles = triangles;
             coneMesh.RecalculateBounds();
+
+            UpdateOutline(vertices);
+        }
+
+        // The fan's vertices already describe the cone boundary as a closed loop:
+        // [apex, arc0 .. arcN]. Looping the line connects arcN back to the apex, so the
+        // outline traces both straight edges and the curved front in one pass.
+        private void UpdateOutline(Vector3[] vertices)
+        {
+            if (outline == null)
+                return;
+
+            outline.useWorldSpace = false;
+            outline.loop = true;
+            outline.widthMultiplier = outlineWidth;
+            outline.numCornerVertices = 0;
+            outline.numCapVertices = 0;
+            outline.alignment = LineAlignment.View;
+            outline.textureMode = LineTextureMode.Stretch;
+
+            outline.positionCount = vertices.Length;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Vector3 p = vertices[i];
+                p.y += outlineLift;
+                outline.SetPosition(i, p);
+            }
         }
     }
 }
