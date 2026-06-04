@@ -29,7 +29,6 @@ namespace Garrison.Vision
         private HierarchyFactory serverHierarchy;
         private float tickAccumulator;
         private bool visibilityDirty;
-        private bool observerWithholdingWasEnabled;
 
         public readonly struct TrackedPlayer
         {
@@ -122,7 +121,7 @@ namespace Garrison.Vision
             {
                 tickAccumulator -= tickDelta;
                 RebuildVisibleSets();
-                ApplyObserverPolicy();
+                ReconcileObservers();
                 visibilityDirty = false;
                 rebuiltThisFrame = true;
             }
@@ -130,7 +129,7 @@ namespace Garrison.Vision
             if (!rebuiltThisFrame && visibilityDirty)
             {
                 RebuildVisibleSets();
-                ApplyObserverPolicy();
+                ReconcileObservers();
                 visibilityDirty = false;
             }
         }
@@ -346,22 +345,6 @@ namespace Garrison.Vision
                 ReconcileTargetObservers(trackedAgents[targetIndex]);
         }
 
-        private void ApplyObserverPolicy()
-        {
-            bool observerWithholdingEnabled = Config?.GetBool(ConfigKey.FogObserverWithholding, true) ?? true;
-            if (!observerWithholdingEnabled)
-            {
-                if (observerWithholdingWasEnabled || HasAnyHiddenPlayers())
-                    ClearObserverWithholding();
-
-                observerWithholdingWasEnabled = false;
-                return;
-            }
-
-            observerWithholdingWasEnabled = true;
-            ReconcileObservers();
-        }
-
         private void ReconcileTargetObservers(TrackedAgent target)
         {
             if (target.Identity == null)
@@ -444,37 +427,6 @@ namespace Garrison.Vision
                     RemoveBlacklistPlayer(trackedAgent, player);
                     SetHostPresentationVisible(trackedAgent, player, true);
                 }
-            }
-        }
-
-        private bool HasAnyHiddenPlayers()
-        {
-            for (int i = 0; i < trackedAgents.Count; i++)
-            {
-                if (trackedAgents[i].HiddenPlayers.Count > 0)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private void ClearObserverWithholding()
-        {
-            for (int i = 0; i < trackedAgents.Count; i++)
-            {
-                TrackedAgent trackedAgent = trackedAgents[i];
-                if (trackedAgent.Identity != null)
-                {
-                    foreach (PlayerID hiddenPlayer in trackedAgent.HiddenPlayers)
-                    {
-                        RemoveBlacklistPlayer(trackedAgent, hiddenPlayer);
-                        trackedAgent.Identity.EvaluateVisibility(hiddenPlayer);
-                        SetHostPresentationVisible(trackedAgent, hiddenPlayer, true);
-                    }
-                }
-
-                trackedAgent.DesiredObservers.Clear();
-                trackedAgent.HiddenPlayers.Clear();
             }
         }
 

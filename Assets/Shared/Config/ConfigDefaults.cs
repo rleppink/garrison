@@ -53,9 +53,6 @@ namespace Garrison.Shared.Config
         [SerializeField, Min(0.0001f)] private float losTickRate = 10f;
         [SerializeField, Range(1f, 179f)] private float npcConeArc = 70f;
         [SerializeField, Min(0f)] private float npcConeRange = 8f;
-        // M3's acceptance gate needs the trust-boundary path enabled by default.
-        // Disable only when deliberately comparing against the pre-fog baseline.
-        [SerializeField] private bool fogObserverWithholding = true;
 
         [Header("Camera")]
         [SerializeField] private float cameraZoom = 10f;
@@ -100,7 +97,6 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.LosTickRate, ConfigValue.Float(losTickRate));
             yield return Pair(ConfigKey.NpcConeArc, ConfigValue.Float(npcConeArc));
             yield return Pair(ConfigKey.NpcConeRange, ConfigValue.Float(npcConeRange));
-            yield return Pair(ConfigKey.FogObserverWithholding, ConfigValue.Bool(fogObserverWithholding));
             yield return Pair(ConfigKey.CameraZoom, ConfigValue.Float(cameraZoom));
             yield return Pair(ConfigKey.CameraPushExtent, ConfigValue.Float(cameraPushExtent));
             yield return Pair(ConfigKey.CameraPushShape, ConfigValue.Int(cameraPushShape));

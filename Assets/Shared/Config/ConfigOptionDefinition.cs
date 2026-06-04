@@ -76,10 +76,6 @@ namespace Garrison.Shared.Config
                     "How far (world units) the NPC's vision cone reaches. Targets beyond this distance " +
                     "are never spotted, even when inside the arc.",
                     0f),
-                Bool(ConfigKey.FogObserverWithholding, "Vision", "Fog observer withholding",
-                    "When on, the server never sends hidden players to clients that shouldn't see them " +
-                    "— true fog of war that can't be peeked by inspecting network traffic. Turn " +
-                    "off only to compare against the pre-fog baseline."),
                 Float(ConfigKey.CameraZoom, "Camera", "Zoom",
                     "Camera zoom, given as the world half-height framed at the player (smaller = closer / " +
                     "more zoomed in). Also bounds how far the aim-push can shift the view.",
@@ -238,11 +234,6 @@ namespace Garrison.Shared.Config
                 max,
                 true
             );
-        }
-
-        private static ConfigOptionDefinition Bool(ConfigKey key, string group, string label, string tooltip)
-        {
-            return new ConfigOptionDefinition(key, ConfigValueType.Bool, group, label, tooltip);
         }
     }
 }

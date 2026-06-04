@@ -36,7 +36,6 @@ namespace Garrison.Shared.Config
         ViewDistance = 31,
         LosTickRate = 32,
         NpcConeArc = 33,
-        NpcConeRange = 34,
-        FogObserverWithholding = 35
+        NpcConeRange = 34
     }
 }
