@@ -19,6 +19,11 @@ namespace Garrison.Shared.Lobby
         [SerializeField] private StyleSheet styleSheet;
 
         private const string HiddenClass = "is-hidden";
+        private const string TooltipVisibleClass = "option-tooltip--visible";
+
+        // Gap between the hovered row and the floating tooltip, and the screen edges.
+        // Matches --space-2 so it sits on the theme's spacing rhythm.
+        private const float TooltipGap = 12f;
 
         private readonly StringBuilder builder = new();
         private readonly List<OptionControl> optionControls = new();
@@ -29,6 +34,14 @@ namespace Garrison.Shared.Lobby
         private Label configLabel;
         private Label playersLabel;
         private Button roundButton;
+
+        // A single floating tooltip reused across all rows. It always lives in the tree
+        // at opacity 0 (so the fade can run both ways) and only repositions/reveals on
+        // hover. picking-mode is ignored so it never steals hover from the rows beneath.
+        private VisualElement tooltipCard;
+        private Label tooltipText;
+        private VisualElement currentTooltipAnchor;
+        private bool hideQueued;
 
         private sealed class OptionControl
         {
@@ -134,6 +147,26 @@ namespace Garrison.Shared.Lobby
             roundButton = root.Q<Button>("RoundButton");
 
             BuildOptions();
+            BuildTooltip(root);
+        }
+
+        private void BuildTooltip(VisualElement root)
+        {
+            tooltipCard = new VisualElement { name = "OptionTooltip", pickingMode = PickingMode.Ignore };
+            tooltipCard.AddToClassList("option-tooltip");
+
+            tooltipText = new Label { name = "OptionTooltipText", pickingMode = PickingMode.Ignore };
+            tooltipText.AddToClassList("option-tooltip__text");
+            tooltipCard.Add(tooltipText);
+
+            // The card's size isn't known until it has laid out its (wrapped) text, so
+            // reposition whenever its geometry resolves — the first show lands correctly
+            // even though we set the text and ask to position in the same frame.
+            tooltipCard.RegisterCallback<GeometryChangedEvent>(_ => PositionTooltip());
+
+            // Added last so it draws over the dossiers, and to the panel root so panel
+            // overflow can't clip it.
+            root.Add(tooltipCard);
         }
 
         private void BuildOptions()
@@ -184,6 +217,16 @@ namespace Garrison.Shared.Lobby
             Label label = container.Q<Label>("OptionLabel");
             if (label != null)
                 label.text = definition.Label;
+
+            // MouseEnter/Leave follow :hover semantics — they treat the row's children
+            // (label, field, toggle) as part of the row, so moving the cursor anywhere
+            // within the row keeps the same tooltip up without re-firing.
+            if (!string.IsNullOrEmpty(definition.Tooltip))
+            {
+                string tooltip = definition.Tooltip;
+                container.RegisterCallback<MouseEnterEvent>(_ => ShowTooltip(container, tooltip));
+                container.RegisterCallback<MouseLeaveEvent>(_ => HideTooltip(container));
+            }
 
             OptionControl control = new() { Definition = definition };
 
@@ -236,6 +279,78 @@ namespace Garrison.Shared.Lobby
                     control.Toggle.SetValueWithoutNotify(lobbyController.GetConfigBool(control.Definition.Key));
                 }
             }
+        }
+
+        private void ShowTooltip(VisualElement anchor, string text)
+        {
+            if (tooltipCard == null)
+                return;
+
+            // Cancel any pending hide so moving directly between two rows swaps the text
+            // and position in place instead of fading out and back in.
+            hideQueued = false;
+            currentTooltipAnchor = anchor;
+            tooltipText.text = text;
+            PositionTooltip();
+        }
+
+        private void HideTooltip(VisualElement anchor)
+        {
+            if (tooltipCard == null || currentTooltipAnchor != anchor)
+                return;
+
+            // Defer the hide one frame: if the cursor is moving onto an adjacent row, its
+            // MouseEnter (and ShowTooltip) runs next and clears this, avoiding a flicker.
+            hideQueued = true;
+            tooltipCard.schedule.Execute(ApplyPendingHide);
+        }
+
+        private void ApplyPendingHide()
+        {
+            if (!hideQueued)
+                return;
+
+            hideQueued = false;
+            currentTooltipAnchor = null;
+            tooltipCard.RemoveFromClassList(TooltipVisibleClass);
+        }
+
+        private void PositionTooltip()
+        {
+            if (tooltipCard == null || currentTooltipAnchor == null)
+                return;
+
+            float width = tooltipCard.resolvedStyle.width;
+            float height = tooltipCard.resolvedStyle.height;
+
+            // Not laid out yet (text just changed) — the GeometryChangedEvent will call
+            // back once the card has resolved its wrapped size.
+            if (float.IsNaN(width) || width <= 0f || float.IsNaN(height) || height <= 0f)
+                return;
+
+            Rect anchor = currentTooltipAnchor.worldBound;
+            Rect panel = tooltipCard.parent.worldBound;
+
+            // Prefer the left of the row (the config panel sits on the right); flip to the
+            // right side if there isn't room, then clamp inside the panel either way.
+            float x = anchor.xMin - width - TooltipGap;
+            if (x < TooltipGap)
+                x = anchor.xMax + TooltipGap;
+
+            x = Mathf.Clamp(x, TooltipGap, Mathf.Max(TooltipGap, panel.width - width - TooltipGap));
+
+            // Vertically centered on the row, clamped so a long tooltip stays on screen.
+            float y = anchor.center.y - height * 0.5f;
+            y = Mathf.Clamp(y, TooltipGap, Mathf.Max(TooltipGap, panel.height - height - TooltipGap));
+
+            // Only write when it actually moves, so the GeometryChanged we trigger here
+            // doesn't loop. Reveal only once placed, so it never flashes at the origin.
+            if (Mathf.Abs(tooltipCard.resolvedStyle.left - x) > 0.5f)
+                tooltipCard.style.left = x;
+            if (Mathf.Abs(tooltipCard.resolvedStyle.top - y) > 0.5f)
+                tooltipCard.style.top = y;
+
+            tooltipCard.AddToClassList(TooltipVisibleClass);
         }
 
         private void SubmitHostRoundAction()

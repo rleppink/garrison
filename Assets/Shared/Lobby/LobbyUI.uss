@@ -125,3 +125,34 @@
 .option-input {
     -unity-text-align: middle-right;
 }
+
+/* --- Option tooltip ------------------------------------------------------
+   A floating paper chit that fades in on hover. Absolutely positioned by
+   LobbyUI in panel space; it ignores picking so it never disturbs the hover
+   it describes. The fade is deliberately under 100ms so checking an option
+   feels instant and crisp. */
+.option-tooltip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: 384px;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--surface-raised);
+    border-width: 1px;
+    border-color: var(--line-strong);
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 80ms;
+    transition-timing-function: ease-out;
+}
+
+.option-tooltip--visible {
+    opacity: 1;
+}
+
+.option-tooltip__text {
+    white-space: normal;
+    font-size: var(--text-xs);
+    color: var(--ink);
+}
