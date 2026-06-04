@@ -90,23 +90,39 @@ namespace Garrison.Player
             MoveWithCollision(delta3);
         }
 
+        // Collide-and-slide. On hitting a surface we advance up to it, then deflect the
+        // leftover motion onto the surface plane and try again, so pressing into a wall at
+        // an angle slides along it instead of dead-stopping. Iterating lets the leftover
+        // resolve against a second surface (inside corners) and naturally stops the player
+        // when wedged. Pressing straight into a wall projects to zero — also correct.
+        private const int MaxSlideIterations = 4;
+
         private void MoveWithCollision(Vector3 delta)
         {
-            float distance = delta.magnitude;
-            if (distance <= Mathf.Epsilon)
-                return;
+            Vector3 remaining = delta;
 
-            Vector3 direction = delta / distance;
-            GetCapsulePoints(transform.position, out Vector3 bottom, out Vector3 top);
-
-            if (!Physics.CapsuleCast(bottom, top, collisionRadius, direction, out RaycastHit hit, distance + collisionSkin, collisionMask, QueryTriggerInteraction.Ignore))
+            for (int i = 0; i < MaxSlideIterations; i++)
             {
-                transform.position += delta;
-                return;
-            }
+                float distance = remaining.magnitude;
+                if (distance <= Mathf.Epsilon)
+                    return;
 
-            float travel = Mathf.Max(0f, hit.distance - collisionSkin);
-            transform.position += direction * Mathf.Min(travel, distance);
+                Vector3 direction = remaining / distance;
+                GetCapsulePoints(transform.position, out Vector3 bottom, out Vector3 top);
+
+                if (!Physics.CapsuleCast(bottom, top, collisionRadius, direction, out RaycastHit hit, distance + collisionSkin, collisionMask, QueryTriggerInteraction.Ignore))
+                {
+                    transform.position += remaining;
+                    return;
+                }
+
+                float travel = Mathf.Min(Mathf.Max(0f, hit.distance - collisionSkin), distance);
+                transform.position += direction * travel;
+
+                // Deflect the unused motion along the surface and keep sliding.
+                Vector3 leftover = remaining - direction * travel;
+                remaining = Vector3.ProjectOnPlane(leftover, hit.normal);
+            }
         }
 
         private void GetCapsulePoints(Vector3 position, out Vector3 bottom, out Vector3 top)
