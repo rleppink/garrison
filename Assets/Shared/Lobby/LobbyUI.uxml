@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="LobbyRoot" class="lobby-root">
+        <ui:VisualElement name="LobbySidebar" class="lobby-sidebar">
+            <ui:Label text="Lobby" class="lobby-title" />
+            <ui:Label name="RoleLabel" class="lobby-role" />
+            <ui:Label name="ConfigLabel" class="lobby-status" />
+            <ui:Button name="RoundButton" class="round-button" />
+            <ui:Label text="Players" class="section-header" />
+            <ui:Label name="PlayersLabel" text="Waiting for players" class="players-list" />
+        </ui:VisualElement>
+        <ui:VisualElement name="LobbyConfigPanel" class="config-panel">
+            <ui:Label text="Lobby Options" class="config-title" />
+            <ui:VisualElement name="OptionGroups" class="option-groups" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

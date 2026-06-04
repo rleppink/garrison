@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Garrison.Shared.Config;
 using Garrison.Shared.Round;
 using PurrNet;
@@ -53,6 +54,7 @@ namespace Garrison.Shared.Lobby
         public RoundState RoundState => roundController ? roundController.State : RoundState.Lobby;
 
         private IConfig Config => configSource as IConfig;
+        private ConfigService ConfigService => configSource as ConfigService;
 
         protected override void OnSpawned(bool asServer)
         {
@@ -103,6 +105,66 @@ namespace Garrison.Shared.Lobby
         {
             if (isServer && roundController)
                 roundController.ResetRound();
+        }
+
+        public string GetConfigDisplayValue(ConfigOptionDefinition option)
+        {
+            IConfig config = Config;
+            if (config == null)
+                return string.Empty;
+
+            switch (option.Type)
+            {
+                case ConfigValueType.Int:
+                    return config.GetInt(option.Key).ToString(CultureInfo.InvariantCulture);
+                case ConfigValueType.Float:
+                    return config.GetFloat(option.Key).ToString("0.###", CultureInfo.InvariantCulture);
+                case ConfigValueType.Bool:
+                    return config.GetBool(option.Key) ? "On" : "Off";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        public bool GetConfigBool(ConfigKey key)
+        {
+            return Config?.GetBool(key) ?? false;
+        }
+
+        public void SetConfigBool(ConfigKey key, bool value)
+        {
+            if (!IsLocalHost || !isServer)
+                return;
+
+            ConfigService?.SetBool(key, value);
+        }
+
+        public void SetConfigFromText(ConfigOptionDefinition option, string text)
+        {
+            if (!IsLocalHost || !isServer)
+                return;
+
+            ConfigService service = ConfigService;
+            if (!service)
+                return;
+
+            switch (option.Type)
+            {
+                case ConfigValueType.Int:
+                    if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int intValue))
+                    {
+                        int clamped = option.HasRange ? Mathf.Clamp(intValue, Mathf.CeilToInt(option.Min), Mathf.FloorToInt(option.Max)) : intValue;
+                        service.SetInt(option.Key, clamped);
+                    }
+                    break;
+                case ConfigValueType.Float:
+                    if (float.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out float floatValue))
+                    {
+                        float clamped = option.HasRange ? Mathf.Clamp(floatValue, option.Min, option.Max) : floatValue;
+                        service.SetFloat(option.Key, clamped);
+                    }
+                    break;
+            }
         }
 
         private void RebuildServerList()

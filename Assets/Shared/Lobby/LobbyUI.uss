@@ -1,0 +1,160 @@
+.lobby-root {
+    flex-direction: row;
+    padding: 18px;
+    background-color: rgba(8, 9, 10, 0.86);
+    color: white;
+}
+
+.is-hidden {
+    display: none;
+}
+
+.lobby-sidebar {
+    width: 26%;
+    min-width: 230px;
+    margin-right: 18px;
+    flex-shrink: 0;
+}
+
+.lobby-title {
+    margin-bottom: 12px;
+    font-size: 24px;
+    -unity-font-style: bold;
+}
+
+.lobby-role {
+    margin-bottom: 4px;
+    font-size: 16px;
+    -unity-font-style: bold;
+}
+
+.lobby-status {
+    margin-bottom: 14px;
+    color: rgb(186, 201, 214);
+    font-size: 13px;
+}
+
+.round-button {
+    height: 34px;
+    margin-bottom: 16px;
+    -unity-font-style: bold;
+}
+
+.section-header {
+    margin-bottom: 4px;
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+.players-list {
+    flex-grow: 1;
+    white-space: normal;
+    font-size: 13px;
+}
+
+.config-panel {
+    flex-grow: 1;
+    padding: 10px 12px;
+    background-color: rgba(18, 20, 23, 0.92);
+}
+
+.config-title {
+    margin-bottom: 8px;
+    font-size: 20px;
+    -unity-font-style: bold;
+}
+
+/* Column-direction wrap: groups stack vertically and flow into a new column
+   when they would exceed the panel height. A tall group (e.g. Combat) ends up
+   in its own column instead of compressing its rows. */
+.option-groups {
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    flex-grow: 1;
+}
+
+/* The group/row UXML templates are cloned, so the real flex children are the
+   TemplateContainer wrappers (tagged in code with the -host classes). Layout
+   sizing must live on those wrappers, not the inner .option-group/.option-row. */
+.option-group-host {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+    width: 240px;
+    margin-right: 14px;
+    margin-bottom: 14px;
+}
+
+.option-row-host {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.option-group-header {
+    height: 18px;
+    margin-bottom: 2px;
+    color: rgb(176, 199, 214);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.option-row {
+    flex-direction: row;
+    align-items: center;
+    height: 26px;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+}
+
+.option-label {
+    flex-grow: 1;
+    min-width: 112px;
+    color: rgb(224, 230, 232);
+    white-space: normal;
+    font-size: 11px;
+}
+
+.option-input,
+.option-toggle {
+    width: 68px;
+    height: 22px;
+    margin-left: 10px;
+}
+
+.option-input {
+    -unity-text-align: middle-right;
+}
+
+/* The default theme gives the text input 10px top/bottom padding, which
+   doesn't fit inside a 22px-tall field and collapses the text to 0 height.
+   Shrink the padding so the glyphs have vertical room to render. */
+.option-input .unity-base-text-field__input {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    background-color: rgb(20, 24, 28);
+    border-left-color: rgb(92, 108, 122);
+    border-right-color: rgb(92, 108, 122);
+    border-top-color: rgb(92, 108, 122);
+    border-bottom-color: rgb(92, 108, 122);
+}
+
+.option-input .unity-text-element {
+    color: white;
+}
+
+.option-toggle .unity-toggle__input {
+    background-color: rgb(20, 24, 28);
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgb(92, 108, 122);
+    border-right-color: rgb(92, 108, 122);
+    border-top-color: rgb(92, 108, 122);
+    border-bottom-color: rgb(92, 108, 122);
+}
+
+.option-toggle .unity-toggle__checkmark {
+    -unity-background-image-tint-color: rgb(135, 209, 143);
+}

@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="OptionRow" class="option-row">
+        <ui:Label name="OptionLabel" class="option-label" />
+        <ui:Toggle name="OptionToggle" class="option-toggle" />
+    </ui:VisualElement>
+</ui:UXML>

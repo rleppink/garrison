@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="OptionGroup" class="option-group">
+        <ui:Label name="OptionGroupHeader" class="option-group-header" />
+        <ui:VisualElement name="OptionRows" />
+    </ui:VisualElement>
+</ui:UXML>
