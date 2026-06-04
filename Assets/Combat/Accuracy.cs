@@ -6,7 +6,7 @@ namespace Garrison.Combat
 {
     public sealed class Accuracy : MonoBehaviour, IConfigConsumer
     {
-        private const float DefaultIdleSpreadDegrees = 0f;
+        private const float DefaultIdleSpreadDegrees = 0.5f;
         private const float DefaultMovingSpreadDegrees = 2f;
         private const float DefaultSprintSpreadDegrees = 5f;
 

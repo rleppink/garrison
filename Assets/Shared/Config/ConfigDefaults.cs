@@ -25,11 +25,17 @@ namespace Garrison.Shared.Config
         [SerializeField, Min(1)] private int maxHearts = 3;
         [SerializeField, Min(1)] private int defenderMaxHearts = 4;
         [SerializeField, Min(0f)] private float bleedOutSec = 12f;
-        [SerializeField, Min(0f)] private float accuracyIdleSpread;
+        // The minimum spread floor: a stationary shooter's stance, not the gun. Keeps a
+        // settled wedge just barely open (~0.5°) so "standing still" reads as near-perfect
+        // but not pixel-perfect. weaponBaseSpread is 0; the inherent inaccuracy lives here
+        // on the body instead.
+        [SerializeField, Min(0f)] private float accuracyIdleSpread = 0.5f;
         [SerializeField, Min(0f)] private float accuracyMovingSpread = 2f;
         [SerializeField, Min(0f)] private float accuracySprintSpread = 5f;
         [SerializeField, Min(1)] private int weaponDamageHearts = 1;
-        [SerializeField, Min(0f)] private float weaponBaseSpread = 0.35f;
+        // Zero by design: the gun adds no inherent spread. The stationary floor lives in
+        // accuracyIdleSpread (stance) instead — see the note there.
+        [SerializeField, Min(0f)] private float weaponBaseSpread;
         [SerializeField, Min(0f)] private float weaponRange = 60f;
         [SerializeField, Min(0f)] private float weaponFalloff = 20f;
         // Per-shot accuracy penalty: each shot widens the recoil bloom by recoilPerShot

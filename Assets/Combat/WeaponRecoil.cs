@@ -26,6 +26,7 @@ namespace Garrison.Combat
 
         public float YawOffsetDegrees => serverRecoil.Offset;
         public float LocalYawOffsetDegrees => localRecoil.Offset;
+        public float LocalBloomDegrees => localRecoil.Bloom;
 
         public void Configure(IConfig source)
         {
@@ -76,6 +77,7 @@ namespace Garrison.Combat
             private float offset;
 
             public readonly float Offset => offset;
+            public readonly float Bloom => bloom;
 
             public void Kick(float perShotDegrees, float maxDegrees)
             {

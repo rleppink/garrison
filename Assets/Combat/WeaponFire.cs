@@ -13,7 +13,7 @@ namespace Garrison.Combat
     public sealed class WeaponFire : NetworkBehaviour, IConfigConsumer, IAudioBusSink
     {
         private const int DefaultWeaponDamageHearts = 1;
-        private const float DefaultWeaponBaseSpread = 0.35f;
+        private const float DefaultWeaponBaseSpread = 0f;
         private const float DefaultWeaponRange = 60f;
         private const float DefaultWeaponFalloff = 20f;
         private const float DefaultTracerWidth = 0.075f;

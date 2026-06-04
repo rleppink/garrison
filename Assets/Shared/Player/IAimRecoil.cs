@@ -13,5 +13,11 @@ namespace Garrison.Shared.Player
 
         // Local presentation recoil offset for the aim line. Zero when settled.
         float LocalYawOffsetDegrees { get; }
+
+        // Local presentation recoil bloom: the half-angle (degrees) of the envelope the
+        // next shot's kick can land within, grown by spam and decayed between shots. The
+        // offset above is one sample inside it; the spread wedge reads the envelope to show
+        // where shots *can* go. Zero when settled.
+        float LocalBloomDegrees { get; }
     }
 }

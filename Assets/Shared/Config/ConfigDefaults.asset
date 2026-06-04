@@ -22,11 +22,11 @@ MonoBehaviour:
   maxHearts: 3
   defenderMaxHearts: 4
   bleedOutSec: 12
-  accuracyIdleSpread: 0
+  accuracyIdleSpread: 0.5
   accuracyMovingSpread: 2
   accuracySprintSpread: 5
   weaponDamageHearts: 1
-  weaponBaseSpread: 0.35
+  weaponBaseSpread: 0
   weaponRange: 60
   weaponFalloff: 20
   recoilPerShot: 6
