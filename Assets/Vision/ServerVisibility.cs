@@ -25,6 +25,7 @@ namespace Garrison.Vision
         private const float DefaultViewDistance = 25f;
         private const float DefaultLosTickRate = 10f;
         private const float MaxAccumulated = 0.25f;
+        private const float DirectionEpsilon = 0.0001f;
 
         private HierarchyFactory serverHierarchy;
         private float tickAccumulator;
@@ -45,13 +46,14 @@ namespace Garrison.Vision
 
         private sealed class TrackedAgent
         {
-            public TrackedAgent(NetworkIdentity identity, NetworkIdentity[] identities, Renderer[] renderers, IVisionAgent visionAgent, IAssignedPlayer assignedPlayer)
+            public TrackedAgent(NetworkIdentity identity, NetworkIdentity[] identities, Renderer[] renderers, IVisionAgent visionAgent, IAssignedPlayer assignedPlayer, float bodyHalfWidth)
             {
                 Identity = identity;
                 Identities = identities;
                 Renderers = renderers;
                 VisionAgent = visionAgent;
                 AssignedPlayer = assignedPlayer;
+                BodyHalfWidth = bodyHalfWidth;
             }
 
             public NetworkIdentity Identity { get; }
@@ -59,6 +61,10 @@ namespace Garrison.Vision
             public NetworkIdentity[] Identities { get; }
 
             public Renderer[] Renderers { get; }
+
+            // Horizontal half-width of the body collider, used to sample LOS across the
+            // target's silhouette rather than only its centerline.
+            public float BodyHalfWidth { get; }
 
             public IVisionAgent VisionAgent { get; }
 
@@ -216,7 +222,8 @@ namespace Garrison.Vision
 
             NetworkIdentity[] identities = identity.GetComponents<NetworkIdentity>();
             Renderer[] renderers = identity.GetComponentsInChildren<Renderer>(true);
-            TrackedAgent trackedAgent = new(identity, identities, renderers, visionAgent, identity as IAssignedPlayer);
+            float bodyHalfWidth = ComputeBodyHalfWidth(identity.GetComponentInChildren<Collider>());
+            TrackedAgent trackedAgent = new(identity, identities, renderers, visionAgent, identity as IAssignedPlayer, bodyHalfWidth);
             trackedAgents.Add(trackedAgent);
             for (int i = 0; i < identities.Length; i++)
             {
@@ -300,7 +307,7 @@ namespace Garrison.Vision
                     if (toTarget.sqrMagnitude > maxDistanceSquared)
                         continue;
 
-                    if (HasLineOfSight(viewerEyePosition, target.VisionAgent.EyePosition))
+                    if (HasLineOfSightToBody(viewerEyePosition, target))
                         visibleTargets.Add(target.Identity);
                 }
             }
@@ -430,9 +437,50 @@ namespace Garrison.Vision
             }
         }
 
+        // A target counts as seen if its centerline OR either horizontal edge of its body
+        // collider is reachable, matching the fact that a shot can clip an exposed flank
+        // even when the dead-center sightline is blocked (e.g. peeking past a corner).
+        private bool HasLineOfSightToBody(Vector3 fromEyePosition, TrackedAgent target)
+        {
+            Vector3 targetEyePosition = target.VisionAgent.EyePosition;
+            if (HasLineOfSight(fromEyePosition, targetEyePosition))
+                return true;
+
+            float halfWidth = target.BodyHalfWidth;
+            if (halfWidth <= 0f)
+                return false;
+
+            // Offset perpendicular to the view direction in the horizontal plane so the
+            // two extra samples straddle the body's left and right edges as the viewer sees it.
+            Vector3 perpendicular = Vector3.Cross(Vector3.up, targetEyePosition - fromEyePosition);
+            if (perpendicular.sqrMagnitude <= DirectionEpsilon)
+                return false;
+
+            perpendicular = perpendicular.normalized * halfWidth;
+            return HasLineOfSight(fromEyePosition, targetEyePosition - perpendicular)
+                || HasLineOfSight(fromEyePosition, targetEyePosition + perpendicular);
+        }
+
         private bool HasLineOfSight(Vector3 fromEyePosition, Vector3 toEyePosition)
         {
             return !Physics.Linecast(fromEyePosition, toEyePosition, obstacleMask, QueryTriggerInteraction.Ignore);
+        }
+
+        private static float ComputeBodyHalfWidth(Collider bodyCollider)
+        {
+            if (bodyCollider == null)
+                return 0f;
+
+            Vector3 lossyScale = bodyCollider.transform.lossyScale;
+            float horizontalScale = Mathf.Max(Mathf.Abs(lossyScale.x), Mathf.Abs(lossyScale.z));
+
+            return bodyCollider switch
+            {
+                CharacterController controller => controller.radius * horizontalScale,
+                CapsuleCollider capsule => capsule.radius * horizontalScale,
+                SphereCollider sphere => sphere.radius * horizontalScale,
+                _ => Mathf.Max(bodyCollider.bounds.extents.x, bodyCollider.bounds.extents.z),
+            };
         }
 
         private void SetHostPresentationVisible(TrackedAgent target, PlayerID player, bool visible)
