@@ -53,34 +53,37 @@
     /* --- Focus ring -------------------------------------------------------- */
     --focus: rgb(47, 74, 99);
 
-    /* --- Spacing scale (4px base) ------------------------------------------ */
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
-    --space-5: 24px;
-    --space-6: 32px;
+    /* --- Spacing scale (6px base) ------------------------------------------
+       Sized for a 1920x1080 PanelSettings reference (see LobbyPanelSettings):
+       1px USS ~= 1 real px on a 1080p display, so these are the old 4px-base
+       values scaled x1.5 to keep the same on-screen size. */
+    --space-1: 6px;
+    --space-2: 12px;
+    --space-3: 18px;
+    --space-4: 24px;
+    --space-5: 36px;
+    --space-6: 48px;
 
     /* --- Radius (mixed by element) -----------------------------------------
        sm -> buttons/inputs/toggles, md -> cards/panels, lg -> big containers. */
-    --radius-sm: 3px;
-    --radius-md: 6px;
-    --radius-lg: 10px;
+    --radius-sm: 5px;
+    --radius-md: 9px;
+    --radius-lg: 15px;
 
     /* --- Type scale -------------------------------------------------------- */
-    --text-xs: 11px;
-    --text-sm: 13px;
-    --text-base: 14px;
-    --text-md: 16px;
-    --text-lg: 20px;
-    --text-xl: 26px;
-    --text-2xl: 34px;
+    --text-xs: 17px;
+    --text-sm: 20px;
+    --text-base: 21px;
+    --text-md: 24px;
+    --text-lg: 30px;
+    --text-xl: 39px;
+    --text-2xl: 51px;
 
     /* --- Tracking (letter-spacing) ----------------------------------------
        Typed-label feel. Larger tracking on uppercase labels reads as stamped
        typewriter text even before the typewriter font is imported. */
-    --tracking-label: 2px;
-    --tracking-tight: 1px;
+    --tracking-label: 3px;
+    --tracking-tight: 2px;
 
     /* --- Fonts -------------------------------------------------------------
        Body = Libre Franklin Medium (heavier strokes read crisper at small

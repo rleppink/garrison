@@ -125,3 +125,27 @@ it in that screen's USS.
 `Assets/Shared/Lobby/` is the worked example: two `.g-dossier` documents on a
 dimmed desk, typed group headers on hairline rules, an ink-blue primary
 **Start** button, themed fields and toggles. Copy its structure for new screens.
+
+## 8. Resolution & crispness
+
+Every screen renders through **one shared PanelSettings asset**
+(`Assets/Shared/Lobby/LobbyPanelSettings.asset`): *Scale With Screen Size*,
+reference **1920×1080**. At 1080p that's a 1:1 mapping — no bilinear upscale, so
+thin text and hairlines stay crisp — and it still scales cleanly to other 16:9
+resolutions.
+
+**For any new panel:** point its `UIDocument` at that same PanelSettings asset.
+The reference resolution lives on the asset, not the panel, so every screen
+inherits it automatically — there is nothing per-panel to set or remember.
+(The name says "Lobby" for historical reasons; treat it as the game-wide
+default.)
+
+Because 1px in USS ≈ 1 real px at 1080p:
+
+- **Size in tokens.** The spacing / radius / type tokens are tuned for this
+  reference. Don't hard-code structural sizes (widths, heights, paddings) in a
+  screen — if you must, remember they're real pixels now, not 0.66× of one.
+- **Avoid fractional-px borders/radii.** `1.5px` reintroduces the soft edges this
+  setup exists to remove. Keep borders and hairlines at whole-pixel values.
+- Hairlines stay `1px` on purpose — crisp is the point. They are *not* scaled
+  with the size tokens.

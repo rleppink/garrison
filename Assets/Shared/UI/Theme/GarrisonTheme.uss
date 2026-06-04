@@ -119,10 +119,10 @@
        text rides high in the box. Extra top padding pushes it to the optical
        centre; -unity-text-align keeps it honest if the stamp is ever sized. */
     -unity-text-align: middle-center;
-    padding-top: 4px;
+    padding-top: 6px;
     padding-bottom: 0;
-    padding-left: 6px;
-    padding-right: 6px;
+    padding-left: 9px;
+    padding-right: 9px;
     font-size: var(--text-xs);
     -unity-font-style: bold;
     letter-spacing: var(--tracking-label);
@@ -243,8 +243,8 @@
     border-width: 1px;
     border-color: var(--line-strong);
     border-radius: var(--radius-sm);
-    width: 18px;
-    height: 18px;
+    width: 27px;
+    height: 27px;
 }
 
 .unity-toggle:hover .unity-toggle__checkmark {

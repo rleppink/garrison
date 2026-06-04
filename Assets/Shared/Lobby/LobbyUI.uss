@@ -23,7 +23,7 @@
 /* --- Sidebar dossier ----------------------------------------------------- */
 .lobby-sidebar {
     width: 26%;
-    min-width: 250px;
+    min-width: 375px;
     margin-right: var(--space-5);
     flex-shrink: 0;
 }
@@ -40,7 +40,7 @@
 }
 
 .round-button {
-    height: 36px;
+    height: 54px;
     margin-bottom: var(--space-4);
 }
 
@@ -75,7 +75,7 @@
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: auto;
-    width: 248px;
+    width: 372px;
     margin-right: var(--space-4);
     margin-bottom: var(--space-4);
 }
@@ -101,14 +101,14 @@
 .option-row {
     flex-direction: row;
     align-items: center;
-    height: 28px;
+    height: 42px;
     flex-shrink: 0;
     margin-bottom: var(--space-1);
 }
 
 .option-label {
     flex-grow: 1;
-    min-width: 112px;
+    min-width: 168px;
     color: var(--ink);
     white-space: normal;
     font-size: var(--text-xs);
@@ -117,8 +117,8 @@
 /* Field/toggle colors come from the theme; only sizing is local. */
 .option-input,
 .option-toggle {
-    width: 70px;
-    height: 24px;
+    width: 105px;
+    height: 36px;
     margin-left: var(--space-3);
 }
 
