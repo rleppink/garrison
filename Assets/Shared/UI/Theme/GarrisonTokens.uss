@@ -1,0 +1,92 @@
+/* ============================================================================
+   GARRISON — DESIGN TOKENS
+   ----------------------------------------------------------------------------
+   The single source of truth for the game's visual language.
+   Theme: WW2 classified-dossier. Warm aged paper, dark sepia ink, high
+   contrast. Ink-blue is the primary accent; stamp-red is reserved for
+   destructive / alert actions only.
+
+   Always reference these via var(--token). Never hard-code a color, radius,
+   or spacing value in component USS — add a token here instead.
+   ============================================================================ */
+
+:root {
+    /* --- Backdrop ----------------------------------------------------------
+       The dimmed game scene behind floating paper documents. */
+    --backdrop: rgba(26, 22, 16, 0.72);
+
+    /* --- Surfaces (paper) --------------------------------------------------
+       canvas -> base desk, surface -> a document, raised -> a card on top,
+       sunken -> inset fields, header -> the manila band atop a dossier. */
+    --surface-canvas: rgb(222, 210, 184);
+    --surface: rgb(244, 238, 223);
+    --surface-raised: rgb(251, 248, 239);
+    --surface-sunken: rgb(232, 222, 198);
+    --surface-header: rgb(222, 210, 184);
+
+    /* --- Ink (text) --------------------------------------------------------
+       Warm near-black down to faint, for primary / secondary / hint text. */
+    --ink: rgb(43, 38, 32);
+    --ink-soft: rgb(90, 80, 64);
+    --ink-faint: rgb(138, 126, 105);
+
+    /* --- Lines / borders --------------------------------------------------- */
+    --line: rgb(201, 188, 158);
+    --line-strong: rgb(168, 154, 120);
+
+    /* --- Accent: ink-blue (primary, links, focus) -------------------------- */
+    --accent: rgb(47, 74, 99);
+    --accent-strong: rgb(36, 58, 78);
+    --accent-soft: rgba(47, 74, 99, 0.12);
+    --accent-contrast: rgb(244, 238, 223);
+
+    /* --- Danger: stamp-red (destructive / alert ONLY) ---------------------- */
+    --danger: rgb(138, 43, 34);
+    --danger-strong: rgb(110, 33, 26);
+    --danger-soft: rgba(138, 43, 34, 0.12);
+    --danger-contrast: rgb(244, 238, 223);
+
+    /* --- Status ------------------------------------------------------------ */
+    --success: rgb(74, 93, 42);
+    --warning: rgb(154, 107, 30);
+
+    /* --- Focus ring -------------------------------------------------------- */
+    --focus: rgb(47, 74, 99);
+
+    /* --- Spacing scale (4px base) ------------------------------------------ */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+
+    /* --- Radius (mixed by element) -----------------------------------------
+       sm -> buttons/inputs/toggles, md -> cards/panels, lg -> big containers. */
+    --radius-sm: 3px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+
+    /* --- Type scale -------------------------------------------------------- */
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-base: 14px;
+    --text-md: 16px;
+    --text-lg: 20px;
+    --text-xl: 26px;
+    --text-2xl: 34px;
+
+    /* --- Tracking (letter-spacing) ----------------------------------------
+       Typed-label feel. Larger tracking on uppercase labels reads as stamped
+       typewriter text even before the typewriter font is imported. */
+    --tracking-label: 2px;
+    --tracking-tight: 1px;
+
+    /* --- Fonts -------------------------------------------------------------
+       Body = Libre Franklin Medium (heavier strokes read crisper at small
+       sizes; link Bold into its Font Weights table for true -unity-font-style:
+       bold, otherwise bold is synthesized).
+       Mono = Special Elite (single-weight typewriter) for the typed voice. */
+    --font-body: url("project://database/Assets/Shared/UI/Fonts/LibreFranklin-Medium SDF.asset");
+    --font-mono: url("project://database/Assets/Shared/UI/Fonts/SpecialElite-Regular SDF.asset");
+}

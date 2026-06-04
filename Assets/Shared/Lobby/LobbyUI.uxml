@@ -1,16 +1,27 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:VisualElement name="LobbyRoot" class="lobby-root">
-        <ui:VisualElement name="LobbySidebar" class="lobby-sidebar">
-            <ui:Label text="Lobby" class="lobby-title" />
-            <ui:Label name="RoleLabel" class="lobby-role" />
-            <ui:Label name="ConfigLabel" class="lobby-status" />
-            <ui:Button name="RoundButton" class="round-button" />
-            <ui:Label text="Players" class="section-header" />
-            <ui:Label name="PlayersLabel" text="Waiting for players" class="players-list" />
+        <ui:VisualElement name="LobbySidebar" class="lobby-sidebar g-dossier">
+            <ui:VisualElement class="g-dossier__header">
+                <ui:Label text="LOBBY" class="g-title" />
+                <ui:Label text="CONFIDENTIAL" class="g-stamp" />
+            </ui:VisualElement>
+            <ui:VisualElement class="g-dossier__body">
+                <ui:Label name="RoleLabel" class="lobby-role" />
+                <ui:Label name="ConfigLabel" class="lobby-status g-meta" />
+                <ui:Button name="RoundButton" class="round-button g-button g-button--primary" />
+                <ui:Label text="PLAYERS" class="section-header g-label" />
+                <ui:VisualElement class="g-divider" />
+                <ui:Label name="PlayersLabel" text="Waiting for players" class="players-list g-body" />
+            </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="LobbyConfigPanel" class="config-panel">
-            <ui:Label text="Lobby Options" class="config-title" />
-            <ui:VisualElement name="OptionGroups" class="option-groups" />
+        <ui:VisualElement name="LobbyConfigPanel" class="config-panel g-dossier">
+            <ui:VisualElement class="g-dossier__header">
+                <ui:Label text="LOBBY OPTIONS" class="g-title" />
+                <ui:Label text="TOP SECRET" class="g-stamp" />
+            </ui:VisualElement>
+            <ui:VisualElement class="g-dossier__body">
+                <ui:VisualElement name="OptionGroups" class="option-groups" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

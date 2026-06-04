@@ -1,0 +1,262 @@
+/* ============================================================================
+   GARRISON — BASE THEME
+   ----------------------------------------------------------------------------
+   Styles Unity's built-in controls and provides reusable component / utility
+   classes for every screen. Built entirely on tokens from GarrisonTokens.uss.
+
+   Class naming:
+     .g-<component>            block        (e.g. .g-dossier, .g-button)
+     .g-<component>__<part>    element      (e.g. .g-dossier__header)
+     .g-<component>--<variant> modifier     (e.g. .g-button--primary)
+   ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+   TYPOGRAPHY
+   To switch to the imported fonts, add to .g-body / .g-meta etc:
+       -unity-font-definition: var(--font-body);   (body)
+       -unity-font-definition: var(--font-mono);   (labels, meta, stamps)
+   ---------------------------------------------------------------------------- */
+.g-title {
+    -unity-font-definition: var(--font-mono);
+    font-size: var(--text-xl);
+    -unity-font-style: bold;
+    color: var(--ink);
+    letter-spacing: var(--tracking-tight);
+}
+
+.g-heading {
+    -unity-font-definition: var(--font-mono);
+    font-size: var(--text-lg);
+    -unity-font-style: bold;
+    color: var(--ink);
+}
+
+/* Small uppercase section/field label — the "typed" voice of the UI. */
+.g-label {
+    -unity-font-definition: var(--font-mono);
+    font-size: var(--text-xs);
+    -unity-font-style: bold;
+    color: var(--ink-soft);
+    letter-spacing: var(--tracking-label);
+}
+
+/* Typewriter metadata: stats, counts, status lines. */
+.g-meta {
+    -unity-font-definition: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--ink-faint);
+    letter-spacing: var(--tracking-tight);
+}
+
+.g-body {
+    -unity-font-definition: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--ink);
+    white-space: normal;
+}
+
+.g-divider {
+    height: 1px;
+    background-color: var(--line);
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+/* ----------------------------------------------------------------------------
+   SURFACES
+   ---------------------------------------------------------------------------- */
+.g-panel {
+    background-color: var(--surface);
+    border-width: 1px;
+    border-color: var(--line-strong);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.g-card {
+    background-color: var(--surface-raised);
+    border-width: 1px;
+    border-color: var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+/* A classified document: header band + body. */
+.g-dossier {
+    background-color: var(--surface);
+    border-width: 1px;
+    border-color: var(--line-strong);
+    border-radius: var(--radius-md);
+}
+
+.g-dossier__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--surface-header);
+    border-bottom-width: 2px;
+    border-bottom-color: var(--line-strong);
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+}
+
+.g-dossier__body {
+    padding: var(--space-4);
+}
+
+/* Rubber-stamp mark. Use sparingly: TOP SECRET / CONFIDENTIAL / DECLASSIFIED. */
+.g-stamp {
+    -unity-font-definition: var(--font-mono);
+    color: var(--danger);
+    border-width: 2px;
+    border-color: var(--danger);
+    border-radius: var(--radius-sm);
+    /* Special Elite reserves a tall descent under its all-caps glyphs, so the
+       text rides high in the box. Extra top padding pushes it to the optical
+       centre; -unity-text-align keeps it honest if the stamp is ever sized. */
+    -unity-text-align: middle-center;
+    padding-top: 4px;
+    padding-bottom: 0;
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: var(--text-xs);
+    -unity-font-style: bold;
+    letter-spacing: var(--tracking-label);
+    rotate: -4deg;
+    opacity: 0.85;
+}
+
+/* ----------------------------------------------------------------------------
+   BUTTONS  (Unity .unity-button + utility .g-button)
+   ---------------------------------------------------------------------------- */
+.unity-button,
+.g-button {
+    -unity-font-definition: var(--font-body);
+    -unity-font-style: bold;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    background-color: var(--surface-raised);
+    background-image: none;
+    border-width: 1px;
+    border-color: var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    margin: 0;
+    letter-spacing: var(--tracking-tight);
+    transition: background-color 0.08s ease, border-color 0.08s ease;
+}
+
+.unity-button:hover,
+.g-button:hover {
+    background-color: var(--surface-sunken);
+    border-color: var(--ink-soft);
+}
+
+.unity-button:active,
+.g-button:active {
+    translate: 0 1px;
+}
+
+.unity-button:focus,
+.g-button:focus {
+    border-color: var(--focus);
+}
+
+.unity-button:disabled,
+.g-button:disabled {
+    opacity: 0.45;
+}
+
+/* Primary — ink-blue. The single most important action on a screen. */
+.g-button--primary {
+    background-color: var(--accent);
+    border-color: var(--accent-strong);
+    color: var(--accent-contrast);
+}
+
+.g-button--primary:hover {
+    background-color: var(--accent-strong);
+    border-color: var(--accent-strong);
+}
+
+/* Danger — stamp-red. Destructive / irreversible / alert only. */
+.g-button--danger {
+    background-color: var(--danger);
+    border-color: var(--danger-strong);
+    color: var(--danger-contrast);
+}
+
+.g-button--danger:hover {
+    background-color: var(--danger-strong);
+    border-color: var(--danger-strong);
+}
+
+/* Ghost — quiet, secondary actions. */
+.g-button--ghost {
+    background-color: rgba(0, 0, 0, 0);
+    border-color: var(--line);
+}
+
+/* ----------------------------------------------------------------------------
+   TEXT FIELDS
+   ---------------------------------------------------------------------------- */
+.unity-text-field {
+    margin: 0;
+}
+
+.unity-text-field .unity-base-text-field__input {
+    background-color: var(--surface-sunken);
+    border-width: 1px;
+    border-color: var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+    color: var(--ink);
+}
+
+.unity-text-field .unity-text-element {
+    color: var(--ink);
+}
+
+.unity-text-field:focus .unity-base-text-field__input {
+    border-color: var(--focus);
+}
+
+/* ----------------------------------------------------------------------------
+   TOGGLES
+   ---------------------------------------------------------------------------- */
+.unity-toggle {
+    margin: 0;
+}
+
+.unity-toggle .unity-toggle__checkmark {
+    background-color: var(--surface-sunken);
+    border-width: 1px;
+    border-color: var(--line-strong);
+    border-radius: var(--radius-sm);
+    width: 18px;
+    height: 18px;
+}
+
+.unity-toggle:hover .unity-toggle__checkmark {
+    border-color: var(--ink-soft);
+}
+
+.unity-toggle:checked .unity-toggle__checkmark {
+    background-color: var(--accent);
+    border-color: var(--accent-strong);
+    -unity-background-image-tint-color: var(--accent-contrast);
+}
+
+.unity-toggle:focus .unity-toggle__checkmark {
+    border-color: var(--focus);
+}

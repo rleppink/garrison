@@ -1,67 +1,61 @@
-.lobby-root {
-    flex-direction: row;
-    padding: 18px;
-    background-color: rgba(8, 9, 10, 0.86);
-    color: white;
-}
+/* ============================================================================
+   LOBBY — screen styles
+   Consumes the game-wide theme. Layout only lives here; look comes from tokens
+   and the .g-* component classes (see Assets/Shared/UI/Theme).
+   ============================================================================ */
+@import url("../UI/Theme/GarrisonTokens.uss");
+@import url("../UI/Theme/GarrisonTheme.uss");
 
 .is-hidden {
     display: none;
 }
 
+/* The dimmed desk: documents float over the darkened game scene. */
+.lobby-root {
+    flex-direction: row;
+    padding: var(--space-6);
+    background-color: var(--backdrop);
+    color: var(--ink);
+    /* Body font is inherited; the .g-* typewriter classes override per element. */
+    -unity-font-definition: var(--font-body);
+}
+
+/* --- Sidebar dossier ----------------------------------------------------- */
 .lobby-sidebar {
     width: 26%;
-    min-width: 230px;
-    margin-right: 18px;
+    min-width: 250px;
+    margin-right: var(--space-5);
     flex-shrink: 0;
 }
 
-.lobby-title {
-    margin-bottom: 12px;
-    font-size: 24px;
-    -unity-font-style: bold;
-}
-
 .lobby-role {
-    margin-bottom: 4px;
-    font-size: 16px;
+    margin-top: var(--space-2);
+    font-size: var(--text-md);
     -unity-font-style: bold;
+    color: var(--ink);
 }
 
 .lobby-status {
-    margin-bottom: 14px;
-    color: rgb(186, 201, 214);
-    font-size: 13px;
+    margin-bottom: var(--space-4);
 }
 
 .round-button {
-    height: 34px;
-    margin-bottom: 16px;
-    -unity-font-style: bold;
+    height: 36px;
+    margin-bottom: var(--space-4);
 }
 
 .section-header {
-    margin-bottom: 4px;
-    font-size: 14px;
-    -unity-font-style: bold;
+    margin-bottom: var(--space-1);
 }
 
 .players-list {
     flex-grow: 1;
-    white-space: normal;
-    font-size: 13px;
+    color: var(--ink-soft);
 }
 
+/* --- Config dossier ------------------------------------------------------ */
 .config-panel {
     flex-grow: 1;
-    padding: 10px 12px;
-    background-color: rgba(18, 20, 23, 0.92);
-}
-
-.config-title {
-    margin-bottom: 8px;
-    font-size: 20px;
-    -unity-font-style: bold;
 }
 
 /* Column-direction wrap: groups stack vertically and flow into a new column
@@ -81,9 +75,9 @@
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: auto;
-    width: 240px;
-    margin-right: 14px;
-    margin-bottom: 14px;
+    width: 248px;
+    margin-right: var(--space-4);
+    margin-bottom: var(--space-4);
 }
 
 .option-row-host {
@@ -91,70 +85,43 @@
     flex-shrink: 0;
 }
 
+/* Group header: a typed label sitting on a hairline rule. */
 .option-group-header {
-    height: 18px;
-    margin-bottom: 2px;
-    color: rgb(176, 199, 214);
-    font-size: 12px;
+    -unity-font-definition: var(--font-mono);
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-1);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--line);
+    font-size: var(--text-xs);
     -unity-font-style: bold;
+    color: var(--ink-soft);
+    letter-spacing: var(--tracking-label);
 }
 
 .option-row {
     flex-direction: row;
     align-items: center;
-    height: 26px;
+    height: 28px;
     flex-shrink: 0;
-    margin-bottom: 2px;
+    margin-bottom: var(--space-1);
 }
 
 .option-label {
     flex-grow: 1;
     min-width: 112px;
-    color: rgb(224, 230, 232);
+    color: var(--ink);
     white-space: normal;
-    font-size: 11px;
+    font-size: var(--text-xs);
 }
 
+/* Field/toggle colors come from the theme; only sizing is local. */
 .option-input,
 .option-toggle {
-    width: 68px;
-    height: 22px;
-    margin-left: 10px;
+    width: 70px;
+    height: 24px;
+    margin-left: var(--space-3);
 }
 
 .option-input {
     -unity-text-align: middle-right;
-}
-
-/* The default theme gives the text input 10px top/bottom padding, which
-   doesn't fit inside a 22px-tall field and collapses the text to 0 height.
-   Shrink the padding so the glyphs have vertical room to render. */
-.option-input .unity-base-text-field__input {
-    padding-top: 2px;
-    padding-bottom: 2px;
-    background-color: rgb(20, 24, 28);
-    border-left-color: rgb(92, 108, 122);
-    border-right-color: rgb(92, 108, 122);
-    border-top-color: rgb(92, 108, 122);
-    border-bottom-color: rgb(92, 108, 122);
-}
-
-.option-input .unity-text-element {
-    color: white;
-}
-
-.option-toggle .unity-toggle__input {
-    background-color: rgb(20, 24, 28);
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-    border-left-color: rgb(92, 108, 122);
-    border-right-color: rgb(92, 108, 122);
-    border-top-color: rgb(92, 108, 122);
-    border-bottom-color: rgb(92, 108, 122);
-}
-
-.option-toggle .unity-toggle__checkmark {
-    -unity-background-image-tint-color: rgb(135, 209, 143);
 }
