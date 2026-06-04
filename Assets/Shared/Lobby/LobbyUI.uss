@@ -53,6 +53,23 @@
     color: var(--ink-soft);
 }
 
+/* --- In-round exit -------------------------------------------------------
+   A quiet ghost button parked in the top-right corner during a round. It lives
+   outside .lobby-root so it survives the round hiding the lobby, and stays
+   small and low-contrast so it never competes with the game beneath it. The
+   right corner keeps it clear of the hearts HUD in the top-left. */
+.back-to-lobby {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    font-size: var(--text-xs);
+    opacity: 0.7;
+}
+
+.back-to-lobby:hover {
+    opacity: 1;
+}
+
 /* --- Config dossier ------------------------------------------------------ */
 .config-panel {
     flex-grow: 1;

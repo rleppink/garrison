@@ -34,6 +34,7 @@ namespace Garrison.Shared.Lobby
         private Label configLabel;
         private Label playersLabel;
         private Button roundButton;
+        private Button backToLobbyButton;
 
         // A single floating tooltip reused across all rows. It always lives in the tree
         // at opacity 0 (so the fade can run both ways) and only repositions/reveals on
@@ -61,6 +62,9 @@ namespace Garrison.Shared.Lobby
             if (roundButton != null)
                 roundButton.clicked += SubmitHostRoundAction;
 
+            if (backToLobbyButton != null)
+                backToLobbyButton.clicked += SubmitBackToLobby;
+
             Refresh();
         }
 
@@ -71,6 +75,9 @@ namespace Garrison.Shared.Lobby
 
             if (roundButton != null)
                 roundButton.clicked -= SubmitHostRoundAction;
+
+            if (backToLobbyButton != null)
+                backToLobbyButton.clicked -= SubmitBackToLobby;
         }
 
         private void Update()
@@ -101,6 +108,15 @@ namespace Garrison.Shared.Lobby
                 roundButton.SetEnabled(isHost);
                 roundButton.EnableInClassList(HiddenClass, !isHost);
                 roundButton.text = lobbyController.RoundState == RoundState.Lobby ? "Start" : "Reset";
+            }
+
+            // The in-round exit lives outside the lobby panel, so it stays visible while
+            // the round hides the lobby. Only the host can reset, so only the host sees it.
+            if (backToLobbyButton != null)
+            {
+                bool canReturn = isHost && lobbyController.RoundState == RoundState.InRound;
+                backToLobbyButton.EnableInClassList(HiddenClass, !canReturn);
+                backToLobbyButton.SetEnabled(canReturn);
             }
 
             if (playersLabel == null)
@@ -145,6 +161,7 @@ namespace Garrison.Shared.Lobby
             configLabel = root.Q<Label>("ConfigLabel");
             playersLabel = root.Q<Label>("PlayersLabel");
             roundButton = root.Q<Button>("RoundButton");
+            backToLobbyButton = root.Q<Button>("BackToLobbyButton");
 
             BuildOptions();
             BuildTooltip(root);
@@ -361,6 +378,15 @@ namespace Garrison.Shared.Lobby
             if (lobbyController.RoundState == RoundState.Lobby)
                 lobbyController.StartRound();
             else
+                lobbyController.ResetRound();
+        }
+
+        private void SubmitBackToLobby()
+        {
+            if (!lobbyController || !lobbyController.IsLocalHost)
+                return;
+
+            if (lobbyController.RoundState == RoundState.InRound)
                 lobbyController.ResetRound();
         }
     }
