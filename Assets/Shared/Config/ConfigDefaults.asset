@@ -37,13 +37,6 @@ MonoBehaviour:
   losTickRate: 10
   npcConeArc: 70
   npcConeRange: 8
-  cameraZoom: 10
-  cameraPushExtent: 8
-  cameraPushShape: 0
-  cameraPushHorizontalScale: 1
-  cameraPushForwardScale: 1
-  cameraPushBackwardScale: 0.7
+  cameraZoom: 15
+  cameraPushExtent: 10
   cameraSafeViewportInset: 0.05
-  cameraReturn: 0
-  cameraReturnSpeed: 8
-  cameraPushCoupling: 0

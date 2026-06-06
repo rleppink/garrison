@@ -84,23 +84,6 @@ namespace Garrison.Shared.Config
                     "Maximum distance (world units) the camera shifts from the body toward your cursor, " +
                     "letting you see further where you aim. 0 disables aim-push entirely.",
                     0f),
-                Int(ConfigKey.CameraPushShape, "Camera", "Push shape",
-                    "Shape of the aim-push reach: 0 = circle (equal in every direction), 1 = ellipse " +
-                    "(scaled by Horizontal and Forward scale), 2 = asymmetric (also applies Backward " +
-                    "scale when you aim back toward the camera).",
-                    0),
-                Float(ConfigKey.CameraPushHorizontalScale, "Camera", "Horizontal scale",
-                    "Ellipse and asymmetric shapes only. Multiplies the push extent sideways (screen " +
-                    "left/right), so the camera can lead further horizontally than vertically.",
-                    0f),
-                Float(ConfigKey.CameraPushForwardScale, "Camera", "Forward scale",
-                    "Ellipse and asymmetric shapes only. Multiplies the push extent when aiming forward " +
-                    "(screen-up, away from the camera).",
-                    0f),
-                Float(ConfigKey.CameraPushBackwardScale, "Camera", "Backward scale",
-                    "Asymmetric shape only. Multiplies the push extent when aiming back toward the camera " +
-                    "(screen-down) — usually kept smaller so you lead less behind yourself.",
-                    0f),
                 Float(
                     ConfigKey.CameraSafeViewportInset,
                     "Camera",
@@ -111,19 +94,6 @@ namespace Garrison.Shared.Config
                     0f,
                     0.45f
                 ),
-                Int(ConfigKey.CameraReturn, "Camera", "Return mode",
-                    "How the camera recenters as your aim pulls back toward the body: 0 = snap (tracks " +
-                    "the aim exactly and instantly), 1 = lazy follow (eases back at Return speed, while " +
-                    "still snapping outward instantly).",
-                    0),
-                Float(ConfigKey.CameraReturnSpeed, "Camera", "Return speed",
-                    "Lazy-follow mode only. How quickly the camera eases back toward the body when your " +
-                    "aim retracts (higher = snappier). No effect in snap mode.",
-                    0f),
-                Int(ConfigKey.CameraPushCoupling, "Camera", "Push coupling",
-                    "Reserved for tuning: 0 = push follows aim, 1 = push follows a separate push input. " +
-                    "Only aim input exists today, so both settings currently behave identically.",
-                    0),
                 Int(ConfigKey.DefenderSlot, "Combat", "Defender slot",
                     "Index into the round's player list that becomes the Defender (0 = host / first " +
                     "player); everyone else attacks. Temporary role picker until the lobby handles roles.",

@@ -55,16 +55,9 @@ namespace Garrison.Shared.Config
         [SerializeField, Min(0f)] private float npcConeRange = 8f;
 
         [Header("Camera")]
-        [SerializeField] private float cameraZoom = 10f;
-        [SerializeField] private float cameraPushExtent = 8f;
-        [SerializeField] private int cameraPushShape;
-        [SerializeField] private float cameraPushHorizontalScale = 1f;
-        [SerializeField] private float cameraPushForwardScale = 1f;
-        [SerializeField] private float cameraPushBackwardScale = 0.7f;
+        [SerializeField] private float cameraZoom = 15f;
+        [SerializeField] private float cameraPushExtent = 10f;
         [SerializeField, Range(0f, 0.45f)] private float cameraSafeViewportInset = 0.05f;
-        [SerializeField] private int cameraReturn;
-        [SerializeField] private float cameraReturnSpeed = 8f;
-        [SerializeField] private int cameraPushCoupling;
 
         /// <summary>
         /// Maps the typed authoring fields onto the neutral key/value pairs that seed
@@ -99,14 +92,7 @@ namespace Garrison.Shared.Config
             yield return Pair(ConfigKey.NpcConeRange, ConfigValue.Float(npcConeRange));
             yield return Pair(ConfigKey.CameraZoom, ConfigValue.Float(cameraZoom));
             yield return Pair(ConfigKey.CameraPushExtent, ConfigValue.Float(cameraPushExtent));
-            yield return Pair(ConfigKey.CameraPushShape, ConfigValue.Int(cameraPushShape));
-            yield return Pair(ConfigKey.CameraPushHorizontalScale, ConfigValue.Float(cameraPushHorizontalScale));
-            yield return Pair(ConfigKey.CameraPushForwardScale, ConfigValue.Float(cameraPushForwardScale));
-            yield return Pair(ConfigKey.CameraPushBackwardScale, ConfigValue.Float(cameraPushBackwardScale));
             yield return Pair(ConfigKey.CameraSafeViewportInset, ConfigValue.Float(cameraSafeViewportInset));
-            yield return Pair(ConfigKey.CameraReturn, ConfigValue.Int(cameraReturn));
-            yield return Pair(ConfigKey.CameraReturnSpeed, ConfigValue.Float(cameraReturnSpeed));
-            yield return Pair(ConfigKey.CameraPushCoupling, ConfigValue.Int(cameraPushCoupling));
         }
 
         private static KeyValuePair<ConfigKey, ConfigValue> Pair(ConfigKey key, ConfigValue value)

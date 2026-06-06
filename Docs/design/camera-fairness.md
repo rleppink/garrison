@@ -49,8 +49,9 @@ sick.
 
 - **A tilt feels better than flat top-down.**
   100% straight-down (90°) reads as flat/board-gamey and loses the sense of
-  height. *May yield:* if that's the only possible outcome and there are no
-  better options
+  height. *Yielded (PoC result):* perspective top-down (1b) is the only fully-fair,
+  non-nauseating outcome — and 1b isn't dead-flat anyway (perspective gives
+  height-read toward the screen edges, unlike ortho 1a).
 
 - **Keep the current control scheme (free cursor aim + world-locked WASD).**
   The known-good build aims with a screen cursor and moves WASD in world space.
@@ -201,9 +202,13 @@ So the **world's vertical rolls with aim**: characters/walls stand upright aimin
 lie on their side aiming E/W, and go **fully upside-down aiming S**. One full tumble
 per aim revolution. Unavoidable — it's the `Z=±90` in the E/W transforms, and
 pitch-past-90 does it for S even with `Z=0`.
-- *Verdict:* the only option that's fully fair **and** control-locked. Stands or
-  falls on **whether players can read upside-down / sideways characters** — likely
-  the hardest pill. *Open, but readability is the gating risk.*
+- *Verdict:* **Rejected (PoC failed).** Looking north is fine; looking south —
+  camera on the north rim, pitch past 90° → "through your legs," inverted — is odd
+  and disorienting. The gating risk hit exactly where predicted. **Not tunable
+  away:** south pitch is `90 + sigma`, so *any* nonzero swing inverts at full south
+  aim (smaller swing = less upside-down, never upright). Queued mitigations
+  (counter-rotated characters, facing arrows) only right the *characters*, not the
+  tipping *environment* — no save in that direction. → drag swing to 0 → ship 1b.
 
 ### 4. Decouple vision from camera — symmetric character-centric fog (Family B)
 **Rejected.** Make enemy visibility a radially symmetric, character-centric
@@ -275,25 +280,32 @@ shallow ~65° (full long lane); aim south / at character → steepen toward top-
 
 ## Status
 
-**Resolved to a PoC.** Fairness is now a *hard constraint*, which eliminates every
-"minimize the asymmetry" compromise — **Option 5 is out** (so is 6 already-in, 3
-plain-rotation, 1a/2 ortho, 4 fog). Only perfectly-symmetric cameras survive:
-**1b (perspective top-down)**, the **dome scheme**, and **8** (partial — also out,
-since it isn't *fully* fair). 7 remains a far-future wildcard.
+**RESOLVED → perspective top-down (Option 1b).** The dome PoC was built and
+played; north was fine but **south aim ("through your legs," inverted) was odd and
+disorienting** — the predicted gating risk, and structurally un-tunable (any swing
+inverts at full south aim). So the swing dial lands at **0 = perspective top-down**,
+which the PoC build already ships as its built-in fallback.
 
-**Decision: build the dome-scheme PoC**, with full top-down (1b) as the built-in
-fallback — they're the two ends of *one* swing dial, and **every setting on that
-dial is 100% fair** (rotationally symmetric rim). So the dial trades only
-sightline-length + world-tip against legibility; fairness never moves. The PoC's
-sole question: **is the tipping/inverted world legible, playable, and not
-nauseating?** If no → drag swing to 0 → ship top-down.
+Why 1b is the right landing spot, not a compromise:
+- **Fully fair** — radial symmetry, the hard constraint, satisfied exactly.
+- **Keeps perspective → keeps wall-peeking** (the other hard constraint); only the
+  *directional* long sightline is given up, replaced by a symmetric awareness radius
+  whose size is one clean dial (zoom/height vs character size).
+- **Not flat like ortho 1a** — perspective splays walls outward and gives
+  height-read toward the edges.
 
-Spec captured in `Docs/design/camera-dome-poc.md`. Decisions made:
-- **Swing driven by cursor distance** from the character (apex/top-down at center,
-  leaning harder toward the cursor the further out you aim — self-tames the center
-  singularity).
-- **First build = raw/honest baseline** (everything tips, incl. characters); add
-  counter-rotated-characters and facing-indicator mitigations as toggles after.
+The "tilt feels better" preference yields here (see Preferences) — it was always
+allowed to yield if top-down was the only fully-fair, non-nauseating outcome, which
+the PoC confirmed it is.
+
+**Path history (all eliminated):** 5/6/3-plain/1a/2/4 out on the fairness hard
+constraint or peeking; **dome out on the PoC** (south inversion); 8 out (only
+partial fairness); **7 (anisotropic) remains the sole far-future wildcard** if the
+loss of the directional long sightline ever proves intolerable.
+
+Next: set `swingDegrees = 0` (or strip the dome path), keep the perspective
+top-down rig, and tune the single zoom/height ↔ character-size dial for the
+awareness radius.
 
 Next: implement per the PoC doc, then tune `swingDegrees` + `followSmoothing` live
 and make the legibility call.
